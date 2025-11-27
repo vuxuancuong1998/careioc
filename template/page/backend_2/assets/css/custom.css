@@ -1,0 +1,11 @@
+.headboxdt{margin: 0;color:#F5720E; font-weight: bold; font-size: 1.1em;padding-bottom: 10px;}
+.fillimage{display: flex; justify-content: flex-start; flex-wrap:wrap; }
+.boximgdt{position: relative;}
+.boximgdt .btndel{position: absolute;top:5px; right:5px;color:#900;cursor: pointer; text-shadow: 0 0 2px #fff;}
+.imgdt{width: auto; object-fit: cover; height: 150px;}
+.boxgallery{display:none}
+.boxgallery .close-undoredo{position: fixed;left:70px;right:70px;top:20px; z-index:99999;text-align: center;}
+.boxgallery .close-undoredo a{color:#FFF; padding:10px; font-size:1.5em}
+.itemcc{text-align:center;margin-bottom:5px;border-radius:4px; cursor: pointer;color:#FFF;background:#1E95A6;}
+.itemcc p{margin: 0;padding: 7px 0; font-size: 14px; font-weight: bold;}
+.itemcc p.btnviewstatus{border-top: #ccc 1px solid;}
