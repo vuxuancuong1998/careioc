@@ -1,6 +1,6 @@
 RewriteEngine on
 
-RewriteBase /eoffice.vietmy/
+RewriteBase /caodangkontum.edu.vn/
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

@@ -36,7 +36,7 @@ define('ThemeMaster', 'page'); //Replace xpanel by your theme's name
 define('AdminThemeMaster', 'sms'); //Replace xpanel by your admin theme's name
 
 /*** define site path ***/
-define('XC_URL','http://localhost/eoffice.vietmy');
+define('XC_URL','http://localhost/caodangkontum.edu.vn/');
 $siteurl = XC_URL;
 /*** template path ***/
 $template_path = XC_URL.'/template/'.ThemeMaster; //Warning: Don't change here

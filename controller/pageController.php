@@ -9,7 +9,9 @@ Class pageController extends baseController
 	{
 		var_dump($para);
 	}
-	
+	public function gioithieu(){
+		$this->view->show("gioithieu");
+	}
 	public function demo()
 	{
 		$this->pdf->income(6);
