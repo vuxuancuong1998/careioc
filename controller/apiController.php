@@ -125,7 +125,116 @@ Class apiController extends baseController
 		echo json_encode($result);
 		
 	}
+	public function addtypedm(){
+		global $db;
+	
+		$type_name = $_POST['type_name'];
+		$type_detail = $_POST['type_detail'];
+		$type_status = '1';
+		$db->query("INSERT INTO hicrm_type(type_name, type_detail,type_status) VALUES ('".$type_name."','".$type_detail."','".$type_status."') "); 
+		$result['status'] = 200;
+		
+		echo json_encode($result);
+		
+	}
+	public function deleteDmtype(){
+		global $db;
+		$result = array();
+		$db->query("SELECT * FROM hicrm_type WHERE id = '".$_POST['id']."'");
+		if($db->num_row())
+		{
+			$db->query("UPDATE hicrm_type SET type_status = '99' WHERE id = '".$_POST['id']."'");
+			$result["status"] = 200;
+		}
+		else
+		{
+			$result["status"] = 500;
+			$result["message"] = "Tài khoản không tồn tại";
+		}
+		echo json_encode($result);
+	}
+	public function addImage(){
+		global $db;
+		$image_name = $_POST['image_name'];
+		$image_user_created = $_POST['image_usercreate'];
+		$image_created_date = date('Y-m-d H:i:s');
+		$image_status = 1;
+		$result = array();
+		$FinalFilenameFront = "";
+		$FinalFilenameFront2 = "";
+		$expensions = array("jpeg","jpg","png");
+		// echo $_FILES['employee_image']['name'];
+		// echo $_FILES['image_file']['size']."ssss";
+		if(isset($_FILES['image_file']))
+			{
+				$errors= array();
+				$file_name = $_FILES['image_file']['name'];
+				$file_size =$_FILES['image_file']['size'];
+				$file_tmp =$_FILES['image_file']['tmp_name'];
+				$file_type=$_FILES['image_file']['type'];
+				$file_ext=strtolower(end(explode('.',$_FILES['image_file']['name'])));
+				$OriginalFilename = $FinalFilename = preg_replace('`[^a-z0-9-_.]`i','',$_FILES['image_file']['name']); 
+				$FinalFilenameFront = md5(time())."-".$FinalFilename;
+				if(in_array($file_ext,$expensions)=== false){
+					$errors[]="Extension not allowed, please choose a .png, .jpg file.";
+				}
+				if($file_size > 5242880){
+					$errors[]='File size must be max 2Mb';
+				}
+				
+				if(empty($errors)==true){
+					move_uploaded_file($file_tmp,"./uploads/images/".$FinalFilenameFront);
+					
+				}else
+				{
+					$result["status"] = 500;
+				}
+				
+			}
+		$db->query("INSERT INTO hicrm_images (image_name, image_url, image_user_created, image_created_date, image_status) VALUES('".$image_name."','".$FinalFilenameFront."','".$image_user_created."','".$image_created_date."','".$image_status."')");
+		
+		$result['status'] = 200;
+		$result["url"] = XC_URL."/uploads/images/".$FinalFilenameFront;
+		$result["id"] = $FinalFilenameFront;
+		echo json_encode($result);
 
+	}
+
+	public function deleteImage(){
+		global $db;
+		$iid = $_POST['iid'];
+		$result = array();
+		$db->query("SELECT * FROM hicrm_images WHERE id = '".$iid."'");
+		$db->fetch_object(true);
+		if($db->num_row()){
+			$db->query("UPDATE hicrm_images SET image_status = 99 WHERE id = '".$iid."'");
+			
+			$result["status"] = 200;
+		}else{
+			$result['message'] = "Không tìm thấy nhân viên này";
+			$result["status"] = 500;
+		}
+		
+		echo json_encode($result);
+	}
+
+	public function updatePage(){
+		global $db;
+		$result = array();
+		$id = $_POST['type_id'];
+		$page_content = $_POST['content'];
+		// echo $page_content;
+		$page_uid = $_POST['userid'];
+		$page_status = 1;
+		$page_created_date = date('Y-m-d H:i:s');
+		echo "UPDATE hicrm_introduce SET introduce_id_type ='".$id."',introduce_content='".$page_content."',introduce_uid = '".$page_uid."',introduce_created_date='".$page_created_date."' WHERE introduce_id_type ='".$id."'";
+		$db->query("UPDATE hicrm_introduce SET introduce_id_type ='".$id."',introduce_content='".$page_content."',introduce_uid = '".$page_uid."',introduce_created_date='".$page_created_date."' WHERE introduce_id_type ='".$id."'");
+
+		$result['message'] = "Sửa thành công";
+		$result['status'] = 200;
+		
+		echo json_encode($result);
+	}
 	//======================== ORDER API =================================//
     
 	public function addorders(){
@@ -647,6 +756,7 @@ Class apiController extends baseController
 		$default_image = 'doctor_default.png';
 		$FinalFilenameFront = "";
 		$FinalFilenameFront2 = "";
+		$expensions = array("jpeg","jpg","png");
 		// echo $_FILES['employee_image']['name'];
 		//echo $_FILES['hinhanh']['name']."ssss";
 		if(isset($_FILES['employee_image'])) {
@@ -1963,7 +2073,7 @@ Class apiController extends baseController
             $_SESSION['LoggedIn'] = 1;
 			$result["status"] = 200;
 			$result["name"] = $_SESSION['user']['fullname'];
-			$result['return_url'] = XC_URL;
+			$result['return_url'] = XC_URL."admin";
         }
 		else
 		{

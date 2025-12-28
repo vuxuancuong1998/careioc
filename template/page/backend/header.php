@@ -5,7 +5,7 @@
    <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-      <title><?php echo ($pagetitle)? $pagetitle." - " : "";?><?php echo $this->helper->get_config("website_name");?> - CloudERP</title>
+      <title><?php echo ($pagetitle)? $pagetitle." - " : "";?><?php echo $this->helper->get_config("website_name");?></title>
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -63,11 +63,12 @@
       <div class="main-wrapper">
          <div class="header">
             <div class="header-left">
-               <a href="index.html" class="logo">
-               <img src="<?php echo $template_path; ?>/backend/assets/img/logo.png" alt="Logo">
+               <a href="<?php echo XC_URL;?> " class="logo" style="font-size: 10px;">
+               <img src="<?php echo $template_path; ?>/assets/images/logo.png" alt="Logo">  
+             
                </a>
-               <a href="index.html" class="logo logo-small">
-               <img src="<?php echo $template_path; ?>/backend/assets/img/logo-small.png" alt="Logo" width="30" height="30">
+               <a href="<?php echo XC_URL;?> " class="logo logo-small">
+               <img src="<?php echo $template_path; ?>/assets/images/logo.png" alt="Logo" width="30" height="30">
                </a>
             </div>
             <a href="javascript:void(0);" id="toggle_btn">
@@ -83,25 +84,7 @@
             <i class="fas fa-bars"></i>
             </a>
             <ul class="nav nav-tabs user-menu">
-               <li class="nav-item dropdown has-arrow flag-nav">
-                  <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button">
-                  <img src="<?php echo $template_path; ?>/backend/assets/img/flags/us.png" alt="" height="20"> <span>Tiếng Việt</span>
-                  </a>
-                  <div class="dropdown-menu dropdown-menu-right">
-                     <a href="javascript:void(0);" class="dropdown-item">
-                     <img src="<?php echo $template_path; ?>/backend/assets/img/flags/vn.png" alt="" height="16"> Tiếng Việt
-                     </a>
-                     <a href="javascript:void(0);" class="dropdown-item">
-                     <img src="<?php echo $template_path; ?>/backend/assets/img/flags/us.png" alt="" height="16"> English
-                     </a>
-                     <a href="javascript:void(0);" class="dropdown-item">
-                     <img src="<?php echo $template_path; ?>/backend/assets/img/flags/es.png" alt="" height="16"> Spanish
-                     </a>
-                     <a href="javascript:void(0);" class="dropdown-item">
-                     <img src="<?php echo $template_path; ?>/backend/assets/img/flags/de.png" alt="" height="16"> German
-                     </a>
-                  </div>
-               </li>
+              
                <li class="nav-item dropdown">
                   <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
                   <i data-feather="bell"></i> <span class="badge rounded-pill">5</span>
@@ -192,13 +175,13 @@
                   <span class="status online"></span>
                   </span>
                   <span><?php if(isset($_SESSSION['user']['id']) && $_SESSSION['user']['id'] != ''){
-					  echo $_SESSSION['user']['email'];
+					  echo $_SESSSION['user']['username_fullname'];
 				  }?></span>
                   </a>
                   <div class="dropdown-menu">
                      <a class="dropdown-item" href="profile.html"><i data-feather="user" class="me-1"></i> Profile</a>
                      <a class="dropdown-item" href="settings.html"><i data-feather="settings" class="me-1"></i> Settings</a>
-                     <a class="dropdown-item" href="<?php echo XC_URL;?>/logout"><i data-feather="log-out" class="me-1"></i> Logout</a>
+                     <a class="dropdown-item" href="<?php echo XC_URL;?>logout"><i data-feather="log-out" class="me-1"></i> Logout</a>
                   </div>
                </li>
             </ul>
@@ -209,64 +192,32 @@
                   <ul>
                      <li class="menu-title"><span>Tính năng</span></li>
                      <li class="<?php echo ($active_menu == "dashboard")? "active" : "";?>">
-                        <a href="<?php echo XC_URL;?>"><i data-feather="home"></i> <span>Tổng quan</span></a>
+                        <a href="<?php echo XC_URL;?>admin"><i data-feather="home"></i> <span>Tổng quan</span></a>
                      </li>
 					 <li class="submenu">
                         <a href="#"><i data-feather="aperture"></i> <span>CRM</span> <span class="menu-arrow"></span></a>
                         <ul>
                            <li><a class="<?php echo ($active_menu == "customers")? "active" : "";?>" href="<?php echo XC_URL;?>/app/customers">Khách hàng/NCC</a></li>
-                           <li><a class="<?php echo ($active_menu == "promotions")? "active" : "";?>" href="<?php echo XC_URL;?>/app/promotions">Khuyến mãi</a></li>
-                           <li><a href="#">Khách hàng thân thiết</a></li>
-                           <li><a href="#">Email Marketing</a></li>
                         </ul>
                      </li>
-					 <li class="submenu">
-                        <a href="#"><i data-feather="pie-chart"></i> <span> Tài chính</span> <span class="menu-arrow"></span></a>
-                        <ul>
-							<li >
-								<a class="<?php echo ($active_menu == "income")? "active" : "";?>" href="<?php echo XC_URL;?>/app/incomes">Phiếu thu</a>
-							</li>
-							<li>
-								<a href="expenses.html">Phiếu chi</a>
-							</li>
-                           <li><a href="sales-report.html">Dòng tiền</a></li>
-                           <li><a href="expenses-report.html">Báo cáo kinh doanh</a></li>
-                           <li><a href="profit-loss-report.html">Kho hàng</a></li>
-                           <li><a href="taxs-report.html">Công cụ dụng cụ</a></li>
-                           <li><a href="taxs-report.html">Tài sản cố định</a></li>
-                        </ul>
-                     </li>
-                     <li class="submenu">
-                        <a href="#"><i data-feather="box"></i> <span>Kho hàng</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           
-                           <li><a class="<?php echo ($active_menu == "quotes")? "active" : "";?>" href="<?php echo XC_URL;?>/app/quotes"><i data-feather="shopping-bag"></i> Báo giá</a></li>
-						   <li><a class="<?php echo ($active_menu == "sell")? "active" : "";?>" href="#"><i data-feather="shopping-bag"></i> Bán hàng</a></li>
-                           <li><a class="<?php echo ($active_menu == "product_return")? "active" : "";?>" href="#"><i data-feather="shopping-bag"></i> Đổi trả hàng</a></li>
-                           <li><a class="<?php echo ($active_menu == "product_categories")? "active" : "";?>" href="#"><i data-feather="shopping-bag"></i> Nhóm hàng</a></li>
-                           <li><a class="<?php echo ($active_menu == "products")? "active" : "";?>" href="<?php echo XC_URL;?>/app/products"><i data-feather="truck"></i> Danh mục hàng hoá</a></li>
-                           <li><a class="<?php echo ($active_menu == "warehouse")? "active" : "";?>" href="<?php echo XC_URL;?>/app/warehouse"><i data-feather="archive"></i> Danh mục kho</a></li>
-						   <li><a class="<?php echo ($active_menu == "orders")? "active" : "";?>" href="<?php echo XC_URL;?>/app/orders/order"><i data-feather="shopping-cart"></i> Mua hàng</a></li>
-						   <li><a class="<?php echo ($active_menu == "stock_transfer")? "active" : "";?>" href="#"><i data-feather="archive"></i> Chuyển kho</a></li>
-						   <li><a class="<?php echo ($active_menu == "barcode")? "active" : "";?>" href="#"><i data-feather="shopping-bag"></i> In Barcode</a></li>
-                        </ul>
-                     </li>
+                     
 					 
 					 
-                    <li class='<?php echo ($active_menu == "toolinstruments")? "active" : "";?>'>
-                        <a href="<?php echo XC_URL;?>/app/toolinstruments""><i data-feather="layers"></i> <span>Công cụ dụng cụ</span></a>
-                     </li>
 					 <li>
                         <a href="<?php echo XC_URL;?>/app/fixedAsset"><i data-feather="codesandbox"></i> <span>Tài sản cố định</span></a>
                      </li>
-                     <li class="submenu">
-                        <a href="#"><i data-feather="pie-chart"></i> <span> Báo cáo</span> <span class="menu-arrow"></span></a>
+                      <li class="submenu">
+                        <a href="#"><i data-feather="book"></i> <span>Quản lý tin tức</span> <span class="menu-arrow"></span></a>
                         <ul>
-                           <li><a href="sales-report.html">Dòng tiền</a></li>
-                           <li><a href="expenses-report.html">Báo cáo kinh doanh</a></li>
-                           <li><a href="profit-loss-report.html">Kho hàng</a></li>
-                           <li><a href="taxs-report.html">Công cụ dụng cụ</a></li>
-                           <li><a href="taxs-report.html">Tài sản cố định</a></li>
+                           <li><a href="sales-report.html">Danh mục tin tức</a></li>
+                           <li><a href="expenses-report.html">Tin tức</a></li>
+                        </ul>
+                     </li>
+                     <li class="submenu">
+                        <a href="#"><i data-feather="pie-chart"></i> <span>Trang tĩnh</span> <span class="menu-arrow"></span></a>
+                        <ul>
+                           <li><a href="<?php echo XC_URL?>/admin/gioithieu">Giới thiệu</a></li>
+                           <li><a href="expenses-report.html">Liên hệ</a></li>
                         </ul>
                      </li>
                       <li>
@@ -276,27 +227,34 @@
                      <li class="menu-title">
                         <span>Hệ thống</span>
                      </li>
+                      <li class="submenu"> 
+                        <a href="#"><i data-feather="home"></i> <span>Quản trị trang chủ</span> <span class="menu-arrow"></span></a>
+                        <ul>
+                           <!-- <li><a href="<?php echo XC_URL?>/admin/addusers">Thêm mới người dùng</a></li> -->
+                           <li><a href="<?php echo XC_URL?>/admin/users">Quản lý slider</a></li>
+                            <li><a href="<?php echo XC_URL?>/admin/info">Quản lý banner</a></li>
+                        </ul>
+                         
+                     </li>
+                    
                      <li class="submenu"> 
                         <a href="#"><i data-feather="pie-chart"></i> <span>Quản trị hệ thống</span> <span class="menu-arrow"></span></a>
                         <ul>
                            <!-- <li><a href="<?php echo XC_URL?>/admin/addusers">Thêm mới người dùng</a></li> -->
-                           <li><a href="<?php echo XC_URL?>/admin/users">Quản lý người dùng</a></li>
-                        </ul>
-                         <ul>
-                           <!-- <li><a href="<?php echo XC_URL?>/admin/addusers">Thêm mới người dùng</a></li> -->
-                           <li><a href="<?php echo XC_URL?>/admin/info">Thông tin đơn vị</a></li>
+                           <li><a href="<?php echo XC_URL?>/admin/users">Quản lý tài khoản</a></li>
+                            <li><a href="<?php echo XC_URL?>/admin/dmType">Quản lý loại danh mục</a></li>
                         </ul>
                          
                      </li>
-					
+                   
 					 
-                     <li class="<?php echo ($active_menu == "categories")? "active" : "";?>">
-                        <a href="<?php echo XC_URL;?>/app/categories/users"><i data-feather="database"></i> <span>Danh mục</span></a>
-                     </li>
-
                      
+                     
+                     <li class="<?php echo ($active_menu == "settings")? "active" : "";?>">
+                        <a href="<?php echo XC_URL;?>/admin/dmimages"><i data-feather="image"></i> <span>Danh mục hình ảnh</span></a>
+                     </li>              
 					 <li class="<?php echo ($active_menu == "settings")? "active" : "";?>">
-                        <a href="<?php echo XC_URL;?>/app/setting"><i data-feather="settings"></i> <span>Thiết lập</span></a>
+                        <a href="<?php echo XC_URL;?>/app/setting"><i data-feather="settings"></i> <span>Thông tin đơn vị</span></a>
                      </li>
                      
                   </ul>

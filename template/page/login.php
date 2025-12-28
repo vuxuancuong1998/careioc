@@ -44,9 +44,9 @@
             </div>
          </div>
       </div>
-   </div>
+   </div> 
 </div>
-<?php include_once "footer.php"; ?>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -130,3 +130,5 @@
             });
         });
 </script>
+
+<?php include "footer.php"; ?>

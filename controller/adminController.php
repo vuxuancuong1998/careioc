@@ -15,7 +15,7 @@ Class adminController extends baseController
 	
 	public function logout(){
 		session_unset();
-		header('Location:' .XC_URL. '/login');
+		header('Location:' .XC_URL. 'admin/login');
 	}
 	public function users($para)
 	{
@@ -110,7 +110,48 @@ Class adminController extends baseController
 		$this->view->show("backend/add-users");
 	}
 	//end
-	
+	public function gioithieu($para){
+		$id = $para[1];
+		global $db;
+		// $db->query("SELECT *, t.id as tid FROM hicrm_type as t 
+		// 			LEFT JOIN hicrm_status as s ON u.user_status = s.id
+		// 			LEFT JOIN hicrm_user_groups as g ON u.user_group = g.id
+		// 			LEFT JOIN hicrm_departments as d ON u.user_dept = d.id
+		// 			 WHERE u.user_status NOT IN(99) and u.id = '$id'
+		// 			");
+		$db->query("SELECT *, i.id as iid FROM hicrm_introduce  as i
+					LEFT JOIN hicrm_type as t ON i.introduce_id_type = t.id
+					where i.introduce_id_type = '".$id."'");
+		$introduce = $db->fetch_object(true);
+		$db->query("SELECT * FROM hicrm_type WHERE type_status NOT IN (99)");
+		$type = $db->fetch_object();
+		$this->view->data['id'] = $id;
+		$this->view->data['introduce'] = $introduce;
+		$this->view->data['type'] = $type;
+		$this->view->show('backend/gioithieu');
+	}
+	public function dmType(){
+		global $db;
+		$db->query("SELECT *, t.id as tid FROM hicrm_type as t 
+					LEFT JOIN hicrm_dmtype as dmt ON t.type_detail = dmt.id
+					 WHERE t.type_status NOT IN(99)");
+		$type = $db->fetch_object();
+		$db->query("SELECT * FROM hicrm_dmtype");
+		$dmtype = $db->fetch_object();
+		$this->view->data["type"] = $type;
+		$this->view->data["dmtype"] = $dmtype;
+		$this->view->show("backend/dmtype");
+	}
+	public function dmimages(){
+		global $db;
+		$db->query("SELECT *, i.id as imageid FROM hicrm_images as i 
+					LEFT JOIN hicrm_status as s ON i.image_status = s.id
+					LEFT JOIN hicrm_users as u ON i.image_user_created = u.id
+					 WHERE i.image_status NOT IN(99) ORDER BY i.image_created_date DESC");
+		$images = $db->fetch_object();
+		$this->view->data["images"] = $images;
+		$this->view->show("backend/dmimage");
+	}
 	public function profile(){
 		$model_user = $this->model->get('user');
 		$get_user = $model_user -> get_user($_SESSION['user']['id']);

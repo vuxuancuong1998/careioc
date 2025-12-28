@@ -2,10 +2,7 @@
 /**
  * Project: xvn.
  * File: config.php.
- * Author: Ken Zaki
- * Email: kenzaki@xiao.vn
- * Create Date: 2:28 PM - 7/30/13
- * Website: www.xiao.vn
+
  */
  
 session_start();
@@ -36,7 +33,7 @@ define('ThemeMaster', 'page'); //Replace xpanel by your theme's name
 define('AdminThemeMaster', 'sms'); //Replace xpanel by your admin theme's name
 
 /*** define site path ***/
-define('XC_URL','http://localhost/caodangkontum.edu.vn/');
+define('XC_URL','http://localhost/caodangkontum.edu.vn');
 $siteurl = XC_URL;
 /*** template path ***/
 $template_path = XC_URL.'/template/'.ThemeMaster; //Warning: Don't change here
@@ -45,5 +42,5 @@ $upload_path = XC_URL.'/uploads';
 $image_path = XC_URL.'/uploads/images';
 
 /*** Set Application Name ***/
-$app_name = 'Viet My JSC';
+$app_name = 'Phong kham va nha thuoc CDKT';
 ?>
