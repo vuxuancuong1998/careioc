@@ -125,7 +125,7 @@ label.error{
                   <table id="table-user" class="table table-center table-hover datatable">
                      <thead class="thead-light">
                         <tr>
-                           <th>STT</th>
+                           <th>ID</th>
 						   <th>Tên danh mục</th>
                            <th>Thuộc loại</th>
                            <th class="text-right">Thao tác</th>
@@ -133,13 +133,12 @@ label.error{
                      </thead>
                      <tbody>
                         <?php 
-							$i = 1;
 							foreach($type as $type)
                            {
                            ?>
                         <tr>
                            <td>
-                              <?php echo $i;?>
+                              <?php echo $type ->tid;?>
                            </td>
 						   <td>
                               <?php echo $type->type_name;?>

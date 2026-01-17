@@ -265,15 +265,15 @@ label.error{
    <div class="page-header">
       <div class="row align-items-center">
          <div class="col">
-            <h3 class="page-title">Danh sách Bác sĩ</h3>
+            <h3 class="page-title"><?php echo $pagetitle; ?></h3>
             <ul class="breadcrumb">
                <!-- <li class="breadcrumb-item"><a href="<?php echo XC_URL?>">CloudERP</a></li> -->
-               <li class="breadcrumb-item active">Bác sĩ</li>
+               <!-- <li class="breadcrumb-item active">Bác sĩ</li> -->
             </ul>
          </div>
          <div class="col-auto">
              <a href="#" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" >
-            <i class="fas fa-plus"></i>Thêm Bác sĩ
+            <i class="fas fa-plus"></i><?php echo $add; ?>
             </a>
             <!-- <a class="btn btn-primary filter-btn" href="javascript:void(0);" id="filter_search">
             <i class="fas fa-filter"></i>
@@ -292,19 +292,14 @@ label.error{
                      <thead class="thead-light">
                         <tr>
                            <th>STT</th>
-                           <th>Tên Bác sĩ</th>
-						   <th>Giới tính</th>
-						   <th>Khoa</th>
-                           <th>Điện thoại</th>
-						   <th>Ảnh đại diện</th>
-						   <!-- <th>Lịch khám bệnh</th> -->
-                           <th >Thao tác</th>
+                           <th>Tên danh mục</th>
+                           <th>Thao tác</th>
                         </tr>
                      </thead>
                      <tbody>
                         <?php 
 							$i = 1;
-							foreach($employees as $employee)
+							foreach($category_products as $category_product)
                            {
                            ?>
                         <tr>
@@ -313,45 +308,19 @@ label.error{
                            </td>
 						   
                            <td >
-                              <?php echo $employee->employee_name;?>
+                              <?php echo $category_product->cat_product_name;?>
                            </td>
-						    <td>
-                              <?php if($employee->employee_gender == 1){echo "Nam";}else{ echo "Nữ";}?>
-                           </td>
-                           <td><?php echo $employee->depart_name;?></td>
-                           <td><?php echo $employee->employee_phone;?></td>
-						    <td id='image'>
-							<?php if($employee->employee_image != null){?>
-							<img src="<?php echo XC_URL . '/uploads/doctors/' . $employee->employee_image; ?>" width="100" height="100"/></td>
-							<?php }else{?>
-							<img src="<?php echo XC_URL . '/uploads/doctors/doctor_default.png'; ?>" width="100" height="100"/></td>
-							<?php }?>
-							<!-- <td>
-							<?php
-							echo !empty($employee->employee_calendar)
-								? date('d-m-Y', strtotime($employee->employee_calendar))
-									. ' - Buổi: '
-									. ($employee->employee_shift == 1 ? 'Sáng' : 'Chiều')
-								: 'Chưa có lịch';
-							?>
-
-                           </td> -->
+						   
                            <td>
                               <div class="btn-group">
-								    <a href="editEmployee/<?php echo $employee->employeeid;?>" class="btn btn-sm btn-white text-success btn-edit" >Sửa</a>
+								    <a href="#" class="btn btn-sm btn-white text-success btn-edit" data-id='<?php echo $category_product->pid;?>' >Sửa</a>
 								   <button type="button" class="btn btn-sm btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								   <span class="sr-only">Toggle Dropdown</span>
 								   </button>
-								   <div class="dropdown-menu">
-									  <a class="dropdown-item" href="employees/detail/<?php echo $employee->employeeid;?>">Xem</a>
-									  <!-- <a class="dropdown-item btn-duplicate-employee" data-id="<?php echo $employee->employeeid;?>" href="#">Nhân bản</a> -->
-									  <a class="dropdown-item btn-delete-employee" data-id="<?php echo $employee->employeeid;?>" href="#" data-status="<?php echo $employee->employee_status;?>">Xoá</a>
+								   <div class="dropdown-menu ">
+									  <a class="dropdown-item btn-delete-employee text-danger" data-id="<?php echo $category_product->pid;?>" href="#" data-status="<?php echo $category_product->cat_product_status;?>">Xoá</a>
 									  
-									
-									  <div class="dropdown-divider"></div>
-									  
-									  <!-- <a class="dropdown-item btn-calendar-employee text-warning" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-id='<?php echo $employee->employeeid;?>' href="#">Lịch khám bệnh</a> -->
-								   </div>
+									 </div>
 								</div>
                            </td>
                         </tr>

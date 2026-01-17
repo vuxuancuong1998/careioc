@@ -85,15 +85,15 @@
 				
 			}
 	});
-		$("#table-employee").on('click', '.btn-delete-employee', function(e) {
-			var eid = $(this).attr("data-id");
-			var employee_status =  $(this).attr("data-status");
+		$("#table-news").on('click', '.btn-delete-new', function(e) {
+			var nid = $(this).attr("data-id");
+			var new_status =  $(this).attr("data-status");
 			$.ajax({
 				"type": "POST",
-				"url": "<?php echo XC_URL; ?>/api/deleteEmployee",
+				"url": "<?php echo XC_URL; ?>/api/deletenews",
 				"data": {
-					'eid': eid,
-					'employee_status': employee_status
+					'id': nid,
+					'new_status': new_status
 				},
 				"dataType":'json',
 				success:function(data){
@@ -192,57 +192,7 @@
 			return false;
 		});
 	
-		$('#addEmployee').click(function(e) {
-			if ($("#frm-action").valid()) {
-				var formData = new FormData();
-
-				formData.append('employee_code', $('#employee_code').val());
-				formData.append('employee_name', $('#employee_name').val());
-				formData.append('employee_address', $('#employee_address').val());
-				formData.append('employee_birthday', $('#employee_birthday').val());
-				formData.append('employee_gender', $('#employee_gender').val());
-				formData.append('employee_phone', $('#employee_phone').val());
-				formData.append('employee_email', $('#employee_email').val());
-				formData.append('employee_department', $('#employee_department').val());
-				formData.append('employee_national_id', $('#employee_national_id').val());
-				formData.append('employee_issue_date', $('#employee_issue_date').val());
-				formData.append('employee_issue_by', $('#employee_issue_by').val());
-				formData.append('employee_des', $('#employee_des').val());
-
-				// Upload file
-				var file = $('#employee_image')[0].files[0];
-				if (file) {
-					formData.append('employee_image', file);
-				}
-			$.ajax({
-				type: "POST",
-				url: "<?php echo XC_URL;?>/api/addEmployee",
-				data:formData,
-				dataType: 'json',
-				enctype: 'multipart/form-data',
-				processData: false,
-				contentType: false,
-				success: function(data){
-					if(data.status == 200){						
-						Swal.fire({
-						  icon: 'success',
-						  title: "Thêm thành công",
-						  footer: '<a href=""></a>',
-						  timer: 1700
-						})
-						setTimeout(function(){ location.reload();     }, 2000);
-					}else{
-						Swal.fire({
-						  icon: 'error',
-						  title: "Lỗi",
-						  text: data.message,
-						  footer: '<a href=""></a>'
-						})
-					}
-				}
-			});
-			}
-		});
+		
 	
 		
 	});
@@ -265,15 +215,15 @@ label.error{
    <div class="page-header">
       <div class="row align-items-center">
          <div class="col">
-            <h3 class="page-title">Danh sách Bác sĩ</h3>
+            <h3 class="page-title">Danh sách Tin tức</h3>
             <ul class="breadcrumb">
                <!-- <li class="breadcrumb-item"><a href="<?php echo XC_URL?>">CloudERP</a></li> -->
-               <li class="breadcrumb-item active">Bác sĩ</li>
+               <li class="breadcrumb-item active">Tin tức</li>
             </ul>
          </div>
          <div class="col-auto">
-             <a href="#" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" >
-            <i class="fas fa-plus"></i>Thêm Bác sĩ
+             <a href="news/add" class="btn btn-primary" data-method = 'add' data-toggle="" data-target=".bd-example-modal-lg" >
+            Thêm Tin tức
             </a>
             <!-- <a class="btn btn-primary filter-btn" href="javascript:void(0);" id="filter_search">
             <i class="fas fa-filter"></i>
@@ -288,23 +238,21 @@ label.error{
          <div class="card card-table">
             <div class="card-body">
                <div class="table-responsive">
-                  <table id="table-employee" class="table table-center table-hover datatable">
+                  <table id="table-news" class="table table-center table-hover datatable">
                      <thead class="thead-light">
                         <tr>
                            <th>STT</th>
-                           <th>Tên Bác sĩ</th>
-						   <th>Giới tính</th>
-						   <th>Khoa</th>
-                           <th>Điện thoại</th>
+                           <th>Tên Tin tức</th>
 						   <th>Ảnh đại diện</th>
-						   <!-- <th>Lịch khám bệnh</th> -->
-                           <th >Thao tác</th>
+						   <th>Ngày đăng</th>
+						   <th>Tác giả</th>
+                           <th>Thao tác</th>
                         </tr>
                      </thead>
                      <tbody>
                         <?php 
 							$i = 1;
-							foreach($employees as $employee)
+							foreach($news as $new)
                            {
                            ?>
                         <tr>
@@ -313,45 +261,26 @@ label.error{
                            </td>
 						   
                            <td >
-                              <?php echo $employee->employee_name;?>
+                              <?php echo $new->new_name;?>
                            </td>
-						    <td>
-                              <?php if($employee->employee_gender == 1){echo "Nam";}else{ echo "Nữ";}?>
-                           </td>
-                           <td><?php echo $employee->depart_name;?></td>
-                           <td><?php echo $employee->employee_phone;?></td>
 						    <td id='image'>
-							<?php if($employee->employee_image != null){?>
-							<img src="<?php echo XC_URL . '/uploads/doctors/' . $employee->employee_image; ?>" width="100" height="100"/></td>
+							<?php if($new->new_image != null){?>
+							<img src="<?php echo XC_URL . '/uploads/news/' . $new->new_image; ?>" width="100" height="100"/></td>
 							<?php }else{?>
-							<img src="<?php echo XC_URL . '/uploads/doctors/doctor_default.png'; ?>" width="100" height="100"/></td>
+							<img src="<?php echo XC_URL . '/uploads/news/new_default.png'; ?>" width="100" height="100"/></td>
 							<?php }?>
-							<!-- <td>
-							<?php
-							echo !empty($employee->employee_calendar)
-								? date('d-m-Y', strtotime($employee->employee_calendar))
-									. ' - Buổi: '
-									. ($employee->employee_shift == 1 ? 'Sáng' : 'Chiều')
-								: 'Chưa có lịch';
-							?>
-
-                           </td> -->
+                           <td><?php echo $new->new_created_date;?></td>	
+                           <td><?php echo $new->user_fullname;?></td>
                            <td>
                               <div class="btn-group">
-								    <a href="editEmployee/<?php echo $employee->employeeid;?>" class="btn btn-sm btn-white text-success btn-edit" >Sửa</a>
+								    <a href="news/edit/<?php echo $new->nid;?>" data-id = '<?php echo $new->newid;?>' data-method='update' class="btn btn-sm btn-white text-success btn-edit" >Sửa</a>
 								   <button type="button" class="btn btn-sm btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								   <span class="sr-only">Toggle Dropdown</span>
 								   </button>
 								   <div class="dropdown-menu">
-									  <a class="dropdown-item" href="employees/detail/<?php echo $employee->employeeid;?>">Xem</a>
-									  <!-- <a class="dropdown-item btn-duplicate-employee" data-id="<?php echo $employee->employeeid;?>" href="#">Nhân bản</a> -->
-									  <a class="dropdown-item btn-delete-employee" data-id="<?php echo $employee->employeeid;?>" href="#" data-status="<?php echo $employee->employee_status;?>">Xoá</a>
+									  <a class="dropdown-item" href="news/detail/<?php echo $new->nid;?>">Xem</a>
+									  <a class="dropdown-item btn-delete-new" data-id="<?php echo $new->nid;?>" href="#" data-status="<?php echo $new->new_status;?>">Xoá</a>
 									  
-									
-									  <div class="dropdown-divider"></div>
-									  
-									  <!-- <a class="dropdown-item btn-calendar-employee text-warning" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-id='<?php echo $employee->employeeid;?>' href="#">Lịch khám bệnh</a> -->
-								   </div>
 								</div>
                            </td>
                         </tr>
@@ -424,7 +353,7 @@ label.error{
       <div class="col-md-12">
          <div class="card">
             <div class="card-header">
-               <h5 class="card-title">Thông tin Bác sĩ</h5>
+               <h5 class="card-title">Thông tin Tin tức</h5>
             </div>
             <div class="card-body">
                <form action="#" data-select2-id="13" id="frm-action">
@@ -433,7 +362,7 @@ label.error{
                         <div class="row">
 							<div class="col-md-2">
                               <div class="form-group">
-                                 <label>Mã Bác sĩ:</label>
+                                 <label>Mã Tin tức:</label>
                                  <input type="text" readonly="true" value="<?php echo $employee_code;?>" class="form-control" name='employee_code' id='employee_code'>
                               </div>
                            </div>
@@ -524,7 +453,7 @@ label.error{
                            </div>
 						   <div class="col-md-12">
                               <div class="form-group" >
-                                 <label>Giới thiệu ngắn về Bác sĩ </label>
+                                 <label>Giới thiệu ngắn về Tin tức </label>
 								<textarea class='form-control' rows="5" cols="50" name = 'employee_des' id='employee_des'></textarea>
 							
                               </div>

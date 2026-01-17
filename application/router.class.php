@@ -147,11 +147,26 @@ private function getController() {
 			}
 		}
 		//Router page
-		elseif($parts[0] == "gioithieu.html")
+		elseif($parts[0] == "gioi-thieu.html")
 		{
 			// echo $parts[0];
 			$this->controller = "page";
-			$this->action = "gioithieu";
+			$this->action = "introduce";
+			if(isset( $parts[1]))
+			{
+				$count_args = count($parts);
+				$k = 1;
+				$args = array();
+				for($i = 1; $i < $count_args; $i++)
+					$args[$k++] = $parts[$i]; 
+				$this->args = $args;
+			}
+		}
+		elseif($parts[0] == "dang-ky-lich-kham.html")
+		{
+			// echo $parts[0];
+			$this->controller = "page";
+			$this->action = "booking";
 			if(isset( $parts[1]))
 			{
 				$count_args = count($parts);

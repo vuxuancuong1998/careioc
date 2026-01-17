@@ -36,7 +36,7 @@
         <div class="ticon">
             <i class="fa fa-edit"></i>
         </div>
-        <div class="ttext">ĐẶT LỊCH HẸN KHÁM</div>
+        <div class="ttext"><a href="<?php echo $template_path;?>/dang-ky-lich-kham.html"></a>ĐẶT LỊCH HẸN KHÁM</div>
         
     </div>
     <div class="lhconts" style="background-image: url('');">

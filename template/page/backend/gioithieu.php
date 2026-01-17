@@ -30,7 +30,7 @@
                   var type_id = $('#tid').val();
                $.ajax({
                   type: "POST",
-                  url: "<?php echo XC_URL;?>/api/updatePage",
+                  url: "<?php echo XC_URL;?>/api/updateIntroduce",
                   data:{
                      'userid': userid,
                      'content': content,

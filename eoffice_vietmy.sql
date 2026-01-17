@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 29, 2025 lúc 02:43 AM
+-- Thời gian đã tạo: Th1 17, 2026 lúc 03:38 AM
 -- Phiên bản máy phục vụ: 10.4.21-MariaDB
 -- Phiên bản PHP: 7.3.30
 
@@ -345,26 +345,44 @@ INSERT INTO `hicrm_bank_accounts` (`id`, `bank_id`, `ba_branch_id`, `ba_account`
 
 CREATE TABLE `hicrm_bookings` (
   `id` bigint(30) NOT NULL,
-  `event_created_by` int(11) NOT NULL,
-  `event_assign_to` varchar(255) DEFAULT NULL,
-  `event_host` int(11) NOT NULL,
-  `event_time_from` datetime NOT NULL,
-  `event_time_to` datetime NOT NULL,
-  `event_title` varchar(255) NOT NULL,
-  `event_description` text DEFAULT NULL,
-  `event_type` int(11) NOT NULL DEFAULT 1
+  `booking_person_name` varchar(255) DEFAULT NULL,
+  `booking_person_gender` int(11) NOT NULL,
+  `booking_person_year` int(11) NOT NULL,
+  `booking_person_address` varchar(255) DEFAULT NULL,
+  `booking_person_phone` varchar(255) NOT NULL,
+  `booking_doctor` int(11) DEFAULT 0,
+  `booking_date` date DEFAULT NULL,
+  `booking_hour` varchar(255) NOT NULL,
+  `booking_title` varchar(255) DEFAULT NULL,
+  `booking_description` text DEFAULT NULL,
+  `booking_created_date` datetime DEFAULT NULL,
+  `booking_status` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Đang đổ dữ liệu cho bảng `hicrm_bookings`
 --
 
-INSERT INTO `hicrm_bookings` (`id`, `event_created_by`, `event_assign_to`, `event_host`, `event_time_from`, `event_time_to`, `event_title`, `event_description`, `event_type`) VALUES
-(1, 1, NULL, 1, '2021-08-24 14:21:45', '2021-08-24 15:21:45', 'Họp tổng kết', NULL, 1),
-(2, 1, '2,3,5', 1, '2021-08-28 10:42:00', '2021-08-28 10:45:00', 'Test', 'Test', 4),
-(3, 1, '2,3,5', 1, '2021-08-28 10:42:00', '2021-08-28 10:45:00', 'Test', 'Test', 4),
-(4, 1, '', 1, '2021-08-28 10:48:00', '2021-08-28 10:55:00', 'Test 2', 'Test 2', 3),
-(5, 1, '1,2', 2, '2021-09-12 11:42:00', '1970-01-01 08:00:00', 'Test', '', 1);
+INSERT INTO `hicrm_bookings` (`id`, `booking_person_name`, `booking_person_gender`, `booking_person_year`, `booking_person_address`, `booking_person_phone`, `booking_doctor`, `booking_date`, `booking_hour`, `booking_title`, `booking_description`, `booking_created_date`, `booking_status`) VALUES
+(1, NULL, 0, 0, '', '0', 1, NULL, '14:21:45', 'Họp tổng kết', NULL, NULL, 2),
+(2, '2,3,5', 0, 0, '', '0', 1, NULL, '10:42:00', 'Test', 'Test', NULL, 1),
+(3, '2,3,5', 0, 0, '', '0', 1, NULL, '10:42:00', 'Test', 'Test', NULL, 1),
+(4, '', 0, 0, '', '0', 1, NULL, '10:48:00', 'Test 2', 'Test 2', NULL, 1),
+(5, '1,2', 0, 0, '', '0', 2, NULL, '11:42:00', 'Test', '', NULL, 1),
+(6, 'aaaaa', 1, 1998, 'aaaa', '1111231231', 2, '2026-01-03', '08:00', NULL, 'aaaa', NULL, 1),
+(7, 'Vũ Xuân Cương', 1, 1998, 'Kon Tum', '0828222833', 2, '2026-01-03', '08:00', NULL, 'aaaa', NULL, 1),
+(8, 'Vũ Xuân Cương', 1, 1998, 'Kon Tum', '0828222833', 2, '2026-01-03', '08:00', NULL, 'aaaa', NULL, 1),
+(9, '1231231aa', 1, 1111, 'aaaa', 'd123123123', 2, '2026-01-03', '08:00', NULL, '12313123123', NULL, 1),
+(10, 'ádasdasdas', 1, 1112, '11123123', 'd112312222', 2, '2026-01-03', '08:00', NULL, '12123123123', NULL, 1),
+(11, '1123123123', 1, 1332, '1112312z', '3333333333', 19, '2026-01-02', '14:00', NULL, '112312', NULL, 1),
+(12, '123123123', 1, 1123, '111111111111', '1211112312', 2, '2026-01-31', '14:00', NULL, 'aaasdasd', NULL, 1),
+(13, '123123123', 1, 3333, 'aaaaaaaaaaaa', '1111111111', 2, '2026-01-03', '07:00', NULL, 'aaaaaaaaaaaa', NULL, 1),
+(14, '13123123', 1, 3312, 'aasd', '1111111111', 2, '2026-01-31', '15:00', NULL, 'aaa', NULL, 1),
+(15, 'ádasdasdas', 1, 1123, 'ádasdas', 'd123123123', 2, '2026-01-03', '15:00', NULL, 'aaa', NULL, 1),
+(16, 'đáasdasdasd', 1, 0, 'ádasdasd', '1231231111', 2, '2026-01-29', '14:00', NULL, 'adasdasdasd', NULL, 1),
+(17, 'aasdasd', 1, 1111, 'aaaaa', '1233333333', 2, '2026-01-03', '07:00', NULL, 'aaaaaaaaaaaaaaaa', NULL, 1),
+(18, 'qqweqwe', 1, 1213, '1111', '3133333333', 2, '0000-00-00', '', NULL, '', NULL, 1),
+(19, 'Vũ Xuân Cương', 1, 1111, 'kon tum', '0822822833', 2, '2026-01-03', '07:00', NULL, 'aaa', '2026-01-03 10:07:27', 2);
 
 -- --------------------------------------------------------
 
@@ -384,9 +402,9 @@ CREATE TABLE `hicrm_booking_status` (
 --
 
 INSERT INTO `hicrm_booking_status` (`id`, `bk_status_label`, `bk_status_class`, `bk_status_icon`) VALUES
-(1, 'Họp', 'success', ''),
-(2, 'Đào tạo', 'danger', NULL),
-(3, 'Tiêp khách', 'primary', NULL),
+(1, 'Mới', 'primary ', ''),
+(2, 'Đã duyệt', 'success', NULL),
+(3, 'Đã hủy', 'danger', NULL),
 (4, 'Khác', 'warning', NULL);
 
 -- --------------------------------------------------------
@@ -420,41 +438,32 @@ INSERT INTO `hicrm_branchs` (`id`, `branch_uid`, `branch_tax_code`, `branch_name
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `hicrm_category_products`
+-- Cấu trúc bảng cho bảng `hicrm_calendar_works`
 --
 
-CREATE TABLE `hicrm_category_products` (
+CREATE TABLE `hicrm_calendar_works` (
   `id` int(11) NOT NULL,
-  `cat_product_code` varchar(100) NOT NULL,
-  `cat_product_name` varchar(255) NOT NULL,
-  `cat_product_unit` int(11) NOT NULL,
-  `cat_product_description` text DEFAULT NULL,
-  `cat_product_status` int(2) NOT NULL,
-  `cat_product_parent` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `calendar_work_name` varchar(255) NOT NULL,
+  `calendar_work_content` longtext NOT NULL,
+  `calendar_work_file` varchar(255) DEFAULT NULL,
+  `calendar_work_time` varchar(255) NOT NULL,
+  `calendar_work_created_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
 
 --
--- Đang đổ dữ liệu cho bảng `hicrm_category_products`
+-- Cấu trúc bảng cho bảng `hicrm_caludar_employees`
 --
 
-INSERT INTO `hicrm_category_products` (`id`, `cat_product_code`, `cat_product_name`, `cat_product_unit`, `cat_product_description`, `cat_product_status`, `cat_product_parent`) VALUES
-(1, 'MTB', 'Máy tính bàn ', 6, '', 1, 0),
-(2, 'TBVT', 'Thiết bị vi tính', 7, '', 1, 1),
-(3, 'CMT', 'Chuột máy tính', 9, 'Chuột máy tính laptop HP', 1, 2),
-(4, 'MTBA', 'Máy tính bàn 1', 0, 'Máy tính bàn 1', 99, 2),
-(5, 'MTBAT', 'Máy tính bàn 2', 0, '', 99, 0),
-(6, 'MTBATV', 'Máy tính bàn 3', 0, '', 99, 0),
-(7, 'MTBAY', 'Máy tính bàn 4', 0, 'Máy tính bàn 4', 99, 2),
-(8, 'TP1', 'Tai phone laptop', 8, 'Tai phone máy tinh HP', 1, 2),
-(9, 'SLT01', 'Sạc Laptop Dell', 9, '', 1, 0),
-(10, 'RAM', 'Ram DDR 2 ', 9, 'Ram DDR 2 Lap top Dell', 1, 2),
-(11, 'BP00021', 'Bàn phím cơ', 9, 'Bàn phím cơ 29122 ', 1, 2),
-(12, 'CCD009', 'Chuột có dây', 9, 'Chuột có dây hãng HP', 1, 2),
-(13, 'MSP000010', 'Màn hình máy tinh', 8, 'màn hình máy tính Asus', 1, 2),
-(14, 'MSP0001', 'Tai phone bluetooh', 9, '', 1, 2),
-(15, 'SP0002', 'Lót chuột', 9, '', 1, 2),
-(16, 'SP003', 'Màn hình cong L1', 9, 'Màn hình cong L1 Hp', 1, 13),
-(17, 'SP004', 'Điện thoại', 9, 'Điện thoại bàn', 1, 0);
+CREATE TABLE `hicrm_caludar_employees` (
+  `id` int(11) NOT NULL,
+  `caludar_id_employee` int(11) NOT NULL,
+  `caludar_time` datetime NOT NULL,
+  `caludar_status` int(11) NOT NULL,
+  `user_created` int(11) NOT NULL,
+  `caludar_created_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -474,7 +483,7 @@ CREATE TABLE `hicrm_configs` (
 
 INSERT INTO `hicrm_configs` (`id`, `config_key`, `config_value`) VALUES
 (1, 'won_rate', '3765'),
-(2, 'website_name', 'Viet My JSC'),
+(2, 'website_name', 'Phong kham & nha thuoc cao dang kon tum'),
 (3, 'website_description', ''),
 (4, 'admin_email', 'tomchen802000@gmail.com'),
 (5, 'smtp_server', ''),
@@ -830,6 +839,30 @@ INSERT INTO `hicrm_departments` (`id`, `depart_name`, `depart_status`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `hicrm_dmtype`
+--
+
+CREATE TABLE `hicrm_dmtype` (
+  `id` int(11) NOT NULL,
+  `dmtype_name` varchar(255) NOT NULL,
+  `dmtype_status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Đang đổ dữ liệu cho bảng `hicrm_dmtype`
+--
+
+INSERT INTO `hicrm_dmtype` (`id`, `dmtype_name`, `dmtype_status`) VALUES
+(1, 'Giới thiệu', 1),
+(2, 'Dịch vụ', 1),
+(3, 'Chuyên khoa', 1),
+(4, 'Nhà thuốc', 1),
+(5, 'Tin tức và sự kiện', 1),
+(6, 'Bác sĩ', 1);
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `hicrm_employees`
 --
 
@@ -852,6 +885,8 @@ CREATE TABLE `hicrm_employees` (
   `employee_image` varchar(255) NOT NULL,
   `employee_des` text NOT NULL,
   `employee_status` int(2) NOT NULL,
+  `employee_calendar` date DEFAULT NULL,
+  `employee_shift` int(11) DEFAULT NULL,
   `employee_created_date` datetime NOT NULL DEFAULT current_timestamp(),
   `employee_last_update` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -860,16 +895,19 @@ CREATE TABLE `hicrm_employees` (
 -- Đang đổ dữ liệu cho bảng `hicrm_employees`
 --
 
-INSERT INTO `hicrm_employees` (`id`, `employee_code`, `employee_name`, `employee_gender`, `employee_birthday`, `employee_branch`, `employee_department`, `employee_position`, `employee_national_id`, `employee_issue_date`, `employee_issue_by`, `employee_address`, `employee_phone`, `employee_email`, `employee_debt`, `employee_image`, `employee_des`, `employee_status`, `employee_created_date`, `employee_last_update`) VALUES
-(1, 'NV0000001', 'Thái Đình Sang', 1, '2019-08-20 00:00:00', 1, 17, 3, '230802525', '2020-08-20 00:00:00', 'abc', 'abc', '0963719679', 'vuxuancuong@gmail.com', '0.00', '', '', 99, '2021-08-19 10:33:50', '2021-08-29 08:09:26'),
-(2, 'NV0000002', 'Nguyễn Khoa Quyền', 1, '2003-08-19 00:00:00', 1, 1, 1, '909772133', '2010-08-20 00:00:00', 'Tỉnh Gia Lai', '324 Cách mạng tháng 8, Pleiku, Gia lai', '0997123131', 'haunguyen@gmail.com', '0.00', '', '', 99, '2021-08-19 17:38:22', '2021-08-24 17:30:34'),
-(18, 'BS003', 'ấdasdasd', 0, '2025-11-23 00:00:00', 0, 1, 0, '11111111111', '2025-11-23 00:00:00', 'aaaaaaaaaaaaaaaaaaa', 'undefined', '11111111111', 'a@ấdasdasxx ', '0.00', '02602714f65ce6f44f6e74622fc4de6c-Screenshot_1.png', 'aaa', 1, '2025-11-23 20:39:23', '2025-11-23 20:39:23'),
-(19, 'BS004', 'Vũ Xuân Cương', 0, '2025-11-23 00:00:00', 0, 1, 0, '030098013026', '2025-11-23 00:00:00', 'CụC CS', '', '0963719679', 'cuongvx.ktm@vnpt.vn', '0.00', 'c7eef5e7ed7bee5df6f7f585c777b461-Screenshot_1.png', 'Tôi là bác sĩ', 1, '2025-11-23 20:48:14', '2025-11-23 22:28:30'),
-(20, 'BS005', 'Vũ Xuân Cương 2', 0, '2025-11-23 00:00:00', 0, 1, 0, '030098013027', '2025-11-23 00:00:00', 'CụC CS', 'undefined', '0963719671', 'cuongv2x.ktm@vnpt.vn', '0.00', '', 'aaaaa', 1, '2025-11-23 20:56:58', '2025-11-23 20:56:58'),
-(21, 'BS006', 'Vũ Xuân Cương 3', 0, '2025-11-23 00:00:00', 0, 1, 0, '030098013026', '2025-11-23 00:00:00', 'CụC CS', 'undefined', '0963719679', 'cuongvx.ktm@vnpt.vn', '0.00', '', 'aaaaaaaaaaaaaaaaax', 1, '2025-11-23 21:00:49', '2025-11-23 21:00:49'),
-(22, 'BS007', 'Vũ Xuân Cương 12', 0, '2025-11-23 00:00:00', 0, 1, 0, '030098013026', '2025-11-23 00:00:00', 'CụC CS', 'undefined', '0963719279', 'cuongv1x.ktm@vnpt.vn', '0.00', '', 'dx', 99, '2025-11-23 21:07:07', '2025-11-23 21:07:07'),
-(23, 'BS008', 'Vũ Xuân Cương 33', 1, '2025-11-23 00:00:00', 0, 1, 0, '030098013026', '2025-11-23 00:00:00', 'CụC CS', 'undefined', '0963719679', 'cuongvx.ktm@vnpt.vn', '0.00', 'e0045fec11b6bfbbafbbf21184c8ea0e-Untitled.png', 'tự giới thiệu bản thân a', 1, '2025-11-24 00:27:03', '2025-11-24 00:27:03'),
-(24, 'BS0000001', 'Vũ Xuân Cương 33', 1, '2025-11-23 00:00:00', 0, 1, 0, '030098013026', '2025-11-23 00:00:00', 'CụC CS', 'undefined', '0963719679', 'cuongvx.ktm@vnpt.vn', '0.00', '', '', 99, '2025-11-23 21:35:04', '2025-11-23 21:35:04');
+INSERT INTO `hicrm_employees` (`id`, `employee_code`, `employee_name`, `employee_gender`, `employee_birthday`, `employee_branch`, `employee_department`, `employee_position`, `employee_national_id`, `employee_issue_date`, `employee_issue_by`, `employee_address`, `employee_phone`, `employee_email`, `employee_debt`, `employee_image`, `employee_des`, `employee_status`, `employee_calendar`, `employee_shift`, `employee_created_date`, `employee_last_update`) VALUES
+(1, 'NV0000001', 'Thái Đình Sang', 1, '2019-08-20 00:00:00', 1, 17, 3, '230802525', '2020-08-20 00:00:00', 'abc', 'abc', '0963719679', 'vuxuancuong@gmail.com', '0.00', '', '', 99, '2025-12-31', 1, '2021-08-19 10:33:50', '2021-08-29 08:09:26'),
+(2, 'NV0000002', 'Nguyễn Khoa Quyền', 1, '2003-08-19 00:00:00', 1, 1, 1, '909772133', '2010-08-20 00:00:00', 'Tỉnh Gia Lai', '324 Cách mạng tháng 8, Pleiku, Gia lai', '0997123131', 'haunguyen@gmail.com', '0.00', '', '', 1, '2025-12-31', 1, '2021-08-19 17:38:22', '2021-08-24 17:30:34'),
+(18, 'BS003', 'ấdasdasd', 0, '2025-11-23 00:00:00', 0, 1, 0, '11111111111', '2025-11-23 00:00:00', 'aaaaaaaaaaaaaaaaaaa', 'undefined', '11111111111', 'a@ấdasdasxx ', '0.00', '02602714f65ce6f44f6e74622fc4de6c-Screenshot_1.png', 'aaa', 1, '2025-12-31', 1, '2025-11-23 20:39:23', '2025-11-23 20:39:23'),
+(19, 'BS004', 'Vũ Xuân Cương', 0, '2025-11-23 00:00:00', 0, 1, 1, '030098013026', '2025-11-23 00:00:00', 'CụC CS', '', '0963719679', 'cuongvx.ktm@vnpt.vn', '0.00', 'c7eef5e7ed7bee5df6f7f585c777b461-Screenshot_1.png', 'Tôi là bác sĩ', 1, '2025-12-31', 1, '2025-11-23 20:48:14', '2025-11-23 22:28:30'),
+(20, 'BS005', 'Vũ Xuân Cương 2', 0, '2025-11-23 00:00:00', 0, 1, 0, '030098013027', '2025-11-23 00:00:00', 'CụC CS', 'undefined', '0963719671', 'cuongv2x.ktm@vnpt.vn', '0.00', '', 'aaaaa', 1, '2025-12-31', 1, '2025-11-23 20:56:58', '2025-11-23 20:56:58'),
+(21, 'BS006', 'Vũ Xuân Cương 3', 0, '2025-11-23 00:00:00', 0, 1, 0, '030098013026', '2025-11-23 00:00:00', 'CụC CS', 'undefined', '0963719679', 'cuongvx.ktm@vnpt.vn', '0.00', '', 'aaaaaaaaaaaaaaaaax', 1, '2025-12-31', 1, '2025-11-23 21:00:49', '2025-11-23 21:00:49'),
+(22, 'BS007', 'Vũ Xuân Cương 12', 0, '2025-11-23 00:00:00', 0, 1, 0, '030098013026', '2025-11-23 00:00:00', 'CụC CS', 'undefined', '0963719279', 'cuongv1x.ktm@vnpt.vn', '0.00', '', 'dx', 99, '2025-12-31', 1, '2025-11-23 21:07:07', '2025-11-23 21:07:07'),
+(23, 'BS008', 'Vũ Xuân Cương 33', 1, '2025-11-23 00:00:00', 0, 1, 0, '030098013026', '2025-11-23 00:00:00', 'CụC CS', 'undefined', '0963719679', 'cuongvx.ktm@vnpt.vn', '0.00', '887c768e210d8b199d91017d6611def3-Hnhnh1.png', 'tự giới thiệu bản thân a', 1, '2025-12-29', 1, '2025-12-28 11:59:39', '2025-12-28 11:59:39'),
+(24, 'BS0000001', 'Vũ Xuân Cương 33', 1, '2025-11-23 00:00:00', 0, 1, 0, '030098013026', '2025-11-23 00:00:00', 'CụC CS', 'undefined', '0963719679', 'cuongvx.ktm@vnpt.vn', '0.00', '', '', 99, '2025-12-31', 1, '2025-11-23 21:35:04', '2025-11-23 21:35:04'),
+(25, 'BS002', 'Vũ Xuân Cương tester', 1, '2025-12-22 00:00:00', 0, 1, 0, '030098013026', '2025-12-09 00:00:00', 'CụC CS', 'undefined', '0963719179', 'cuong1a2x.ktm@vnpt.vn', '0.00', '6d0aa28924a8c2a9e74e1e1f2bd38c5c-The-Gioi-24H.jpg', 'aaa', 1, '2025-12-30', 2, '2025-12-28 12:10:15', '2025-12-28 12:10:15'),
+(26, 'BS003', 'Vũ Xuân Cương 331', 1, '2025-12-23 00:00:00', 0, 1, 0, '030098013028', '2025-12-31 00:00:00', 'CụC CS', 'undefined', '0963719672', 'cuongvxax.ktm@vnpt.vn', '0.00', '878c20366d5ae480b11bb72c7cf982f8-_sieu-am-o-bung-3.jpg', 'aaa', 99, '2025-12-31', 1, '2025-12-31 23:20:58', '2025-12-31 23:20:58'),
+(27, 'BS004', 'Vũ Xuân Cương test lịch', 1, '2025-12-30 00:00:00', 0, 1, 0, '030098013017', '2025-12-30 00:00:00', 'CụC CS', 'undefined', '0963719621', 'cuongv2zx.ktm@vnpt.vn', '0.00', '', '', 1, NULL, NULL, '2025-12-31 23:30:46', '2025-12-31 23:30:46');
 
 -- --------------------------------------------------------
 
@@ -885,6 +923,31 @@ CREATE TABLE `hicrm_employee_banks` (
   `bank_id` int(11) NOT NULL,
   `bank_branch` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `hicrm_events`
+--
+
+CREATE TABLE `hicrm_events` (
+  `id` int(11) NOT NULL,
+  `event_name` varchar(255) NOT NULL,
+  `event_description` text NOT NULL,
+  `event_content` longtext NOT NULL,
+  `event_image` varchar(255) NOT NULL,
+  `event_type` int(11) NOT NULL,
+  `event_user_created` int(11) NOT NULL,
+  `event_status` int(11) NOT NULL,
+  `event_created_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Đang đổ dữ liệu cho bảng `hicrm_events`
+--
+
+INSERT INTO `hicrm_events` (`id`, `event_name`, `event_description`, `event_content`, `event_image`, `event_type`, `event_user_created`, `event_status`, `event_created_date`) VALUES
+(1, 'sk 1', 'Mô tả', '<p>aaaa asd zzz</p>', '8ea1c0411ad93af2550011d1504fddb8-NDThe.png', 0, 24, 1, '2026-01-06 20:49:23');
 
 -- --------------------------------------------------------
 
@@ -910,6 +973,29 @@ INSERT INTO `hicrm_expense_items` (`id`, `expense_code`, `expense_name`, `expens
 (2, 'MTC', 'Chi phí sử dụng máy thi công', '', 0, 99),
 (3, 'CPVH', 'Chi phí vạn hành', 'Chi phí vận hành', 1, 1),
 (4, 'CPSC', 'Chi phí sửa chữa', 'Chi phí sửa chữa', 0, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `hicrm_images`
+--
+
+CREATE TABLE `hicrm_images` (
+  `id` int(11) NOT NULL,
+  `image_name` varchar(255) NOT NULL,
+  `image_url` text NOT NULL,
+  `image_user_created` int(11) NOT NULL,
+  `image_created_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `image_status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Đang đổ dữ liệu cho bảng `hicrm_images`
+--
+
+INSERT INTO `hicrm_images` (`id`, `image_name`, `image_url`, `image_user_created`, `image_created_date`, `image_status`) VALUES
+(1, 'Hình ảnh giới thiệu', 'd2173854c8803807b1835ae91a68629b-Hnhnh1.png', 24, '2025-12-28 12:14:30', 1),
+(2, 'Hình ảnh của đơn vị', '358c270047cc7088cc8d0d71aa50e4dc-banner.jpg', 24, '2025-12-28 13:29:48', 1);
 
 -- --------------------------------------------------------
 
@@ -996,6 +1082,56 @@ INSERT INTO `hicrm_income_types` (`id`, `type_name`, `type_to`) VALUES
 (2, 'Thu hoàn ứng nhân viên', 3),
 (3, 'Rút tiền gửi về nhập quỹ', 0),
 (4, 'Thu khác', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `hicrm_introduce`
+--
+
+CREATE TABLE `hicrm_introduce` (
+  `id` int(11) NOT NULL,
+  `introduce_id_type` int(11) NOT NULL,
+  `introduce_content` longtext NOT NULL,
+  `introduce_uid` int(11) NOT NULL,
+  `introduce_created_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Đang đổ dữ liệu cho bảng `hicrm_introduce`
+--
+
+INSERT INTO `hicrm_introduce` (`id`, `introduce_id_type`, `introduce_content`, `introduce_uid`, `introduce_created_date`) VALUES
+(1, 1, '<pre style=\"text-align: center; \"><span style=\"background-color: rgb(255, 0, 0);\"><b>PHÒNG KHÁM VÀ NHÀ THUỐC CAO ĐẲNG KON TUM</b></span></pre><ul><li style=\"text-align: justify;\"><span style=\"color: rgb(31, 31, 31); font-family: monospace; font-size: 12px; text-align: start; white-space-collapse: preserve;\">Phòng Khám chính thức khai trương và đi vào hoạt động từ ngày 25 tháng 11 năm 2025. Cùng theo đuổi những giá trị cốt lõi “Nâng niu sức khỏe - Giữ trọn niềm tin” và mô hình quản lý dịch vụ y tế chuyên nghiệp theo chuẩn quốc tế, Phòng khám đa khoa Cao đẳng Kon Tum là một làn gió mới góp phần thay đổi tích cực trong việc chăm sóc sức khỏe cho cộng đồng.</span></li><li style=\"text-align: center;\"><img style=\"width: 50%;\" src=\"http://localhost/caodangkontum.edu.vn/uploads/images/358c270047cc7088cc8d0d71aa50e4dc-banner.jpg\"><span style=\"color: rgb(31, 31, 31); font-family: monospace; font-size: 12px; text-align: start; white-space-collapse: preserve;\"><br></span></li><li style=\"text-align: center;\"><span style=\"color: rgb(31, 31, 31); font-family: monospace; font-size: 12px; text-align: start; white-space-collapse: preserve;\">Hình ảnh bác sĩ của phòng khám</span></li><li style=\"text-align: justify;\"><span style=\"color: rgb(31, 31, 31); font-family: monospace; font-size: 12px; text-align: start; white-space-collapse: preserve;\">Là cơ sở y tế trực thuộc trường Cao đẳng Kon Tum, chúng tôi cung cấp dịch vụ khám chữa bệnh ban đầu và tư vấn dược khoa chuyên nghiệp. Với phương châm \'Lấy người bệnh làm trung tâm\', phòng khám cam kết mang lại sự an tâm tuyệt đối qua từng khâu chẩn đoán và điều trị. Đến với chúng tôi để trải nghiệm dịch vụ y tế thân thiện và chuẩn mực ngay tại địa phương.</span></li></ul><p style=\"text-align: justify;\"><span style=\"color: rgb(31, 31, 31); font-family: monospace; font-size: 12px; text-align: start; white-space-collapse: preserve;\"><br></span></p><p style=\"text-align: right;\"><span style=\"color: rgb(31, 31, 31); font-family: monospace; font-size: 12px; text-align: start; white-space-collapse: preserve;\">Tác giả: Vũ Xuân Cương</span></p><p style=\"text-align: justify;\"><span style=\"color: rgb(31, 31, 31); font-family: monospace; font-size: 12px; text-align: start; white-space-collapse: preserve;\"><br></span></p>', 24, '2025-12-28 21:45:03'),
+(2, 2, '<p>Cơ sở hạ tầng vô cùng hiện đại, đầy đủ</p>', 24, '2025-12-28 21:53:46'),
+(3, 3, '<p>Cơ cấu tổ chức được phân thành như sau:</p><p>Trưởng phòng khám bác sĩ: Nguyễn Văn A</p>', 24, '2025-12-28 21:54:35'),
+(4, 4, '<p>Tại sao chọn chúng tôi.</p><p>Chúng tôi có đội ngũ chuyên gia bác sĩ nhiều năm kinh nghiệm.</p>', 24, '2025-12-28 22:08:25');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `hicrm_news`
+--
+
+CREATE TABLE `hicrm_news` (
+  `id` int(11) NOT NULL,
+  `new_name` varchar(255) NOT NULL,
+  `new_description` text NOT NULL,
+  `new_content` longtext NOT NULL,
+  `new_image` varchar(255) NOT NULL,
+  `new_type` int(11) DEFAULT NULL,
+  `new_user_created` int(11) NOT NULL,
+  `new_status` int(11) NOT NULL,
+  `new_created_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Đang đổ dữ liệu cho bảng `hicrm_news`
+--
+
+INSERT INTO `hicrm_news` (`id`, `new_name`, `new_description`, `new_content`, `new_image`, `new_type`, `new_user_created`, `new_status`, `new_created_date`) VALUES
+(1, 'aaa', 'aaaa', '<pre style=\"text-align: center; \"><span style=\"background-color: rgb(255, 0, 0);\"><b>PHÒNG KHÁM VÀ NHÀ THUỐC CAO ĐẲNG KON TUM</b></span></pre><ul><li style=\"text-align: justify;\"><span style=\"color: rgb(31, 31, 31); font-family: monospace; font-size: 12px; text-align: start; white-space-collapse: preserve;\">Phòng Khám chính thức khai trương và đi vào hoạt động từ ngày 25 tháng 11 năm 2025. Cùng theo đuổi những giá trị cốt lõi “Nâng niu sức khỏe - Giữ trọn niềm tin” và mô hình quản lý dịch vụ y tế chuyên nghiệp theo chuẩn quốc tế, Phòng khám đa khoa Cao đẳng Kon Tum là một làn gió mới góp phần thay đổi tích cực trong việc chăm sóc sức khỏe cho cộng đồng.</span></li><li style=\"text-align: center;\"><img style=\"width: 50%;\" src=\"http://localhost/caodangkontum.edu.vn/uploads/images/358c270047cc7088cc8d0d71aa50e4dc-banner.jpg\"><span style=\"color: rgb(31, 31, 31); font-family: monospace; font-size: 12px; text-align: start; white-space-collapse: preserve;\"><br></span></li><li style=\"text-align: center;\"><span style=\"color: rgb(31, 31, 31); font-family: monospace; font-size: 12px; text-align: start; white-space-collapse: preserve;\">Hình ảnh bác sĩ của phòng khám</span></li><li style=\"text-align: justify;\"><span style=\"color: rgb(31, 31, 31); font-family: monospace; font-size: 12px; text-align: start; white-space-collapse: preserve;\">Là cơ sở y tế trực thuộc trường Cao đẳng Kon Tum, chúng tôi cung cấp dịch vụ khám chữa bệnh ban đầu và tư vấn dược khoa chuyên nghiệp. Với phương châm \'Lấy người bệnh làm trung tâm\', phòng khám cam kết mang lại sự an tâm tuyệt đối qua từng khâu chẩn đoán và điều trị. Đến với chúng tôi để trải nghiệm dịch vụ y tế thân thiện và chuẩn mực ngay tại địa phương.</span></li></ul><p style=\"text-align: justify;\"><span style=\"color: rgb(31, 31, 31); font-family: monospace; font-size: 12px; text-align: start; white-space-collapse: preserve;\"><br></span></p><p style=\"text-align: right;\"><span style=\"color: rgb(31, 31, 31); font-family: monospace; font-size: 12px; text-align: start; white-space-collapse: preserve;\">Tác giả: Vũ Xuân Cương</span></p><p style=\"text-align: justify;\"><span style=\"color: rgb(31, 31, 31); font-family: monospace; font-size: 12px; text-align: start; white-space-collapse: preserve;\"><br></span></p>', 'c7103c7b276a7ae3bf5b074688736776-image-removebg-preview10.png', NULL, 24, 1, '2026-01-05 21:35:52'),
+(2, 'Tin 1', 'Tin 1 nè', '<p>TIn trong ngày</p><p><img src=\"http://localhost/caodangkontum.edu.vn/uploads/images/d2173854c8803807b1835ae91a68629b-Hnhnh1.png\" style=\"width: 314px;\"><br></p>', 'cec9c2e819fc4e30eef8af1b437ecf9c-image-removebg-preview.png', NULL, 24, 99, '2026-01-05 21:43:49');
 
 -- --------------------------------------------------------
 
@@ -1132,6 +1268,22 @@ INSERT INTO `hicrm_permission_datas` (`id`, `depart`, `permission_id`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `hicrm_pharmacy_categories`
+--
+
+CREATE TABLE `hicrm_pharmacy_categories` (
+  `id` int(11) NOT NULL,
+  `pharmacy_category_name` varchar(255) NOT NULL,
+  `pharmacy_category_description` text DEFAULT NULL,
+  `pharmacy_category_status` int(11) NOT NULL,
+  `pharmacy_category_parent` int(11) NOT NULL DEFAULT 0,
+  `pharmacy_category_image` varchar(255) DEFAULT NULL,
+  `pharmacy_category_created_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `hicrm_positions`
 --
 
@@ -1145,7 +1297,7 @@ CREATE TABLE `hicrm_positions` (
 --
 
 INSERT INTO `hicrm_positions` (`id`, `position_title`) VALUES
-(1, 'Giám đốc'),
+(1, 'Bác sĩ'),
 (2, 'Phó Giám đốc'),
 (3, 'Trưởng phòng'),
 (4, 'Phó trưởng phòng'),
@@ -1169,7 +1321,7 @@ CREATE TABLE `hicrm_products` (
   `product_category` int(11) NOT NULL,
   `product_price` decimal(20,2) NOT NULL,
   `product_discount` decimal(20,2) DEFAULT NULL,
-  `product_tax_id` int(11) NOT NULL,
+  `product_tax_id` int(11) NOT NULL DEFAULT 0,
   `product_description` text DEFAULT NULL,
   `product_image` text DEFAULT NULL,
   `product_created_time` datetime NOT NULL DEFAULT current_timestamp(),
@@ -1181,7 +1333,9 @@ CREATE TABLE `hicrm_products` (
 --
 
 INSERT INTO `hicrm_products` (`id`, `product_name`, `product_code`, `product_barcode`, `product_vat_name`, `product_unit`, `product_category`, `product_price`, `product_discount`, `product_tax_id`, `product_description`, `product_image`, `product_created_time`, `product_status`) VALUES
-(1, 'Sản phẩm 1', 'SP0001', NULL, '', 2, 1, '650000.00', '595000.00', 1, 'hức ăn cho chó mọi độ tuổi, không độn ngũ cốc, không phẩm màu và chất bảo quản nhân tạo.\r\n\r\nTHÀNH PHẦN: Bột thịt gà, Khoai tây, Mỡ gà (được bảo quản với Tocopherols hỗn hợp), Bột thịt cá trắng, Trứng, Cà chua, Đậu Hà Lan, Sợi việt quất, Sợi nam việt quất, Táo, Việt quất, Cà rốt, Rau bina, Nam Việt quất, DL-Methionine, L-Lysine, Taurine, Beta-Carotene, L-Carnitine, Yucca, Cây hương thảo, Vitamin, Khoáng chất , Probiotics.\r\n\r\nBỔ SUNG (TRÊN MỖI KG): Vitamin A 12.000 IU/kg, Vitamin D3 750 IU/kg, Vitamin C 100 mg/kg, Vitamin E (α-tocopherol) 250 IU/kg, Đồng (đồng sunfat) 16 mg/kg, Omega-6 >3,3%, Omega-3 >0,4%, Methionine 1,2%, Lysine 2,1%, Taurine 0,05%, L-Carnitine 50 mg/kg, Beta-Carotene 10 mg/kg, Axit Docosahexaenoic (DHA) >0,05%.\r\n\r\nTHÀNH PHẦN PHÂN TÍCH: Đạm 38%, Chất béo 20%, Tro 10,2%, Chất xơ 2,5%, Độ ẩm 10%, Natri 0,3%, Canxi 1,5%, Phốt pho 1,0%. Kilocalories/kg: 3.800', NULL, '2021-10-30 16:19:28', 1);
+(1, 'Sản phẩm 1', 'SP0001', NULL, '', 2, 1, '650000.00', '595000.00', 1, 'hức ăn cho chó mọi độ tuổi, không độn ngũ cốc, không phẩm màu và chất bảo quản nhân tạo.\r\n\r\nTHÀNH PHẦN: Bột thịt gà, Khoai tây, Mỡ gà (được bảo quản với Tocopherols hỗn hợp), Bột thịt cá trắng, Trứng, Cà chua, Đậu Hà Lan, Sợi việt quất, Sợi nam việt quất, Táo, Việt quất, Cà rốt, Rau bina, Nam Việt quất, DL-Methionine, L-Lysine, Taurine, Beta-Carotene, L-Carnitine, Yucca, Cây hương thảo, Vitamin, Khoáng chất , Probiotics.\r\n\r\nBỔ SUNG (TRÊN MỖI KG): Vitamin A 12.000 IU/kg, Vitamin D3 750 IU/kg, Vitamin C 100 mg/kg, Vitamin E (α-tocopherol) 250 IU/kg, Đồng (đồng sunfat) 16 mg/kg, Omega-6 >3,3%, Omega-3 >0,4%, Methionine 1,2%, Lysine 2,1%, Taurine 0,05%, L-Carnitine 50 mg/kg, Beta-Carotene 10 mg/kg, Axit Docosahexaenoic (DHA) >0,05%.\r\n\r\nTHÀNH PHẦN PHÂN TÍCH: Đạm 38%, Chất béo 20%, Tro 10,2%, Chất xơ 2,5%, Độ ẩm 10%, Natri 0,3%, Canxi 1,5%, Phốt pho 1,0%. Kilocalories/kg: 3.800', 'abc.png', '2021-10-30 16:19:28', 1),
+(2, 'Kháng sinh', '01', '', '', 1, 1, '1000000.00', '0.00', 0, '<p>ấc</p>', 'ecd99574ee4d8c7ffa4412b6aeb4b771-2908_02_b73c39a223.jpg', '2026-01-14 23:02:57', 1),
+(3, 'Tiêu chảy â aa', '002', '', '', 0, 1, '100000.00', '0.00', 0, 'Thuốc điều trị tiêu chảy cấp\r\n\r\n', 'd8535c8a19519afd8bb5b91220665a62-2908_02_b73c39a223.jpg', '2026-01-14 23:07:04', 1);
 
 -- --------------------------------------------------------
 
@@ -1213,15 +1367,16 @@ CREATE TABLE `hicrm_product_categories` (
   `category_name` varchar(255) NOT NULL,
   `category_description` text NOT NULL,
   `category_parent` int(11) NOT NULL DEFAULT 0,
-  `category_image` text DEFAULT NULL
+  `category_image` text DEFAULT NULL,
+  `category_status` int(2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Đang đổ dữ liệu cho bảng `hicrm_product_categories`
 --
 
-INSERT INTO `hicrm_product_categories` (`id`, `category_name`, `category_description`, `category_parent`, `category_image`) VALUES
-(1, 'Thức ăn cho chó', '', 0, NULL);
+INSERT INTO `hicrm_product_categories` (`id`, `category_name`, `category_description`, `category_parent`, `category_image`, `category_status`) VALUES
+(1, 'Thuốc thường', '', 0, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -1637,6 +1792,31 @@ CREATE TABLE `hicrm_transactions` (
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `hicrm_type`
+--
+
+CREATE TABLE `hicrm_type` (
+  `id` int(11) NOT NULL,
+  `type_name` varchar(255) NOT NULL,
+  `type_detail` int(11) NOT NULL COMMENT '1. Giới thiệu\r\n2. Dịch vụ\r\n3. Chuyên khoa\r\n4. Nhà thuốc',
+  `type_status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Đang đổ dữ liệu cho bảng `hicrm_type`
+--
+
+INSERT INTO `hicrm_type` (`id`, `type_name`, `type_detail`, `type_status`) VALUES
+(1, 'Về chúng tôi', 1, 1),
+(2, 'Cơ sở hạ tầng', 1, 1),
+(3, 'Cơ cấu tổ chức', 1, 1),
+(4, 'Tại sao chọn chúng tôi?', 1, 1),
+(5, 'Tin tức', 5, 1),
+(6, 'Sự kiện', 5, 1);
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `hicrm_units`
 --
 
@@ -1653,15 +1833,15 @@ CREATE TABLE `hicrm_units` (
 --
 
 INSERT INTO `hicrm_units` (`id`, `unit_code`, `unit_name`, `unit_description`, `unit_status`) VALUES
-(1, 'KG', 'KG', 'Diễn giải', 99),
-(2, 'TUI', 'Túi', 'Diễn giải', 99),
+(1, 'Chai', 'Chai', NULL, 1),
+(2, '', 'Túi', 'Diễn giải', 99),
 (3, 'AAAA', 'aa', 'aa', 99),
 (4, 'AAAA A', 'aa', 'aa', 99),
 (5, 'TEST', 'Test', '', 99),
-(6, 'DVTKG', 'KG', 'Đơn vị tính là KG', 1),
-(7, 'DVTK', 'g', 'Gam\n', 1),
-(8, 'DVTC1', 'Chiếc', 'Chiếc', 1),
-(9, 'DVTC2', 'Cái', 'Cái', 1);
+(6, 'DVTKG', 'KG', 'Đơn vị tính là KG', 99),
+(7, 'DVTK', 'g', 'Gam\n', 99),
+(8, 'DVTC1', 'Chiếc', 'Chiếc', 99),
+(9, 'DVTC2', 'Cái', 'Cái', 99);
 
 -- --------------------------------------------------------
 
@@ -1797,6 +1977,28 @@ INSERT INTO `system_otp` (`id`, `otp_code`, `otp_uid`, `otp_exp`) VALUES
 (9, '390663', 6, '2021-04-05 17:03:14'),
 (10, '203970', 6, '2021-04-05 17:03:17');
 
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `system_page`
+--
+
+CREATE TABLE `system_page` (
+  `page_type` int(11) NOT NULL,
+  `page_content` longtext NOT NULL,
+  `page_uid` int(11) NOT NULL,
+  `page_status` int(11) NOT NULL,
+  `page_created_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Đang đổ dữ liệu cho bảng `system_page`
+--
+
+INSERT INTO `system_page` (`page_type`, `page_content`, `page_uid`, `page_status`, `page_created_date`) VALUES
+(1, '', 0, 0, '2025-12-28 07:58:34'),
+(2, '', 1, 1, '2025-12-28 07:58:55');
+
 --
 -- Chỉ mục cho các bảng đã đổ
 --
@@ -1838,9 +2040,15 @@ ALTER TABLE `hicrm_branchs`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `hicrm_category_products`
+-- Chỉ mục cho bảng `hicrm_calendar_works`
 --
-ALTER TABLE `hicrm_category_products`
+ALTER TABLE `hicrm_calendar_works`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `hicrm_caludar_employees`
+--
+ALTER TABLE `hicrm_caludar_employees`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1880,6 +2088,12 @@ ALTER TABLE `hicrm_departments`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Chỉ mục cho bảng `hicrm_dmtype`
+--
+ALTER TABLE `hicrm_dmtype`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Chỉ mục cho bảng `hicrm_employees`
 --
 ALTER TABLE `hicrm_employees`
@@ -1892,9 +2106,21 @@ ALTER TABLE `hicrm_employee_banks`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Chỉ mục cho bảng `hicrm_events`
+--
+ALTER TABLE `hicrm_events`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Chỉ mục cho bảng `hicrm_expense_items`
 --
 ALTER TABLE `hicrm_expense_items`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `hicrm_images`
+--
+ALTER TABLE `hicrm_images`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1913,6 +2139,18 @@ ALTER TABLE `hicrm_income_details`
 -- Chỉ mục cho bảng `hicrm_income_types`
 --
 ALTER TABLE `hicrm_income_types`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `hicrm_introduce`
+--
+ALTER TABLE `hicrm_introduce`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `hicrm_news`
+--
+ALTER TABLE `hicrm_news`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1943,6 +2181,12 @@ ALTER TABLE `hicrm_permissions`
 -- Chỉ mục cho bảng `hicrm_permission_datas`
 --
 ALTER TABLE `hicrm_permission_datas`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `hicrm_pharmacy_categories`
+--
+ALTER TABLE `hicrm_pharmacy_categories`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -2042,6 +2286,12 @@ ALTER TABLE `hicrm_transactions`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Chỉ mục cho bảng `hicrm_type`
+--
+ALTER TABLE `hicrm_type`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Chỉ mục cho bảng `hicrm_units`
 --
 ALTER TABLE `hicrm_units`
@@ -2097,7 +2347,7 @@ ALTER TABLE `hicrm_bank_accounts`
 -- AUTO_INCREMENT cho bảng `hicrm_bookings`
 --
 ALTER TABLE `hicrm_bookings`
-  MODIFY `id` bigint(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT cho bảng `hicrm_booking_status`
@@ -2112,10 +2362,16 @@ ALTER TABLE `hicrm_branchs`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT cho bảng `hicrm_category_products`
+-- AUTO_INCREMENT cho bảng `hicrm_calendar_works`
 --
-ALTER TABLE `hicrm_category_products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+ALTER TABLE `hicrm_calendar_works`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `hicrm_caludar_employees`
+--
+ALTER TABLE `hicrm_caludar_employees`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `hicrm_configs`
@@ -2154,10 +2410,16 @@ ALTER TABLE `hicrm_departments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
+-- AUTO_INCREMENT cho bảng `hicrm_dmtype`
+--
+ALTER TABLE `hicrm_dmtype`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- AUTO_INCREMENT cho bảng `hicrm_employees`
 --
 ALTER TABLE `hicrm_employees`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT cho bảng `hicrm_employee_banks`
@@ -2166,10 +2428,22 @@ ALTER TABLE `hicrm_employee_banks`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT cho bảng `hicrm_events`
+--
+ALTER TABLE `hicrm_events`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT cho bảng `hicrm_expense_items`
 --
 ALTER TABLE `hicrm_expense_items`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT cho bảng `hicrm_images`
+--
+ALTER TABLE `hicrm_images`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `hicrm_incomes`
@@ -2188,6 +2462,18 @@ ALTER TABLE `hicrm_income_details`
 --
 ALTER TABLE `hicrm_income_types`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT cho bảng `hicrm_introduce`
+--
+ALTER TABLE `hicrm_introduce`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT cho bảng `hicrm_news`
+--
+ALTER TABLE `hicrm_news`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `hicrm_orders`
@@ -2220,6 +2506,12 @@ ALTER TABLE `hicrm_permission_datas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
+-- AUTO_INCREMENT cho bảng `hicrm_pharmacy_categories`
+--
+ALTER TABLE `hicrm_pharmacy_categories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT cho bảng `hicrm_positions`
 --
 ALTER TABLE `hicrm_positions`
@@ -2229,7 +2521,7 @@ ALTER TABLE `hicrm_positions`
 -- AUTO_INCREMENT cho bảng `hicrm_products`
 --
 ALTER TABLE `hicrm_products`
-  MODIFY `id` bigint(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT cho bảng `hicrm_products_bk`
@@ -2314,6 +2606,12 @@ ALTER TABLE `hicrm_template_types`
 --
 ALTER TABLE `hicrm_transactions`
   MODIFY `id` bigint(30) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `hicrm_type`
+--
+ALTER TABLE `hicrm_type`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `hicrm_units`

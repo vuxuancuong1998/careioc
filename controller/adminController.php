@@ -15,10 +15,11 @@ Class adminController extends baseController
 	
 	public function logout(){
 		session_unset();
-		header('Location:' .XC_URL. 'admin/login');
+		header('Location:' .XC_URL. '/admin/login');
 	}
 	public function users($para)
 	{
+		
 		global $db;
 		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
 		if(isset($para[1]) && $para[1] == "detail" ){
@@ -53,6 +54,7 @@ Class adminController extends baseController
 	}
 	public function editusers($para){
 		$id = $para[1];
+		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
 		global $db;
 		$db->query("SELECT *, u.id as uid FROM hicrm_users as u 
 					LEFT JOIN hicrm_status as s ON u.user_status = s.id
@@ -77,6 +79,7 @@ Class adminController extends baseController
 	public function addusers()
 	{	
 		global $db;
+		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
 		$db->query("SELECT * FROM hicrm_customers ORDER BY id DESC LIMIT 1");
 		$lastno = $db->fetch_object(true)->customer_code;
 		$prefix = $this->helper->get_config("customer_prefix");
@@ -112,6 +115,7 @@ Class adminController extends baseController
 	//end
 	public function gioithieu($para){
 		$id = $para[1];
+		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
 		global $db;
 		// $db->query("SELECT *, t.id as tid FROM hicrm_type as t 
 		// 			LEFT JOIN hicrm_status as s ON u.user_status = s.id
@@ -121,9 +125,9 @@ Class adminController extends baseController
 		// 			");
 		$db->query("SELECT *, i.id as iid FROM hicrm_introduce  as i
 					LEFT JOIN hicrm_type as t ON i.introduce_id_type = t.id
-					where i.introduce_id_type = '".$id."'");
+					where i.introduce_id_type = '".$id."' " );
 		$introduce = $db->fetch_object(true);
-		$db->query("SELECT * FROM hicrm_type WHERE type_status NOT IN (99)");
+		$db->query("SELECT * FROM hicrm_type WHERE type_status NOT IN (99) AND type_detail = 1");
 		$type = $db->fetch_object();
 		$this->view->data['id'] = $id;
 		$this->view->data['introduce'] = $introduce;
@@ -132,6 +136,7 @@ Class adminController extends baseController
 	}
 	public function dmType(){
 		global $db;
+		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
 		$db->query("SELECT *, t.id as tid FROM hicrm_type as t 
 					LEFT JOIN hicrm_dmtype as dmt ON t.type_detail = dmt.id
 					 WHERE t.type_status NOT IN(99)");
@@ -144,6 +149,7 @@ Class adminController extends baseController
 	}
 	public function dmimages(){
 		global $db;
+		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
 		$db->query("SELECT *, i.id as imageid FROM hicrm_images as i 
 					LEFT JOIN hicrm_status as s ON i.image_status = s.id
 					LEFT JOIN hicrm_users as u ON i.image_user_created = u.id
@@ -151,6 +157,244 @@ Class adminController extends baseController
 		$images = $db->fetch_object();
 		$this->view->data["images"] = $images;
 		$this->view->show("backend/dmimage");
+	}
+	public function bookings(){
+		global $db;
+		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
+		$db->query("SELECT *, b.id as ibk FROM hicrm_bookings as b 
+					LEFT JOIN hicrm_booking_status as bs ON b.booking_status = bs.id
+					LEFT JOIN hicrm_employees as e ON b.booking_doctor = e.id
+					ORDER BY b.booking_created_date DESC");
+		$bookings = $db->fetch_object();
+		$this->view->data["bookings"] = $bookings;
+		$this->view->show("backend/bookings");
+	}
+	// public function news(){
+	// 	global $db;
+	// 	if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
+	// 	$db->query("SELECT *, t.id as tid FROM hicrm_type as t 
+	// 				LEFT JOIN hicrm_dmtype as dmt ON t.type_detail = dmt.id
+	// 				 WHERE t.type_status NOT IN(99)");
+	// 	$type = $db->fetch_object();
+	// 	$db->query("SELECT * FROM hicrm_dmtype");
+	// 	$dmtype = $db->fetch_object();
+	// 	$this->view->data["type"] = $type;
+	// 	$this->view->data["dmtype"] = $dmtype;
+	// 	$this->view->show("backend/dmnews");
+	// }
+	public function news($para){
+		global $db;
+		$method = $para[1];
+		$id = $para[2];
+		// echo $id;
+		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
+		$db->query("SELECT *, n.id as nid FROM hicrm_news as n
+					LEFT JOIN hicrm_users as u ON n.new_user_created = u.id
+					LEFT JOIN hicrm_type as t ON n.new_type = t.type_detail WHERE new_status NOT IN (99) ORDER BY n.new_created_date DESC
+					");
+		$news = $db->fetch_object();
+		$db->query("SELECT * FROM hicrm_dmtype");
+		if(isset($method) && $method == 'add'){
+			$this->view->data['method'] = 'add';
+			
+			$this->view->show("backend/new-add");
+
+
+		}elseif(isset($method) && $method == 'edit'){
+			$db->query("SELECT * FROM hicrm_news WHERE id = '".$id."'");		
+			$new_detai = $db->fetch_object(true);
+			// echo $new_detai->new_name;
+			$this->view->data['new_detail'] = $new_detai;
+			$this->view->data['method'] = 'edit';
+			$this->view->show("backend/new-add");
+		}elseif(isset($method) && $method == 'detail'){
+			$db->query("SELECT * FROM hicrm_news WHERE id = '".$id."'");		
+			$new_detai = $db->fetch_object(true);
+			// echo $new_detai->new_name;
+			$this->view->data['new_detail'] = $new_detai;
+			$this->view->data['method'] = 'edit';
+			$this->view->show("backend/new-detail");
+		}
+		else{
+		$dmtype = $db->fetch_object();
+		$this->view->data["news"] = $news;
+		$this->view->data["dmtype"] = $dmtype;
+		$this->view->show("backend/news");
+		}
+	}
+	public function events($para){
+		global $db;
+		$method = $para[1];
+		$id = $para[2];
+		// echo $id;
+		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
+		$db->query("SELECT *, e.id as eid FROM hicrm_events as e
+					LEFT JOIN hicrm_users as u ON e.event_user_created = u.id
+					LEFT JOIN hicrm_type as t ON e.event_type = t.type_detail WHERE e.event_status NOT IN (99) ORDER BY e.event_created_date DESC
+					");
+		$events = $db->fetch_object();
+		$db->query("SELECT * FROM hicrm_dmtype");
+		if(isset($method) && $method == 'add'){
+			$this->view->data['method'] = 'add';
+			$this->view->show("backend/event-add");
+
+
+		}elseif(isset($method) && $method == 'edit'){
+			$db->query("SELECT * FROM hicrm_events WHERE id = '".$id."'");		
+			$event_detai = $db->fetch_object(true);
+			// echo $event_detai->event_name;
+			$this->view->data['event_detail'] = $event_detai;
+			$this->view->data['method'] = 'edit';
+			$this->view->show("backend/event-add");
+		}elseif(isset($method) && $method == 'detail'){
+			$db->query("SELECT * FROM hicrm_events WHERE id = '".$id."'");		
+			$event_detai = $db->fetch_object(true);
+			// echo $event_detai->event_name;
+			$this->view->data['event_detail'] = $event_detai;
+			$this->view->data['method'] = 'edit';
+			$this->view->show("backend/event-detail");
+		}
+		else{
+		$dmtype = $db->fetch_object();
+		$this->view->data["events"] = $events;
+		$this->view->data["dmtype"] = $dmtype;
+		$this->view->show("backend/events");
+		}
+	}
+	public function products($para)
+	{
+		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/login"); }
+		global $db;
+		
+		if(isset($para) && $para[1] == "new")
+		{
+			$db->query("SELECT * FROM hicrm_units WHERE unit_status NOT IN (99)");
+			$this->view->data["units"] = $db->fetch_object();
+			$db->query("SELECT * FROM hicrm_product_categories");
+			$this->view->data["product_categories"] = $db->fetch_object();
+			$this->view->data['method'] = $para[1];
+			$this->view->show("backend/product_action");
+		}elseif(isset($para) && $para[1] == "update"){
+			$id = $para[2];
+			$db->query("SELECT * FROM hicrm_units WHERE unit_status NOT IN (99)");
+			$this->view->data["units"] = $db->fetch_object();
+			$db->query("SELECT * FROM hicrm_product_categories");
+			$this->view->data["product_categories"] = $db->fetch_object();
+			$db->query("SELECT *, p.id as pid FROM hicrm_products as p
+			LEFT JOIN hicrm_product_categories as c ON p.product_category = c.id
+			LEFT JOIN hicrm_units as u ON p.product_unit = u.id WHERE p.id = '".$id."'");
+			$this->view->data["product"] = $db->fetch_object(true);
+			$this->view->data['method'] = $para[1];
+			
+			$this->view->show("backend/product_action");
+		}
+		elseif(isset($para) && $para[1] == "detail")
+		{
+			
+		}
+		else
+		{
+			$db->query("SELECT *, p.id as pid FROM hicrm_products as p
+			LEFT JOIN hicrm_product_categories as c ON p.product_category = c.id
+			LEFT JOIN hicrm_units as u ON p.product_unit = u.id
+			LEFT JOIN hicrm_taxs as t ON p.product_tax_id = t.id
+			ORDER BY p.id DESC
+			");
+			$this->view->data["products"] = $db->fetch_object();
+			$this->view->data["active_menu"] = "products";
+			$this->view->data["pagetitle"] = "Danh sách sản phẩm";
+			$this->view->show("backend/products");
+			//Danh sách sản phẩm
+		}
+	}
+	public function categories($para)
+	{
+		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/login"); }
+		// echo $para[1];
+		if(isset($para[1]) && $para[1] != "")
+		{
+			global $db;
+			switch($para[1])
+			{
+				case "users":
+				{
+					$db->query("SELECT *, u.id as uid FROM hicrm_users as u 
+					LEFT JOIN hicrm_status as s ON u.user_status = s.id
+					LEFT JOIN hicrm_user_groups as g ON u.user_group = g.id WHERE u.user_status NOT IN(99)
+					");
+					$this->view->data["users"] = $db->fetch_object();
+					$page = "category_users";
+					$title = "Quản lý người dùng";
+					break;
+				}
+				case "accounts":
+				{
+					$db->query("SELECT *, a.id as aid FROM hicrm_accounts as a
+					LEFT JOIN hicrm_status as s ON a.account_status = s.id
+					WHERE a.account_status NOT IN (99) ORDER BY a.id ASC");
+					$accounts = $db->fetch_object();
+					$this->view->data['accounts'] = $accounts;
+					$page = "category_accounts";
+					$title = "Hệ thống tài khoản";
+					break;
+				}
+				
+				case "departments":
+				{
+					$db->query("SELECT * FROM hicrm_departments WHERE depart_status NOT IN(99) ORDER BY id DESC");
+					$this->view->data["departments"] = $db->fetch_object();
+					$page = "category_departments";
+					$active_menu = "category_departments";
+					$title = "Danh sách phòng ban";
+					break;
+				}
+				
+				case "units":
+				{
+					$db->query("SELECT *, un.id as unid FROM hicrm_units as un
+					LEFT JOIN hicrm_status as st ON un.unit_status = st.id WHERE un.unit_status NOT IN(99) ORDER BY un.id ASC");
+					$this->view->data["units"] = $db->fetch_object();
+					$page = "category_units";
+					$title = "Danh sách đơn vị tính ";
+					break;
+				}
+				
+				case "products":
+				{
+					// echo 'sss';
+					$db->query("SELECT *, p.id as pid FROM hicrm_category_products as p
+					LEFT JOIN hicrm_status as st ON p.cat_product_status = st.id
+					LEFT JOIN hicrm_units as u ON p.cat_product_unit = u.id
+					WHERE p.cat_product_status NOT IN(99) ORDER BY p.id ASC");
+					$this->view->data["category_products"] = $db->fetch_object();
+					$page = "category_products";
+					$title = "Danh sách danh mục loại thuốc";
+					$add = "Thêm loại thuốc";
+					$this->view->data["pagetitle"] = $title;
+					$this->view->data["add"] = $add;
+
+					$this->view->show('backend/categories');
+					break;
+				}
+				
+				default:
+				{
+					break;
+				}
+			}
+			$this->view->data["active_menu"] = "categories";
+			$this->view->data["pagetitle"] = $title;
+			// $this->view->data["backend/categories"] = $page;
+			$this->view->show('categories');
+		}
+		else
+		{
+			header("Location: ".XC_URL."/admin");
+		}
+	}
+	public function calendarword(){
+		global $db;
+
 	}
 	public function profile(){
 		$model_user = $this->model->get('user');
@@ -166,7 +410,7 @@ Class adminController extends baseController
 		$this->view->data['user'] = $get_user;
 		$this->view->data['type'] = $type;
 		
-		$this->view->show('settings');
+		$this->view->show('backend/settings');
 	}
 	
 	public function employees($para = ''){
@@ -511,15 +755,15 @@ Class adminController extends baseController
 		$this->view->data["menus"] = $db->fetch_object();
 		$this->view->show("menu_manager");
 	}
-	public function categories()
-	{
-		if(!(isset($_SESSION['staff']['id']) && $_SESSION['staff']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
-		global $db;
-		$db->query("SELECT *, (SELECT COUNT(*) FROM bds_posts WHERE post_category = c.id) as countpost FROM bds_categories as c ORDER BY id ASC");
-		$this->view->data["categories"] = $db->fetch_object();
-		$this->view->show("categories_manager");
-	}
-	public function news()
+	// public function categories()
+	// {
+	// 	if(!(isset($_SESSION['staff']['id']) && $_SESSION['staff']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
+	// 	global $db;
+	// 	$db->query("SELECT *, (SELECT COUNT(*) FROM bds_posts WHERE post_category = c.id) as countpost FROM bds_categories as c ORDER BY id ASC");
+	// 	$this->view->data["categories"] = $db->fetch_object();
+	// 	$this->view->show("categories_manager");
+	// }
+	public function news_1()
 	{
 		if(!(isset($_SESSION['staff']['id']) && $_SESSION['staff']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
 		global $db;

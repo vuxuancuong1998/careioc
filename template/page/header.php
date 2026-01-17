@@ -46,6 +46,7 @@
 <link href="<?php echo $template_path; ?>/assets/skins/default/style/iconmoon/stylead59.css?vs=1.0.9" rel="stylesheet" type="text/css" />
 <link href="<?php echo $template_path; ?>/assets/vnt_upload/ckeditor/ck_stylead59.css?vs=1.0.9" rel="stylesheet" type="text/css" />
 <link href="<?php echo $template_path; ?>/assets/vnt_upload/ckeditor/widget_layoutad59.css?vs=1.0.9" rel="stylesheet" type="text/css"/>
+<link href="<?php echo $template_path; ?>/assets/modules/popup/css/book.css?vs=1.1.0" rel="stylesheet" type="text/css"/>
 <script>var ROOT = "index.html";  var ROOT_MOD = "index.html"; var ROOT_PROD = "vn/index.html"; var url = "index.html"; var actmod = ""; var DIR_IMAGE = "<?php echo $template_path; ?>/assets/skins/default/images/index.html"; var cmd= "vnTRUST";  var lang = "vn";  var mem_id = 0; var js_lang = new Array(); js_lang['mess_logout'] = "Bạn có muốn thoát không ?"; js_lang['view_more_content'] = ''; js_lang['announce'] = "Thông báo"; js_lang['error'] = "Báo lỗi"; js_lang['empty_link_mem'] = 'Không tìm thấy link thành viên. Vui lòng liên hệ ban quản trị qua hotline 0123456789 để được hỗ trợ'; var fId = "1305829822896074"; var gId = ""; var g_clientId = ""; var phone = '1900 599 941'; var emailChat = 'info@ytedaiphuoc.vn'; var fbchat = 'https://m.me/02873063638'; var zalochat = 'https://zalo.me/02873063638'; var skypechat = 'skype:01234567899?call'; var time_loading = parseInt(); var err_mess_processing = 'Đang xử lý yêu cầu. Vui lòng chờ vài giây...'; var f_chat = 'Chát FB cùng chúng tôi'; var f_chat_zalo = 'Chat với chúng tôi qua zalo'; var f_contact = 'Liên hệ'; var view_more = 'Xem thêm'; var view_less = 'Thu gọn'; var menu_support = '[]'; var dayOffWeek = (parseInt(1)) ? [] : ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];</script>
 <script src="<?php echo $template_path; ?>/assets/js/jquery/jquery.min.js"></script>
 <script src="<?php echo $template_path; ?>/assets/js/jquery/jquery-migrate.min.js"></script>
@@ -56,6 +57,7 @@
 <script src="<?php echo $template_path; ?>/assets/js/jquery_plugins/jquery.validate.js" defer></script>
 <script src="<?php echo $template_path; ?>/assets/js/stylead59.js?vs=1.0.9" defer></script>
 <script src="<?php echo $template_path; ?>/assets/js/mnfixed/mnfixedad59.js?vs=1.0.9" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="text/javascript">
 
       var arr_input = ['p','catID','price','status_id','statusID','brand_id','bID','event_id','size_id','color_id','eventID','sort', 'keyword','vpage'];
@@ -397,7 +399,7 @@ $(document).ready(function(){
                                     <ul>
                                         <!-- <li class="vmm sub"><a href="javascript:;" target=_self><img src="<?php echo $template_path; ?>/assets/vnt_upload/menu/04_2024/ifile.png" alt="HỒ SƠ BỆNH ÁN"><span>HỒ SƠ BỆNH ÁN</span></a><ul><li class='vhh'><a href='https://ketqua.ytedaiphuoc.vn/UserBenhNhan' target='_self'><img  src="<?php echo $template_path; ?>/assets/vnt_upload/menu/04_2024/ifile.png"   alt = 'Hồ sơ bệnh án điện tử'  /><span>Hồ sơ bệnh án điện tử</span></a></li><li class='vmm'><a href='https://ketqua.ytedaiphuoc.vn/HomeAdmin/Login' target='_self'><img  src="<?php echo $template_path; ?>/assets/vnt_upload/menu/04_2024/ifile.png"   alt = 'Hồ sơ bệnh án cho bác sĩ'  /><span>Hồ sơ bệnh án cho bác sĩ</span></a></li></ul>
                                     </li> -->
-                                    <li class="vhh"><a href="vn/dang-ky-lich-kham.html" target=_self><img src="<?php echo $template_path; ?>/assets/vnt_upload/menu/04_2024/iedit.png" alt="Đặt lịch khám"><span>Đặt lịch khám</span></a></li></ul>
+                                    <li class="vhh"><a href="dang-ky-lich-kham.html" target=_self><img src="<?php echo $template_path; ?>/assets/vnt_upload/menu/04_2024/iedit.png" alt="Đặt lịch khám"><span>Đặt lịch khám</span></a></li></ul>
                                     
                                 </div>
                             </div>
@@ -422,7 +424,7 @@ $(document).ready(function(){
                                 <div class="tpsubmnhead ">
                                     <ul>
                                         <li>
-                                            <a href='gioithieu.html' target='_self'>Giới thiệu</a>
+                                            <a href='gioi-thieu.html' target='_self'>Giới thiệu</a>
                                         </li>
                                         <li>
                                             <a href='vn/dich-vu.html' target='_self'>Dịch vụ</a>

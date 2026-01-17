@@ -691,5 +691,10 @@ Class appController extends baseController
 		$this->view->data['departments'] = $departments;
 		$this->view->show('backend/edit-employee');
 	}
+	public function calendarEmployee($para){
+		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/login"); }
+		$id = $para[1];
+		global $db;
+	}
 	
 }

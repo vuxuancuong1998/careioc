@@ -1,312 +1,498 @@
-<?php include_once "header.php"; ?>
-<script src="<?php echo $template_path;?>/assets/plugins/fullcalendar/fullcalendar.bundle.js" type="text/javascript"></script>
-<script type="text/javascript">
-   $(function () {
-       $('#event_from').datetimepicker();
-       $('#event_to').datetimepicker({
-   useCurrent: false //Important! See issue #1075
-   });
-       $("#event_from").on("dp.change", function (e) {
-           $('#event_to').data("DateTimePicker").minDate(e.date);
-       });
-       $("#event_to").on("dp.change", function (e) {
-           $('#event_from').data("DateTimePicker").maxDate(e.date);
-       });
-   });
-</script>
+<?php include_once "header.php";?>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js" type="text/javascript"></script>
 <script>
-        $(document).ready(function() {
-            var KTCalendarBasic = function() {
+	$(document).ready(function(){
+		 $.validator.addMethod("alpha", function(value, element){
 
-				return {
-					//main function to initiate the module
-					init: function() {
-						var todayDate = moment().startOf('day');
-						var YM = todayDate.format('YYYY-MM');
-						var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
-						var TODAY = todayDate.format('YYYY-MM-DD');
-						var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
+        return this.optional(element) || value == value.match(/^[0-9, '']+$/);
 
-						var calendarEl = document.getElementById('kt_calendar');
-						var calendar = new FullCalendar.Calendar(calendarEl, {
-							plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid', 'list' ],
-							
-							isRTL: false,
-
-							header: {
-								left: 'prev,next today',
-								center: 'title',
-								right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-							},
-
-							height: 800,
-							contentHeight: 780,
-							aspectRatio: 3,  // see: https://fullcalendar.io/docs/aspectRatio
-
-							nowIndicator: true,
-							now: TODAY + 'T09:25:00', // just for demo
-
-							views: {
-								dayGridMonth: { buttonText: 'month' },
-								timeGridWeek: { buttonText: 'week' },
-								timeGridDay: { buttonText: 'day' }
-							},
-
-							defaultView: 'dayGridMonth',
-							defaultDate: TODAY,
-
-							editable: true,
-							eventLimit: true, // allow "more" link when too many events
-							navLinks: true,
-							events: 'https://e-office.anlocgroup.vn/page/booking',
-								
-
-							eventRender: function(info) {
-								var element = $(info.el);
-
-								if (info.event.extendedProps && info.event.extendedProps.description) {
-									if (element.hasClass('fc-day-grid-event')) {
-										element.data('content', info.event.extendedProps.description);
-										element.data('placement', 'top');
-										KTApp.initPopover(element);
-									} else if (element.hasClass('fc-time-grid-event')) {
-										element.find('.fc-title').append('<div class="fc-description">' + info.event.extendedProps.description + '</div>');
-									} else if (element.find('.fc-list-item-title').lenght !== 0) {
-										element.find('.fc-list-item-title').append('<div class="fc-description">' + info.event.extendedProps.description + '</div>');
-									}
-								}
-							}
-						});
-
-						calendar.render();
-					}
-				};
-			}();
-			jQuery(document).ready(function() {
-				KTCalendarBasic.init();
-			});
-        });
-		
-    </script>
-	<script>
-		$(document).ready(function(){
-			$("#btnbooking").click(function(){
-				var event_title = $('#event_title').val();
-				var event_from = $('#event_from').val();
-				var event_host = $("#event_host").val();
-				var event_to = $("#event_to").val();
-				var event_assign_to = $("#event_assign_to").val();
-				var event_description = $("#event_description").val();
-				var event_type = $("#event_type").val();
-				$.ajax({
-					type:"POST",
-					url:"<?php echo XC_URL;?>/api/addbookings",
-					data:{
-						'event_title':event_title,
-						'event_from': event_from,
-						'event_host': event_host,
-						'event_to': event_to,
-						'event_assign_to': event_assign_to,
-						'event_description':event_description,
-						'event_type': event_type
-					},
-					dataType: 'json',
-					success: function(data){
-						if(data.status == 200){
-							Swal.fire({
-							  icon: 'success',
-							  title: "Đặt thành công",
-							  footer: '<a href=""></a>',
-							  timer: 1700
-							})
-							setTimeout(function(){ location.reload();     }, 2000);
-							}else{
-							Swal.fire({
-							  icon: 'error',
-							  title: "Lỗi",
-							  text: data.message,
-							  footer: '<a href=""></a>'
-							})
-						}
-					}
-				});
+    }, "Vui lòng nhập ký tự số!");
+	$("#frm-action").validate({
+		onfocusout: false,
+		onkeyup: false,
+		onclick: false,
+		rules: {
+			"booking_phone": {
+				required: true,
+				alpha: true,
+				maxlength: 15,
+				minlength: 8
+			},
+			"booking_national_id": {
+				required: true,
+				alpha: true,
+				maxlength: 15,
+				minlength: 5
+			},
+			"booking_name":{
+				required: true
+			},
+			"booking_branch":{
+				required: true
+			},
+			"booking_position":{
+				required: true
+			},
+			"booking_address":{
+				required: true
+			},
+			"booking_birthday":{
+				required: true
+			},
+			"booking_gender":{
+				required: true
+			},
+			"booking_email":{
+				required: true
+			},
+			"booking_department":{
+				required: true
+			},
+			"booking_issue_date":{
+				required: true
+			},
+			"booking_issue_by":{
+				required: true
+			},
+			"booking_issue_date":{
+				required: true
+			}
+			
+			
+			
+		},
+		messages:{
+				booking_national_id: {
+					required: "Vui lòng số CMND",
+					minlength: "số CMND phải vượt quá 5 ký tự",
+					maxlength: "số CMND phải ngắn hơn 15 ký tự"
+				},
+				booking_phone: {
+					required: "Vui lòng nhập số điện thoại",
+					minlength: "Số điện thoại phải vượt quá 8 ký tự",
+					maxlength: "Số điện thoại phải ngắn hơn 15 ký tự"
+				},
+				booking_name: "Vui lòng nhập tên nhân viên",
+				booking_branch: "Vui lòng chọn đơn vị",
+				booking_position: "Vui lòng chọn chức danh",
+				booking_address: "Vui lòng nhập địa chỉ",
+				booking_birthday: "Vui lòng nhập ngày sinh",
+				booking_gender: "Vui lòng chọn giới tính",
+				booking_email: "Vui lòng nhập email",
+				booking_department: "Vui lòng chọn phòng ban",
+				booking_issue_date: "Vui lòng nhập ngày cấp",
+				booking_issue_by: "Vui lòng nhập nơi cấp"
 				
+			}
+	});
+		$("#table-booking").on('click', '.btn-delete-booking', function(e) {
+			var eid = $(this).attr("data-id");
+			var booking_status =  $(this).attr("data-status");
+			$.ajax({
+				"type": "POST",
+				"url": "<?php echo XC_URL; ?>/api/deletebooking",
+				"data": {
+					'eid': eid,
+					'booking_status': booking_status
+				},
+				"dataType":'json',
+				success:function(data){
+					if(data.status == 200){
+						Swal.fire({
+						  icon: 'success',
+						  title: "Xoá thành công",
+						  footer: '<a href=""></a>',
+						  timer: 1700
+						})
+						setTimeout(function(){ location.reload();     }, 2000);
+					}else{
+						Swal.fire({
+						  icon: 'error',
+						  title: "Lỗi",
+						  text: data.message,
+						  footer: '<a href=""></a>'
+						})
+					}
+				}
+			
 			});
+			return false;
 		});
-	</script>
+		$("#table-booking").on('click', '.btn-calendar-booking', function(e) {
+			$('#booking_id').val($(this).data('id'));
+
+		});
+		$('#updateCalendarbooking').click(function(e) {
+			var eid =  $('#booking_id').val();
+			var booking_calendar =  $('#booking_calendar').val();
+			var booking_shift = $('#booking_shift').val();
+			$.ajax({
+				"type": "POST",
+				"url": "<?php echo XC_URL; ?>/api/calendarbooking",
+				"data": {
+					'eid': eid,
+					'booking_shift': booking_shift,
+					'booking_calendar': booking_calendar
+				},
+				"dataType":'json',
+				success:function(data){
+					if(data.status == 200){
+						Swal.fire({
+						  icon: 'success',
+						  title: "Lưu thành công",
+						  footer: '<a href=""></a>',
+						  timer: 1700
+						})
+						setTimeout(function(){ location.reload();     }, 2000);
+					}else{
+						Swal.fire({
+						  icon: 'error',
+						  title: "Lỗi",
+						  text: data.message,
+						  footer: '<a href=""></a>'
+						})
+					}
+				}
+			
+			});
+			return false;
+		});
+		
+		
+		$("#table-booking").on('click', '.btn-approve', function(e) {
+			var bid = $(this).attr("data-id");
+			$.ajax({
+				"type": "POST",
+				"url": "<?php echo XC_URL; ?>/api/approveBooking",
+				"data": {
+					'bid': bid
+				},
+				"dataType":'json',
+				success:function(data){
+					if(data.status == 200){
+						Swal.fire({
+						  icon: 'success',
+						  title: "Đã duyệt",
+						//   text: "Mã Khách hàng/NCC mới: " + data.new_booking_code,
+						  footer: '<a href=""></a>',
+						  timer: 1700
+						})
+						setTimeout(function(){ location.reload();     }, 2000);
+					}else{
+						Swal.fire({
+						  icon: 'error',
+						  title: "Lỗi",
+						  text: data.message,
+						  footer: '<a href=""></a>'
+						})
+					}
+				}
+			
+			});
+			return false;
+		});
+	
+		$('#addbooking').click(function(e) {
+			if ($("#frm-action").valid()) {
+				var formData = new FormData();
+
+				formData.append('booking_code', $('#booking_code').val());
+				formData.append('booking_name', $('#booking_name').val());
+				formData.append('booking_address', $('#booking_address').val());
+				formData.append('booking_birthday', $('#booking_birthday').val());
+				formData.append('booking_gender', $('#booking_gender').val());
+				formData.append('booking_phone', $('#booking_phone').val());
+				formData.append('booking_email', $('#booking_email').val());
+				formData.append('booking_department', $('#booking_department').val());
+				formData.append('booking_national_id', $('#booking_national_id').val());
+				formData.append('booking_issue_date', $('#booking_issue_date').val());
+				formData.append('booking_issue_by', $('#booking_issue_by').val());
+				formData.append('booking_des', $('#booking_des').val());
+
+				// Upload file
+				var file = $('#booking_image')[0].files[0];
+				if (file) {
+					formData.append('booking_image', file);
+				}
+			$.ajax({
+				type: "POST",
+				url: "<?php echo XC_URL;?>/api/addbooking",
+				data:formData,
+				dataType: 'json',
+				enctype: 'multipart/form-data',
+				processData: false,
+				contentType: false,
+				success: function(data){
+					if(data.status == 200){						
+						Swal.fire({
+						  icon: 'success',
+						  title: "Thêm thành công",
+						  footer: '<a href=""></a>',
+						  timer: 1700
+						})
+						setTimeout(function(){ location.reload();     }, 2000);
+					}else{
+						Swal.fire({
+						  icon: 'error',
+						  title: "Lỗi",
+						  text: data.message,
+						  footer: '<a href=""></a>'
+						})
+					}
+				}
+			});
+			}
+		});
+	
+		
+	});
+</script>
+<style>
+::placeholder{
+	font-size:12px;
+	font-style: italic;
+}
+.btn-search{
+	background-color:white;
+	border:none;
+}
+label.error{
+	color:red;
+}
+</style>
 <div class="content container-fluid">
-
-    <div class="page-header">
-        <div class="row align-items-center">
-            <div class="col">
-                <h3 class="page-title">Quản lý phòng họp</h3>
-                <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="<?php echo XC_URL;?>">CloudERP</a></li>
-                    <li class="breadcrumb-item active">Quản lý phòng họp</li>
-                </ul>
-            </div>
-            <div class="col-auto text-right float-right ml-auto">
-                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_event">Đăng ký lịch</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-12 col-md-12">
-            <div class="card bg-white">
-                <div class="card-body">
-                    <div id="kt_calendar"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="add_event" class="modal custom-modal fade" role="dialog">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Đăng ký lịch mới</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="#" >
-                        <div class="row" >
-							<div class="col-md-12" >
-                                <div class="form-group">
-									<label>Nội dung tóm tắt</label>
-									<input type="text" class="form-control" id='event_title'>
+   
+   <div class="page-header">
+      <div class="row align-items-center">
+         <div class="col">
+            <h3 class="page-title">Danh sách bệnh nhân đặt lịch khám bệnh</h3>
+            <ul class="breadcrumb">
+               <!-- <li class="breadcrumb-item"><a href="<?php echo XC_URL?>">CloudERP</a></li> -->
+               <!-- <li class="breadcrumb-item active">Bác sĩ</li> -->
+            </ul>
+         </div>
+         <!-- <div class="col-auto">
+             <a href="#" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" >
+            Đăng ký lịch khám
+            </a> -->
+            <!-- <a class="btn btn-primary filter-btn" href="javascript:void(0);" id="filter_search">
+            <i class="fas fa-filter"></i>
+            </a> -->
+         <!-- </div> -->
+      </div>
+   </div>
+   
+   </div>
+   <div class="row">
+      <div class="col-sm-12">
+         <div class="card card-table">
+            <div class="card-body">
+               <div class="table-responsive">
+                  <table id="table-booking" class="table table-center table-hover datatable">
+                     <thead class="thead-light">
+                        <tr>
+                           <th>STT</th>
+                           <th>Tên bệnh nhân</th>
+						   <th>Số điện thoại</th>
+						   <th>Giới tính</th>
+						   <th>Năm sinh</th>
+                           <th>Địa chỉ</th>
+						   <th>Bác sĩ khám</th>
+						   <th>Thời gian</th>
+						   <th>Trạng thái</th>
+                           <th>Thao tác</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <?php 
+							$i = 1;
+							foreach($bookings as $booking)
+                           {
+                           ?>
+                        <tr>
+                           <td>
+                              <?php echo $i;?>
+                           </td>
+						   
+                           <td >
+                              <?php echo $booking->booking_person_name;?>
+                           </td>
+						   <td>
+							<?php echo $booking->booking_person_phone;?>
+						   </td>
+						    <td>
+                              <?php if($booking->booking_person_gender == 1){echo "Nam";}else{ echo "Nữ";}?>
+                           </td>
+                           <td><?php echo $booking->booking_person_year;?></td>
+                           <td><?php echo $booking->booking_person_address;?></td>
+                           <td><?php echo $booking->booking_name;?></td>
+                           <td><?php 
+						   echo !empty($booking->booking_date) ? date('d-m-Y', strtotime($booking->booking_date)) : 'Chưa đặt ngày';
+							?>
+								<span > <?php 
+								echo  !empty($booking->booking_hour) ? " - " . $booking->booking_hour : '';
+								?></span>
+							</td>
+						   
+                           <td class='text-<?php echo $booking->bk_status_class;?>'><?php echo $booking->bk_status_label;?></td>
+                           </td>
+                           <td>
+                              <div class="btn-group">
+								    <a href="#" data-status="<?php echo $booking->booking_status;?>" data-id='<?php echo $booking->ibk; ?>' class="btn btn-sm btn-white text-success btn-approve" >Duyệt</a>
+								   <!-- <button type="button" class="btn btn-sm btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								   <span class="sr-only">Toggle Dropdown</span>
+								   </button>
+								   <div class="dropdown-menu">
+									  <a class="dropdown-item text-primary" href="#" data-id="<?php echo $booking->ibk;?>">Sửa</a>
+									  <a class="dropdown-item btn-delete-booking text-danger" data-id="<?php echo $booking->ibk;?>" href="#" data-status="<?php echo $booking->booking_status;?>">Hủy</a>
+									  
+									
+									  <div class="dropdown-divider"></div>
+									  
+									  <a class="dropdown-item btn-calendar-booking text-warning" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-id='<?php echo $booking->bookingid;?>' href="#">Lịch khám bệnh</a>
+								   </div> -->
 								</div>
-							</div>
-						</div>
-                        <div class="row" >
-                            <div class="col-md-6" >
-                                <div class="form-group">
-                                    <label>Từ:</label>
-                                    <div class="cal-icon">
-                                        <input id="event_from" class="form-control datetimepicker-2" type="text">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Chủ trì:</label>
-                                    <select id="event_host" class="select select2">
-                                          <option disabled selected>Chọn chủ trì</option>
-                                          <?php foreach($employees as $employee)
-										  {
-											?>
-											<option value="<?php echo $employee->id;?>"><?php echo $employee->employee_name;?></option>
-											<?php
-										  }
-											?>
-                                       </select>
-                                </div>
-                                
-                            </div>
-                            <div class="col-md-6" data-select2-id="25">
-                                <div class="form-group">
-                                    <label>Đến:</label>
-                                    <div class="cal-icon">
-                                        <input id="event_to" class="form-control datetimepicker-2" type="text">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Thành phần tham dự:</label>
-                                    <select id="event_assign_to" multiple="multiple" class="select select2">
-                                          
-                                          <?php foreach($employees as $employee)
-										  {
-											?>
-											<option value="<?php echo $employee->id;?>"><?php echo $employee->employee_name;?></option>
-											<?php
-										  }
-											?>
-                                       </select>
-                                </div>
-                            </div>
-							
-                        </div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label>Nội dung:</label>
-									<textarea rows="5" cols="5" class="form-control" placeholder="Nội dung" id = "event_description"></textarea>
-								</div>
-							</div>
+                           </td>
+                        </tr>
+                        <?php
+							$i++;
+                           }
+                           ?>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   
+		</div>
+
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+	<div class="modal-content">
+		<div class="row">
+      <div class="col-md-12">
+         <div class="card">
+            <div class="card-header">
+               <h5 class="card-title">Lịch khám của bệnh nhân</h5>
+            </div>
+            <div class="card-body">
+               <form action="#" data-select2-id="13" id="frm-action">
+                  <div class="row">
+                     <div class="col-md-12" data-select2-id="12">
+                        <div class="row">
 							<div class="col-md-6">
-								<div class="form-group">
-										<label>Loại phòng:</label>
-										<select id="event_type"  class="select form-control">
-												<option disabled selected="selected">Chọn loại</option>
-												<option value="1">Họp</option>
-												<option value="2">Đào tạo</option>
-												<option value="3">Tiếp khách</option>
-												<option value="4">Khác</option>
-										   </select>
-								</div>
-							</div>
+                              <div class="form-group">
+                                 <label> Họ và tên: </label>
+                                 <input type="text" value="<?php echo $booking_code;?>" class="form-control" name='booking_code' id='booking_code'>
+                              </div>
+                           </div>
+                           
+                           <div class="col-md-6">
+                              <div class="form-group">
+                                 <label>Điện thoại:</label><span class='text-danger'>*</span>
+                                 <input type="text" class="form-control" id='booking_name' name="booking_name">
+                              </div>
+                           </div>
+						    <div class="col-md-6">
+                              <div class="form-group" >
+                                 <label>Giới tính:</label><span class='text-danger'>*</span>
+						   		<select class='form-control' id='booking_gender' name='booking_gender'>
+						   		<option value='1'>Nam</option>
+								<option value='2'>Nữ</option>
+								</select>
+                              </div>
+                           </div>
+
+						   <div class="col-md-6">
+                              <div class="form-group" >
+                                 <label>Chọn bác sĩ</label><span class='text-danger'>*</span>
+									<select class="form-control" id='booking_department'>
+										<?php foreach($doctors as $doctor){?>
+										<option value = '<?php echo $doctor->id?>'><?php echo $doctor->booking_name;?></option>
+										<?php }?>
+									</select>
+                              </div>
+                           </div>
+						  
+                        </div>
+                     </div>
+                     <div class="col-md-12">
+                        <div class="row">
+                           <div class="col-md-4">
+                              <div class="form-group" >
+                                 <label>Tuổi: </label><span class='text-danger'>*</span>
+									<input class="form-control" type="text" id='booking_phone' name="booking_phone" min = '4' max = '4' placeholder="VD:1970">
+                              </div>
+                           </div>
+						   <div class="col-md-4">
+                              <div class="form-group" >
+                                 <label>Email: </label><span class='text-danger'>*</span>
+									<input class="form-control" type="text" id='booking_email' name="booking_email">
 							
-							<div class="text-end mt-4">
-                                    <button type="button" class="btn btn-primary" id="btnbooking">Đặt lịch</button>
-                                </div>
+                            </div>
 						</div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="modal custom-modal fade none-border" id="my_event">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Add Event</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-                <div class="modal-body"></div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-success save-event submit-btn">Create event</button>
-                    <button type="button" class="btn btn-danger delete-event submit-btn" data-dismiss="modal">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="modal custom-modal fade" id="add_new_event">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Add Category</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label>Category Name</label>
-                            <input class="form-control form-white" placeholder="Enter name" type="text" name="category-name" />
+                           <div class="col-md-4">
+                              <div class="form-group" >
+                                 <label>Giới tính:</label><span class='text-danger'>*</span>
+						   		<select class='form-control' id='booking_gender' name='booking_gender'>
+						   		<option value='1'>Nam</option>
+								<option value='2'>Nữ</option>
+								</select>
+                                 
+								
+                              </div>
+                           </div>							  
+						   
+						  
+						   <div class="col-md-4">
+                              <div class="form-group" >
+                                 <label>Địa chỉ: </label><span class='text-danger'>*</span>
+									<input class="form-control" type="text" id='booking_issue_by' name="booking_issue_by">
+							
+                              </div>
+                           </div>
+						   <div class="col-md-4">
+                              <div class="form-group" >
+                                 <label>Chọn bác sĩ</label><span class='text-danger'>*</span>
+									<select class="form-control" id='booking_department'>
+										<?php foreach($doctors as $doctor){?>
+										<option value = '<?php echo $doctor->id?>'><?php echo $doctor->booking_name;?></option>
+										<?php }?>
+									</select>
+							
+                              </div>
+                           </div>
+						   
+						  
+						   <div class="col-md-12">
+                              <div class="form-group" >
+                                 <label>Giới thiệu ngắn về Bác sĩ </label>
+								<textarea class='form-control' rows="5" cols="50" name = 'booking_des' id='booking_des'></textarea>
+							
+                              </div>
+                           </div>
                         </div>
-                        <div class="form-group mb-0">
-                            <label>Choose Category Color</label>
-                            <select class="form-control form-white" data-placeholder="Choose a color..." name="category-color">
-                                <option value="success">Success</option>
-                                <option value="danger">Danger</option>
-                                <option value="info">Info</option>
-                                <option value="primary">Primary</option>
-                                <option value="warning">Warning</option>
-                                <option value="inverse">Inverse</option>
-                            </select>
-                        </div>
-                        <div class="submit-section">
-                            <button type="button" class="btn btn-primary save-category submit-btn" data-dismiss="modal">Save</button>
-                        </div>
-                    </form>
-                </div>
+                        
+                        
+                       
+                     </div>
+                  </div>
+                  <div class="text-end">
+                     <button type="button" class="btn btn-primary" id = 'addbooking'>Thêm</button>
+                  </div>
+               </form>
             </div>
-        </div>
-    </div>
-
+         </div>
+      </div>
+   </div>
+			</div>
+		  </div>
+		</div>
+   
 </div>
 
 
-
-<?php include_once "footer.php"; ?>
+<?php include_once "footer.php";?>

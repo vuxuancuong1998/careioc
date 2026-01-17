@@ -217,22 +217,501 @@ Class apiController extends baseController
 		
 		echo json_encode($result);
 	}
-
-	public function updatePage(){
+ 
+	public function updateIntroduce(){
 		global $db;
 		$result = array();
 		$id = $_POST['type_id'];
-		$page_content = $_POST['content'];
-		// echo $page_content;
+
+		$page_content = $db->escapestring($_POST['content']);
+		// var_dump($page_content);
 		$page_uid = $_POST['userid'];
 		$page_status = 1;
 		$page_created_date = date('Y-m-d H:i:s');
-		echo "UPDATE hicrm_introduce SET introduce_id_type ='".$id."',introduce_content='".$page_content."',introduce_uid = '".$page_uid."',introduce_created_date='".$page_created_date."' WHERE introduce_id_type ='".$id."'";
+		// echo "UPDATE hicrm_introduce SET introduce_id_type ='".$id."',introduce_content='".$page_content."',introduce_uid = '".$page_uid."',introduce_created_date='".$page_created_date."' WHERE introduce_id_type ='".$id."'";
 		$db->query("UPDATE hicrm_introduce SET introduce_id_type ='".$id."',introduce_content='".$page_content."',introduce_uid = '".$page_uid."',introduce_created_date='".$page_created_date."' WHERE introduce_id_type ='".$id."'");
 
-		$result['message'] = "Sửa thành công";
+		$result['message'] = "Thành công";
 		$result['status'] = 200;
 		
+		echo json_encode($result);
+	}
+	public function calendarEmployee(){
+		global $db;
+		$result = array();
+		$id = $_POST['eid'];
+		// echo $id;
+		$employee_calendar = $_POST['employee_calendar'];
+		$employee_shift = $_POST['employee_shift'];
+		$db->query("SELECT * FROM hicrm_employees WHERE id = '".$id."'");
+		$db->fetch_object(true);
+		if($db->num_row()){
+				$db->query("UPDATE hicrm_employees SET employee_calendar='".$employee_calendar."',employee_shift='".$employee_shift."' WHERE id = '".$id."' ");
+				$result['message'] = "Sửa thành công";
+				$result['status'] = 200;
+			
+		}else{
+			$result['message'] = "Thất bại";
+			$result['status'] = 500;
+		}
+		echo json_encode($result);
+
+	}
+	public function addBooking(){
+		global $db;
+		$result = array();
+		
+		$db->query("INSERT INTO 
+		hicrm_bookings(booking_person_name, booking_person_gender, booking_person_year, booking_person_address, booking_person_phone, booking_doctor, booking_date, booking_hour, booking_description, booking_created_date)
+		VALUES ('".$_POST['booking_person_name']."','".$_POST['booking_person_gender']."','".$_POST['booking_person_year']."','".$_POST['booking_person_address']."','".$_POST['booking_person_phone']."',
+		'".$_POST['booking_doctor']."','".$_POST['booking_date']."','".$_POST['booking_hour']."','".$_POST['booking_description']."', '".date("Y-m-d H:i:s")."')");
+		
+		$result['status'] = 200;
+		$result['message'] = "Bộ phận tiếp nhận sẽ sớm liên hệ để xác nhận lịch hẹn.";
+		echo json_encode($result);
+	}
+	public function approveBooking()
+	{
+		global $db;
+		// echo $_POST['bid'];
+		$bid = $_POST['bid'];
+		$result = array();
+		$db->query("SELECT * FROM hicrm_bookings WHERE id = '".$_POST['bid']."'");
+		$db->fetch_object(true);
+		if($db->num_row()){
+				$db->query("UPDATE hicrm_bookings SET booking_status='2' WHERE id = '".$bid."'");
+				$result['message'] = "Duyệt thành công";
+				$result['status'] = 200;
+			
+		}else{
+			$result['message'] = "Không có dữ liệu";
+			$result['status'] = 500;
+		}
+
+		echo json_encode($result);
+	}
+	//===== API NEWS === 
+	public function news()
+	{
+		global $db;
+		$new_name = $_POST['new_name'];
+		$new_description = $_POST['new_description'];
+		$new_content = $db->escapestring($_POST['new_content']);
+		$new_user_created = $_POST['new_user_created'];
+		$new_created_date = date('Y-m-d H:i:s');
+		$FinalFilenameFront = "";
+		$FinalFilenameFront2 = "";
+		$expensions = array("jpeg","jpg","png");
+		$method = $_POST['method'];
+		$result = array();
+		$id = $_POST['nid'];
+		
+		if(isset($method) && $method == "add")
+		{
+			$FinalFilenameFront = "";
+			$FinalFilenameFront2 = "";
+			//echo $_FILES['hinhanh']['name']."ssss";
+			if ($_FILES['new_image']['error'] == 4) {
+				// Không có file upload → gán hình mặc định
+				$FinalFilenameFront = '';
+			}else{
+				$errors= array();
+				$file_name = $_FILES['new_image']['name'];
+				$file_size =$_FILES['new_image']['size'];
+				$file_tmp =$_FILES['new_image']['tmp_name'];
+				$file_type=$_FILES['new_image']['type'];
+				$file_ext=strtolower(end(explode('.',$_FILES['new_image']['name'])));
+				$OriginalFilename = $FinalFilename = preg_replace('`[^a-z0-9-_.]`i','',$_FILES['new_image']['name']); 
+				$FinalFilenameFront = md5(time())."-".$FinalFilename;
+				if(in_array($file_ext,$expensions)=== false){
+					$errors[]="Extension not allowed, please choose a .png, .jpg file.";
+				}
+				if($file_size > 5242880){
+					$errors[]='File size must be max 2Mb';
+				}
+				if(empty($errors)==true){
+					move_uploaded_file($file_tmp,"./uploads/news/".$FinalFilenameFront);
+					
+				}else
+				{
+					$result["status"] = 500;
+				}
+				
+			}
+			$db->query("INSERT INTO hicrm_news(new_name,new_description,new_content,new_image,new_user_created,new_status,new_created_date)
+			VALUES('".$_POST['new_name']."','".$_POST['new_description']."','".$new_content."','".$FinalFilenameFront."','".$new_user_created."',1,'".$new_created_date."')");
+			$result["status"] = 200;
+			$result["url"] = XC_URL."/uploads/news/".$FinalFilenameFront;
+			$result["id"] = $FinalFilenameFront;
+			$result['message'] = 'Thêm thành công';
+			$result['returnUrl'] = XC_URL."/admin/news";
+		}
+		elseif(isset($method) && $method == "edit")
+		{
+			// echo "ssss";
+			// echo $id .'id';
+			$db->query("SELECT * FROM hicrm_news WHERE id = '".$id."'");
+			$db->fetch_object(true);
+			if($db->num_row())
+			{
+				// echo "aa";
+				$FinalFilenameFront = "";
+				//echo $_FILES['hinhanh']['name']."ssss";
+				if(isset($_FILES['new_image']))
+				{
+					$errors= array();
+					$file_name = $_FILES['new_image']['name'];
+					$file_size =$_FILES['new_image']['size'];
+					$file_tmp =$_FILES['new_image']['tmp_name'];
+					$file_type=$_FILES['new_image']['type'];
+					$file_ext=strtolower(end(explode('.',$_FILES['new_image']['name'])));
+					$OriginalFilename = $FinalFilename = preg_replace('`[^a-z0-9-_.]`i','',$_FILES['new_image']['name']); 
+					$FinalFilenameFront = md5(time())."-".$FinalFilename;
+					if(in_array($file_ext,$expensions)=== false){
+						$errors[]="Extension not allowed, please choose a .png, .jpg file.";
+					}
+					if($file_size > 5242880){
+						$errors[]='File size must be max 2Mb';
+					}
+					if(empty($errors)==true){
+						move_uploaded_file($file_tmp,"./uploads/news/".$FinalFilenameFront);
+						
+					}else
+					{
+						$result["status"] = 500;
+					}
+					
+				}
+				
+				$updateimage = ($FinalFilenameFront != "")? ", new_image = '".$FinalFilenameFront."'" : "";
+				// echo "UPDATE hicrm_news SET new_name = '".$_POST['new_name']."',new_description = '".$_POST['new_description']."', new_content = '".$new_content."'".$updateimage." WHERE id = '".$id."'";
+				$db->query("UPDATE hicrm_news SET new_name = '".$_POST['new_name']."',new_description = '".$_POST['new_description']."', new_content = '".$new_content."'".$updateimage." WHERE id = '".$id."'");
+				$result["status"] = 200;
+				$result['message'] = 'Sửa thành công';
+				$result['returnUrl'] = XC_URL."/admin/news";
+			}
+			else
+			{
+				$result["status"] = 500;
+				$result["message"] = "Không tồn tại nội dung này!";
+			}
+		}
+		echo json_encode($result);
+	}
+	//====END====/
+
+	//===== API events === 
+	public function events()
+	{
+		global $db;
+		$event_name = $_POST['event_name'];
+		$event_description = $_POST['event_description'];
+		$event_content = $db->escapestring($_POST['event_content']);
+		$event_user_created = $_POST['event_user_created'];
+		$event_created_date = date('Y-m-d H:i:s');
+		$FinalFilenameFront = "";
+		$FinalFilenameFront2 = "";
+		$expensions = array("jpeg","jpg","png");
+		$method = $_POST['method'];
+		$result = array();
+		$id = $_POST['eid'];
+		
+		if(isset($method) && $method == "add")
+		{
+			$FinalFilenameFront = "";
+			$FinalFilenameFront2 = "";
+			//echo $_FILES['hinhanh']['name']."ssss";
+			if ($_FILES['event_image']['error'] == 4) {
+				// Không có file upload → gán hình mặc định
+				$FinalFilenameFront = '';
+			}else{
+				$errors= array();
+				$file_name = $_FILES['event_image']['name'];
+				$file_size =$_FILES['event_image']['size'];
+				$file_tmp =$_FILES['event_image']['tmp_name'];
+				$file_type=$_FILES['event_image']['type'];
+				$file_ext=strtolower(end(explode('.',$_FILES['event_image']['name'])));
+				$OriginalFilename = $FinalFilename = preg_replace('`[^a-z0-9-_.]`i','',$_FILES['event_image']['name']); 
+				$FinalFilenameFront = md5(time())."-".$FinalFilename;
+				if(in_array($file_ext,$expensions)=== false){
+					$errors[]="Extension not allowed, please choose a .png, .jpg file.";
+				}
+				if($file_size > 5242880){
+					$errors[]='File size must be max 2Mb';
+				}
+				if(empty($errors)==true){
+					move_uploaded_file($file_tmp,"./uploads/events/".$FinalFilenameFront);
+					
+				}else
+				{
+					$result["status"] = 500;
+				}
+				
+			}
+			$db->query("INSERT INTO hicrm_events(event_name,event_description,event_content,event_image,event_user_created,event_status,event_created_date)
+			VALUES('".$_POST['event_name']."','".$_POST['event_description']."','".$event_content."','".$FinalFilenameFront."','".$event_user_created."',1,'".$event_created_date."')");
+			$result["status"] = 200;
+			$result["url"] = XC_URL."/uploads/events/".$FinalFilenameFront;
+			$result["id"] = $FinalFilenameFront;
+			$result['message'] = 'Thêm thành công';
+			$result['returnUrl'] = XC_URL."/admin/events";
+		}
+		elseif(isset($method) && $method == "edit")
+		{
+			// echo "ssss";
+			// echo $id .'id';
+			$db->query("SELECT * FROM hicrm_events WHERE id = '".$id."'");
+			$db->fetch_object(true);
+			if($db->num_row())
+			{
+				// echo "aa";
+				$FinalFilenameFront = "";
+				//echo $_FILES['hinhanh']['name']."ssss";
+				if(isset($_FILES['event_image']))
+				{
+					$errors= array();
+					$file_name = $_FILES['event_image']['name'];
+					$file_size =$_FILES['event_image']['size'];
+					$file_tmp =$_FILES['event_image']['tmp_name'];
+					$file_type=$_FILES['event_image']['type'];
+					$file_ext=strtolower(end(explode('.',$_FILES['event_image']['name'])));
+					$OriginalFilename = $FinalFilename = preg_replace('`[^a-z0-9-_.]`i','',$_FILES['event_image']['name']); 
+					$FinalFilenameFront = md5(time())."-".$FinalFilename;
+					if(in_array($file_ext,$expensions)=== false){
+						$errors[]="Extension not allowed, please choose a .png, .jpg file.";
+					}
+					if($file_size > 5242880){
+						$errors[]='File size must be max 2Mb';
+					}
+					if(empty($errors)==true){
+						move_uploaded_file($file_tmp,"./uploads/events/".$FinalFilenameFront);
+						
+					}else
+					{
+						$result["status"] = 500;
+					}
+					
+				}
+				
+				$updateimage = ($FinalFilenameFront != "")? ", event_image = '".$FinalFilenameFront."'" : "";
+				// echo "UPDATE hicrm_events SET event_name = '".$_POST['event_name']."',event_description = '".$_POST['event_description']."', event_content = '".$event_content."'".$updateimage." WHERE id = '".$id."'";
+				$db->query("UPDATE hicrm_events SET event_name = '".$_POST['event_name']."',event_description = '".$_POST['event_description']."', event_content = '".$event_content."'".$updateimage." WHERE id = '".$id."'");
+				$result["status"] = 200;
+				$result['message'] = 'Sửa thành công';
+				$result['returnUrl'] = XC_URL."/admin/events";
+			}
+			else
+			{
+				$result["status"] = 500;
+				$result["message"] = "Không tồn tại nội dung này!";
+			}
+		}
+		echo json_encode($result);
+	}
+	//====END====/
+
+	//=======API product ========== ////
+	public function productActions()
+	{
+		global $db;
+		$product_code = $_POST['product_code'];
+		$product_name = $_POST['product_name'];
+		$product_price = $_POST['product_price'];
+		$product_discount = $_POST['product_discount'];
+		$product_category = $_POST['product_category'];
+		$product_description = $db->escapestring($_POST['product_description']);
+		$product_unit = $_POST['product_unit'];
+		$product_created_time = date('Y-m-d H:i:s');
+		$product_vat_name = '';
+		$product_barcode = '';
+		$FinalFilenameFront = "";
+		$FinalFilenameFront2 = "";
+		$expensions = array("jpeg","jpg","png");
+		$method = $_POST['method'];
+		$result = array();
+		$id = $_POST['pid'];
+		if(isset($method) && $method == "new")
+		{
+			$FinalFilenameFront = "";
+			$FinalFilenameFront2 = "";
+			//echo $_FILES['hinhanh']['name']."ssss";
+			if ($_FILES['product_image']['error'] == 4) {
+				// Không có file upload → gán hình mặc định
+				$FinalFilenameFront = '';
+			}else{
+				$errors= array();
+				$file_name = $_FILES['product_image']['name'];
+				$file_size =$_FILES['product_image']['size'];
+				$file_tmp =$_FILES['product_image']['tmp_name'];
+				$file_type=$_FILES['product_image']['type'];
+				$file_ext=strtolower(end(explode('.',$_FILES['product_image']['name'])));
+				$OriginalFilename = $FinalFilename = preg_replace('`[^a-z0-9-_.]`i','',$_FILES['product_image']['name']); 
+				$FinalFilenameFront = md5(time())."-".$FinalFilename;
+				if(in_array($file_ext,$expensions)=== false){
+					$errors[]="Extension not allowed, please choose a .png, .jpg file.";
+				}
+				if($file_size > 5242880){
+					$errors[]='File size must be max 2Mb';
+				}
+				if(empty($errors)==true){
+					move_uploaded_file($file_tmp,"./uploads/products/".$FinalFilenameFront);
+					
+				}else
+				{
+					$result["status"] = 500;
+				}
+				
+			}
+			$db->query("INSERT INTO hicrm_products(product_name,product_code,product_barcode,product_vat_name,product_unit,product_category,product_price,product_discount,product_tax_id,product_description,product_image,product_created_time,product_status) VALUES ('".$product_name."','".$product_code."','".$product_barcode."','".$product_vat_name."','".$product_unit."','".$product_category."','".$product_price."','".$product_discount."',0,'".$product_description."','".$FinalFilenameFront."','".$product_created_time."',1)");			
+			$result["status"] = 200;
+			$result["url"] = XC_URL."/uploads/products/".$FinalFilenameFront;
+			$result["id"] = $FinalFilenameFront;
+			$result['message'] = 'Thêm thành công';
+			$result['returnUrl'] = XC_URL."/admin/products";
+		}
+		elseif(isset($method) && $method == "update")
+		{
+			// echo "ssss";
+			// echo $id .'id';
+			$db->query("SELECT * FROM hicrm_products WHERE id = '".$id."'");
+			$db->fetch_object(true);
+			if($db->num_row())
+			{
+				// echo "aa";
+				$FinalFilenameFront = "";
+				//echo $_FILES['hinhanh']['name']."ssss";
+				if(isset($_FILES['product_image']))
+				{
+					$errors= array();
+					$file_name = $_FILES['product_image']['name'];
+					$file_size =$_FILES['product_image']['size'];
+					$file_tmp =$_FILES['product_image']['tmp_name'];
+					$file_type=$_FILES['product_image']['type'];
+					$file_ext=strtolower(end(explode('.',$_FILES['product_image']['name'])));
+					$OriginalFilename = $FinalFilename = preg_replace('`[^a-z0-9-_.]`i','',$_FILES['product_image']['name']); 
+					$FinalFilenameFront = md5(time())."-".$FinalFilename;
+					if(in_array($file_ext,$expensions)=== false){
+						$errors[]="Extension not allowed, please choose a .png, .jpg file.";
+					}
+					if($file_size > 5242880){
+						$errors[]='File size must be max 2Mb';
+					}
+					if(empty($errors)==true){
+						move_uploaded_file($file_tmp,"./uploads/products/".$FinalFilenameFront);
+						
+					}else
+					{
+						$result["status"] = 500;
+					}
+					
+				}
+				
+				$updateimage = ($FinalFilenameFront != "")? ", product_image = '".$FinalFilenameFront."'" : "";
+				// echo "UPDATE hicrm_products SET product_name='".$product_name."',product_code='".$product_code."',product_barcode='".$product_barcode."',product_vat_name='".$product_vat_name."',product_unit='".$product_unit."',product_category='".$product_category."',product_price='".$product_price."',product_discount='".$product_discount."',product_tax_id=0,product_description='".$product_description."".$updateimage." WHERE id='".$id."'";
+				$db->query("UPDATE hicrm_products SET product_name='".$product_name."',product_code='".$product_code."',product_barcode='".$product_barcode."',product_vat_name='".$product_vat_name."',product_unit='".$product_unit."',product_category='".$product_category."',product_price='".$product_price."',product_discount='".$product_discount."',product_tax_id=0,product_description='".$product_description."'".$updateimage." WHERE id='".$id."'");
+
+				$result["status"] = 200;
+				$result['message'] = 'Sửa thành công';
+				$result['returnUrl'] = XC_URL."/admin/products";
+			}
+			else
+			{
+				$result["status"] = 500;
+				$result["message"] = "Không tồn tại nội dung này!";
+			}
+		}
+		echo json_encode($result);
+	}
+
+
+	///===END====//
+
+	public function addnews()
+	{
+		global $db;
+		$result = array();
+		$updatetype = $_POST['updatetype'];
+		if(isset($_POST['updatetype']) && $_POST['updatetype'] == "new")
+		{
+			$FinalFilenameFront = "";
+			$FinalFilenameFront2 = "";
+			//echo $_FILES['hinhanh']['name']."ssss";
+			if ($_FILES['hinhanh']['error'] == 4) {
+				// Không có file upload → gán hình mặc định
+				$FinalFilenameFront = $default_image;
+			}else{
+				$errors= array();
+				$file_name = $_FILES['hinhanh']['name'];
+				$file_size =$_FILES['hinhanh']['size'];
+				$file_tmp =$_FILES['hinhanh']['tmp_name'];
+				$file_type=$_FILES['hinhanh']['type'];
+				$file_ext=strtolower(end(explode('.',$_FILES['hinhanh']['name'])));
+				$OriginalFilename = $FinalFilename = preg_replace('`[^a-z0-9-_.]`i','',$_FILES['hinhanh']['name']); 
+				$FinalFilenameFront = md5(time())."-".$FinalFilename;
+				if(in_array($file_ext,$expensions)=== false){
+					$errors[]="Extension not allowed, please choose a .png, .jpg file.";
+				}
+				if($file_size > 5242880){
+					$errors[]='File size must be max 2Mb';
+				}
+				if(empty($errors)==true){
+					move_uploaded_file($file_tmp,"./uploads/general/".$FinalFilenameFront);
+					
+				}else
+				{
+					$result["status"] = 500;
+				}
+				
+			}
+			
+			$db->query("INSERT INTO bds_news(news_title,news_category,news_content,news_author,news_feature,news_view,news_image) VALUES('".$_POST['title']."','".$_POST['category']."','".$_POST['noidung']."','".$_SESSION['staff']['id']."',1,0,'".$FinalFilenameFront."')");
+			$result["status"] = 200;
+			$result["url"] = XC_URL."/uploads/general/".$FinalFilenameFront;
+			$result["id"] = $FinalFilenameFront;
+		}
+		elseif(isset($_POST['updatetype']) && $_POST['updatetype'] == "edit")
+		{
+			$db->query("SELECT * FROM bds_news WHERE id = '".$_POST['id']."'");
+			if($db->num_row())
+			{
+				$FinalFilenameFront = "";
+				//echo $_FILES['hinhanh']['name']."ssss";
+				if(isset($_FILES['hinhanh']))
+				{
+					$errors= array();
+					$file_name = $_FILES['hinhanh']['name'];
+					$file_size =$_FILES['hinhanh']['size'];
+					$file_tmp =$_FILES['hinhanh']['tmp_name'];
+					$file_type=$_FILES['hinhanh']['type'];
+					$file_ext=strtolower(end(explode('.',$_FILES['hinhanh']['name'])));
+					$OriginalFilename = $FinalFilename = preg_replace('`[^a-z0-9-_.]`i','',$_FILES['hinhanh']['name']); 
+					$FinalFilenameFront = md5(time())."-".$FinalFilename;
+					if(in_array($file_ext,$expensions)=== false){
+						$errors[]="Extension not allowed, please choose a .png, .jpg file.";
+					}
+					if($file_size > 5242880){
+						$errors[]='File size must be max 2Mb';
+					}
+					if(empty($errors)==true){
+						move_uploaded_file($file_tmp,"./uploads/general/".$FinalFilenameFront);
+						
+					}else
+					{
+						$result["status"] = 500;
+					}
+					
+				}
+				
+				$updateimage = ($FinalFilenameFront != "")? ", news_image = '".$FinalFilenameFront."'" : "";
+				$db->query("UPDATE bds_news SET news_title = '".$_POST['title']."', news_category = '".$_POST['category']."', news_content = '".$_POST['noidung']."' ".$updateimage." WHERE id = '".$_POST['id']."'");
+				$result["status"] = 200;
+			}
+			else
+			{
+				$result["status"] = 500;
+				$result["message"] = "Không tồn tại nội dung này!";
+			}
+		}
 		echo json_encode($result);
 	}
 	//======================== ORDER API =================================//
@@ -881,6 +1360,7 @@ Class apiController extends baseController
 		$result["new_employee_code"] = $lastno;
 		echo json_encode($result);
 	}
+	
 	public function deleteEmployee()
 	{
 		global $db;
@@ -2073,7 +2553,7 @@ Class apiController extends baseController
             $_SESSION['LoggedIn'] = 1;
 			$result["status"] = 200;
 			$result["name"] = $_SESSION['user']['fullname'];
-			$result['return_url'] = XC_URL."admin";
+			$result['return_url'] = XC_URL."/admin";
         }
 		else
 		{
@@ -3049,94 +3529,7 @@ Class apiController extends baseController
 		echo json_encode($result);
 	}
 	//===================================== NEWS FUNCTION ======================//
-	public function addnews()
-	{
-		global $db;
-		$result = array();
-		$updatetype = $_POST['updatetype'];
-		if(isset($_POST['updatetype']) && $_POST['updatetype'] == "new")
-		{
-			$FinalFilenameFront = "";
-			$FinalFilenameFront2 = "";
-			//echo $_FILES['hinhanh']['name']."ssss";
-			if ($_FILES['hinhanh']['error'] == 4) {
-				// Không có file upload → gán hình mặc định
-				$FinalFilenameFront = $default_image;
-			}else{
-				$errors= array();
-				$file_name = $_FILES['hinhanh']['name'];
-				$file_size =$_FILES['hinhanh']['size'];
-				$file_tmp =$_FILES['hinhanh']['tmp_name'];
-				$file_type=$_FILES['hinhanh']['type'];
-				$file_ext=strtolower(end(explode('.',$_FILES['hinhanh']['name'])));
-				$OriginalFilename = $FinalFilename = preg_replace('`[^a-z0-9-_.]`i','',$_FILES['hinhanh']['name']); 
-				$FinalFilenameFront = md5(time())."-".$FinalFilename;
-				if(in_array($file_ext,$expensions)=== false){
-					$errors[]="Extension not allowed, please choose a .png, .jpg file.";
-				}
-				if($file_size > 5242880){
-					$errors[]='File size must be max 2Mb';
-				}
-				if(empty($errors)==true){
-					move_uploaded_file($file_tmp,"./uploads/general/".$FinalFilenameFront);
-					
-				}else
-				{
-					$result["status"] = 500;
-				}
-				
-			}
-			
-			$db->query("INSERT INTO bds_news(news_title,news_category,news_content,news_author,news_feature,news_view,news_image) VALUES('".$_POST['title']."','".$_POST['category']."','".$_POST['noidung']."','".$_SESSION['staff']['id']."',1,0,'".$FinalFilenameFront."')");
-			$result["status"] = 200;
-			$result["url"] = XC_URL."/uploads/general/".$FinalFilenameFront;
-			$result["id"] = $FinalFilenameFront;
-		}
-		elseif(isset($_POST['updatetype']) && $_POST['updatetype'] == "edit")
-		{
-			$db->query("SELECT * FROM bds_news WHERE id = '".$_POST['id']."'");
-			if($db->num_row())
-			{
-				$FinalFilenameFront = "";
-				//echo $_FILES['hinhanh']['name']."ssss";
-				if(isset($_FILES['hinhanh']))
-				{
-					$errors= array();
-					$file_name = $_FILES['hinhanh']['name'];
-					$file_size =$_FILES['hinhanh']['size'];
-					$file_tmp =$_FILES['hinhanh']['tmp_name'];
-					$file_type=$_FILES['hinhanh']['type'];
-					$file_ext=strtolower(end(explode('.',$_FILES['hinhanh']['name'])));
-					$OriginalFilename = $FinalFilename = preg_replace('`[^a-z0-9-_.]`i','',$_FILES['hinhanh']['name']); 
-					$FinalFilenameFront = md5(time())."-".$FinalFilename;
-					if(in_array($file_ext,$expensions)=== false){
-						$errors[]="Extension not allowed, please choose a .png, .jpg file.";
-					}
-					if($file_size > 5242880){
-						$errors[]='File size must be max 2Mb';
-					}
-					if(empty($errors)==true){
-						move_uploaded_file($file_tmp,"./uploads/general/".$FinalFilenameFront);
-						
-					}else
-					{
-						$result["status"] = 500;
-					}
-					
-				}
-				
-				$updateimage = ($FinalFilenameFront != "")? ", news_image = '".$FinalFilenameFront."'" : "";
-				$db->query("UPDATE bds_news SET news_title = '".$_POST['title']."', news_category = '".$_POST['category']."', news_content = '".$_POST['noidung']."' ".$updateimage." WHERE id = '".$_POST['id']."'");
-				$result["status"] = 200;
-			}
-			else
-			{
-				$result["status"] = 500;
-				$result["message"] = "Không tồn tại nội dung này!";
-			}
-		}
-		echo json_encode($result);
-	}
+	
 	public function addpage()
 	{
 		global $db;
@@ -3292,10 +3685,10 @@ Class apiController extends baseController
 	{
 		global $db;
 		$result = array();
-		$db->query("SELECT * FROM bds_news WHERE id = '".$_POST['id']."'");
+		$db->query("SELECT * FROM hicrm_news WHERE id = '".$_POST['id']."'");
 		if($db->num_row())
 		{
-			$db->query("DELETE FROM bds_news WHERE id = '".$_POST['id']."'");
+			$db->query("UPDATE hicrm_news SET new_status = '99' WHERE id = '".$_POST['id']."'");
 			$result["status"] = 200;
 		}
 		else

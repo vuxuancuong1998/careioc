@@ -181,7 +181,7 @@
                   <div class="dropdown-menu">
                      <a class="dropdown-item" href="profile.html"><i data-feather="user" class="me-1"></i> Profile</a>
                      <a class="dropdown-item" href="settings.html"><i data-feather="settings" class="me-1"></i> Settings</a>
-                     <a class="dropdown-item" href="<?php echo XC_URL;?>logout"><i data-feather="log-out" class="me-1"></i> Logout</a>
+                     <a class="dropdown-item" href="<?php echo XC_URL;?>/logout"><i data-feather="log-out" class="me-1"></i> Logout</a>
                   </div>
                </li>
             </ul>
@@ -192,40 +192,37 @@
                   <ul>
                      <li class="menu-title"><span>Tính năng</span></li>
                      <li class="<?php echo ($active_menu == "dashboard")? "active" : "";?>">
-                        <a href="<?php echo XC_URL;?>admin"><i data-feather="home"></i> <span>Tổng quan</span></a>
+                        <a href="<?php echo XC_URL;?>/admin"><i data-feather="home"></i> <span>Tổng quan</span></a>
                      </li>
-					 <li class="submenu">
-                        <a href="#"><i data-feather="aperture"></i> <span>CRM</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li><a class="<?php echo ($active_menu == "customers")? "active" : "";?>" href="<?php echo XC_URL;?>/app/customers">Khách hàng/NCC</a></li>
-                        </ul>
+                      <li class="<?php echo ($active_menu == "calendar")? "active" : "";?>">
+                        <a href="<?php echo XC_URL;?>/admin/bookings"><i data-feather="calendar"></i> <span>Lịch hẹn khám</span></a>
                      </li>
-                     
 					 
-					 
-					 <li>
-                        <a href="<?php echo XC_URL;?>/app/fixedAsset"><i data-feather="codesandbox"></i> <span>Tài sản cố định</span></a>
-                     </li>
-                      <li class="submenu">
-                        <a href="#"><i data-feather="book"></i> <span>Quản lý tin tức</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li><a href="sales-report.html">Danh mục tin tức</a></li>
-                           <li><a href="expenses-report.html">Tin tức</a></li>
-                        </ul>
-                     </li>
                      <li class="submenu">
-                        <a href="#"><i data-feather="pie-chart"></i> <span>Trang tĩnh</span> <span class="menu-arrow"></span></a>
+                        <a href="#"><i data-feather="credit-card"></i> <span>Tin tức & sự kiện</span> <span class="menu-arrow"></span></a>
                         <ul>
-                           <li><a href="<?php echo XC_URL?>/admin/gioithieu">Giới thiệu</a></li>
-                           <li><a href="expenses-report.html">Liên hệ</a></li>
+                           <li><a href="<?php echo XC_URL;?>/admin/news">Tin tức</a></li>
+                           <li><a href="<?php echo XC_URL;?>/admin/events">Sự kiện</a></li>
                         </ul>
                      </li>
-                      <li>
-                     <a href="<?php echo XC_URL?>/app/employees"><i data-feather="users"></i> <span>Bác sĩ</span></a>
-                     </li>
                      
+                      <li>
+                     <a href="<?php echo XC_URL?>/app/employees"><i data-feather="user-check"></i> <span>Bác sĩ</span></a>
+                     </li>
+                    
+                     <li>
+                        <a href="<?php echo XC_URL?>/admin/products"><i data-feather="plus-square"></i> <span>Nhà thuốc</span></a>
+                     </li>
+
                      <li class="menu-title">
                         <span>Hệ thống</span>
+                     </li>
+                     <li class="submenu">
+                        <a href="#"><i data-feather="pie-chart"></i> <span>Quản trị Trang tĩnh</span> <span class="menu-arrow"></span></a>
+                        <ul>
+                           <li><a href="<?php echo XC_URL?>/admin/gioithieu/1">Giới thiệu</a></li>
+                           <!-- <li><a href="expenses-report.html">Liên hệ</a></li> -->
+                        </ul>
                      </li>
                       <li class="submenu"> 
                         <a href="#"><i data-feather="home"></i> <span>Quản trị trang chủ</span> <span class="menu-arrow"></span></a>
@@ -242,19 +239,21 @@
                         <ul>
                            <!-- <li><a href="<?php echo XC_URL?>/admin/addusers">Thêm mới người dùng</a></li> -->
                            <li><a href="<?php echo XC_URL?>/admin/users">Quản lý tài khoản</a></li>
-                            <li><a href="<?php echo XC_URL?>/admin/dmType">Quản lý loại danh mục</a></li>
+                            <li><a href="<?php echo XC_URL?>/admin/calendarword">Lịch công tác</a></li>
                         </ul>
                          
                      </li>
-                   
-					 
-                     
-                     
-                     <li class="<?php echo ($active_menu == "settings")? "active" : "";?>">
-                        <a href="<?php echo XC_URL;?>/admin/dmimages"><i data-feather="image"></i> <span>Danh mục hình ảnh</span></a>
-                     </li>              
+                      <li class="submenu"> 
+                        <a href="#"><i data-feather="layers"></i> <span>Quản trị danh mục</span> <span class="menu-arrow"></span></a>
+                        <ul>
+                           <li><a  href="<?php echo XC_URL?>/admin/categories/products">Quản lý loại thuốc </a></li>
+                           <li><a href="<?php echo XC_URL;?>/admin/dmimages">Danh mục hình ảnh</a></li>   
+                           <li><a href="<?php echo XC_URL?>/admin/dmType">Quản lý danh mục chung</a></li> 
+                        </ul>
+                         
+                     </li>
 					 <li class="<?php echo ($active_menu == "settings")? "active" : "";?>">
-                        <a href="<?php echo XC_URL;?>/app/setting"><i data-feather="settings"></i> <span>Thông tin đơn vị</span></a>
+                        <a href="<?php echo XC_URL;?>/admin/setting"><i data-feather="settings"></i> <span>Thông tin đơn vị</span></a>
                      </li>
                      
                   </ul>

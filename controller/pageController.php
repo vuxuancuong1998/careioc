@@ -9,7 +9,7 @@ Class pageController extends baseController
 	{
 		var_dump($para);
 	}
-	public function gioithieu(){
+	public function introduce(){
 		$this->view->show("gioithieu");
 	}
 	public function demo()
@@ -19,35 +19,10 @@ Class pageController extends baseController
 	public function booking()
 	{
 		global $db;
-		$db->query("SELECT * FROM hicrm_bookings");
-		$datalist = $db->fetch_object();
-		$result = array();
-		foreach($datalist as $data)
-		{
-			$calendar = array();
-			$calendar["title"] = $data->event_title;
-			$calendar["start"] = $data->event_time_from;
-			$calendar["end"] = $data->event_time_to;
-			if($data->event_type == 2)
-			{
-				$calendar["className"] = "fc-event-light bg-primary fc-event-solid-primary";
-			}
-			elseif($data->event_type == 1)
-			{
-				$calendar["className"] = "fc-event-light bg-success fc-event-solid-success";
-			}
-			elseif($data->event_type == 3)
-			{
-				$calendar["className"] = "fc-event-light bg-info fc-event-solid-info";
-			}
-			else
-			{
-				$calendar["className"] = "fc-event-light bg-warning fc-event-solid-warning";
-			}
-			//$calendar["end"] = date("Y-m-d H:i:s",strtotime($data->event_time." + 5 minutes"));
-			array_push($result,$calendar);
-		}
-		echo json_encode($result);
+		$db->query("SELECT * FROM hicrm_employees WHERE employee_status NOT IN (99) AND employee_position = '1'");
+		$doctors = $db->fetch_object();
+		$this->view->data['doctors'] = $doctors;
+		$this->view->show('booking');
 	}
 	public function profile($para){
 		$id = $para[1];
@@ -265,7 +240,7 @@ Class pageController extends baseController
 			'phone' => '0917281333',
 			'message' => $Content
 		);
-		$url = 'https://api.gialai.biz/service/send';
+		// $url = 'https://api.gialai.biz/service/send';
 		// Khởi tạo CURL
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
