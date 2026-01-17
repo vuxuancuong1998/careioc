@@ -396,10 +396,12 @@ $(document).ready(function(){
                             </div>
                             <div class="bcol hiddenmb">
                                 <div class="tplinkhead ">
+                                    <ul> 
+                                        <li class="vmm"><a href="javascript:;" target=_self><i class='fa fa-user'></i><span>Đăng nhập</span></a>
+                                         
+                                    </li>
                                     <ul>
-                                        <!-- <li class="vmm sub"><a href="javascript:;" target=_self><img src="<?php echo $template_path; ?>/assets/vnt_upload/menu/04_2024/ifile.png" alt="HỒ SƠ BỆNH ÁN"><span>HỒ SƠ BỆNH ÁN</span></a><ul><li class='vhh'><a href='https://ketqua.ytedaiphuoc.vn/UserBenhNhan' target='_self'><img  src="<?php echo $template_path; ?>/assets/vnt_upload/menu/04_2024/ifile.png"   alt = 'Hồ sơ bệnh án điện tử'  /><span>Hồ sơ bệnh án điện tử</span></a></li><li class='vmm'><a href='https://ketqua.ytedaiphuoc.vn/HomeAdmin/Login' target='_self'><img  src="<?php echo $template_path; ?>/assets/vnt_upload/menu/04_2024/ifile.png"   alt = 'Hồ sơ bệnh án cho bác sĩ'  /><span>Hồ sơ bệnh án cho bác sĩ</span></a></li></ul>
-                                    </li> -->
-                                    <li class="vhh"><a href="dang-ky-lich-kham.html" target=_self><img src="<?php echo $template_path; ?>/assets/vnt_upload/menu/04_2024/iedit.png" alt="Đặt lịch khám"><span>Đặt lịch khám</span></a></li></ul>
+                                    <li class="vhh"><a href="dang-ky-lich-kham.html" target=_self><img src="<?php echo $template_path; ?>/assets/vnt_upload/menu/iedit.png" alt="Đặt lịch khám"><span>Đặt lịch khám</span></a></li></ul>
                                     
                                 </div>
                             </div>
@@ -441,48 +443,16 @@ $(document).ready(function(){
                                             <li>
                                                 <a href='vn/goi-kham-lai-xe.html' target='_self'>Gói Khám Sức Khỏe</a>
                                             </li>
-                                            <li>
-                                                <a href='javascript:;' target='_self'>
-                                                <span>Khám tổng quát</span>
-                                                </a>
-                                                <ul>
-                                                <li>
-                                                    <a href='vn/tam-soat-ung-thu-tuoi-18-30.html' target='_self'>Gói Tổng quát người lớn</a>
-                                                </li>
-                                                <li>
-                                                   <a href='vn/tam-soat-ung-thu-tuoi-18-30.html' target='_self'>Gói Tổng quát trẻ em</a>
-                                                </li>
-                                                
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <a href='javascript:;' target='_self'>
-                                                <span>Gói Khám Sức Khỏe</span>
-                                                </a>
-                                                <ul>
-                                                <li>
-                                                    <a href='vn/kham-suc-khoe-tien-hon-nhan.html' target='_self'>Gói Khám Sức Khỏe Tiền Hôn Nhân</a>
-                                                </li>
-                                                <li>
-                                                    <a href='vn/goi-kham-an-toan-thuc-pham.html' target='_self'>Gói Khám An Toàn Thực Phẩm</a>
-                                                </li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <a href='
-                                                            <?php echo $template_path; ?>/lay-mau-xet-nghiem-tai-nha.html' target='_self'>Lấy Mẫu Xét Nghiệm Tại Nhà </a>
-                                            </li>
-                                          
                                             </ul>
                                         </li>
                                         <li>
-                                            <a href='vn/chuyen-khoa.html' target='_self'>Chuyên khoa</a>
+                                            <a href='nha-thuoc.html' target='_self'>Nhà Thuốc</a>
                                         </li>
                                         <li>
                                             <a href='vn/doi-ngu-bac-si.html' target='_self'>Bác sĩ</a>
                                         </li>
                                         <li>
-                                            <a href='vn/huong-dan.html' target='_self'>Hướng dẫn khám bệnh</a>
+                                            <a href='vn/huong-dan.html' target='_self'>Lịch công tác</a>
                                         </li>
                                         <li>
                                             <a href='vn/tin-tuc.html' target='_self'>Tin tức</a>
@@ -497,54 +467,13 @@ $(document).ready(function(){
                             <div class="hcol">
                                 <div class="tpfindshead">
                                     <script>
-	function check_search(f){
-		var key_default = "Nhập từ khóa";
-		var keyword = f.keyword.value;		
-		var key_len = f.keyword.value.length;
+	
 
-		if( (keyword == key_default) || (keyword == '')){
-            vnTScript.alert_notifi('Vui lòng nhập từ khóa', 'error');
-			f.keyword.focus();
-			return false;
-		}
-
-		if( key_len < 2){
-            vnTScript.alert_notifi('Từ khóa tới thiểu là 2 ký tự', 'error');
-			f.keyword.focus();
-			return false;
-		}
-		return true;
-	}
-
-    /*$(document).ready(function() {
-        $("#cateS").change(function(e) {
-            var link_action = $('#cateS option:selected').attr('data-link');
-            $("#formSearch").attr('action', link_action+'/');
-        });
-    });*/
+    
 </script>
-
-<form id="formSearch" name="formSearch" method="GET" action="https://phongkhamcaodangkontum.edu.vn/vn/tim-kiem.html/" onSubmit="return check_search(this);" class="box_search">
-    <div class="frmponsi ">
-        <input name="keyword" type="text" class="text_search" value="" placeholder="Nhập từ khóa" autocomplete="off" />
-        <button type="submit" class="btn-search"><i class="fa fa-search"></i></button>
-        
-    </div>
-</form>
 <div class="ajax_search"></div>
                                 </div>
-                                
-                                <script>
-                                    $(document).ready(function() {
-                                        $(".tplanghead .nntitle").click(function () {
-                                            if (!$(this).parents(".tplanghead").hasClass("active")) {
-                                                $(this).parents(".tplanghead").addClass("active");
-                                            } else {
-                                                $(this).parents(".tplanghead").removeClass("active");
-                                            }
-                                        });
-                                    }); 
-                                </script>
+                            
                             </div>
                         </div>
                     </div>

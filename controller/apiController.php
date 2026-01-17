@@ -236,6 +236,18 @@ Class apiController extends baseController
 		
 		echo json_encode($result);
 	}
+	public function loadIntroduce(){
+		global $db;
+		$id = $_POST['id'];
+		$db->query("SELECT *, i.id as id FROM hicrm_introduce as i
+					LEFT JOIN hicrm_type as t ON i.introduce_id_type = t.id WHERE i.introduce_id_type= '".$id."'");
+		$introduce = $db->fetch_object(true);
+		$result['title'] = $introduce->type_name;
+		$result['content'] = $introduce->introduce_content;
+		$result['status'] = 200;
+		echo json_encode($result);
+
+	}
 	public function calendarEmployee(){
 		global $db;
 		$result = array();

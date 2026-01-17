@@ -244,7 +244,7 @@ label.error{
                                  <select class="select select2 form-control" id='product_category' name="product_category">
 									<option >----Chọn----</option>
 									<?php foreach($product_categories as $category){?>
-									<option value="<?php echo $category->id;?>"><?php echo $category->category_name;?></option>
+									<option value="<?php echo $category->id;?>"  <?php if($product->product_category == $category->id) echo 'selected = selected'; ?>><?php echo $category->category_name;?></option>
 									<?php }?>
 								 
 							   </select>
@@ -254,12 +254,11 @@ label.error{
                               <div class="form-group">
                                  <label>Đơn vị tính:</label><span class='text-danger'>*</span>
                                  <select class="select select2 form-control" id='product_unit' name="product_unit">
-									<option >----Chọn----</option>
+									<option>----Chọn----</option>
 									<?php foreach($units as $unit){?>
-									<option value="<?php echo $unit->id;?>"
-										<?php if($product->product_unit == $unit->id) echo 'selected'; ?>>
-										<?php echo $unit->unit_name;?>
-									</option>									<?php }?>
+									<option value="<?php echo $unit->id;?>" <?php if($product->product_unit == $unit->id) echo 'selected = selected'; ?>><?php echo $unit->unit_name;?>
+									</option>									
+									<?php }?>
 							   </select>
                               </div>
                            </div>

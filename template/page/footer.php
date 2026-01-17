@@ -190,7 +190,7 @@
                             <div class='tppartfoot '><div class='pntitle'><h3>Liên kết</h3></div><div class='pnconts'><ul><li>
                                 <!-- <div class='vlogo'>
                                     <a href='https://medinet.gov.vn/tin-tuc-su-kien-c1780.aspx' target='_self'>
-                                        <img  src="<?php echo $template_path; ?>/assets/vnt_upload/menu/04_2024/logoyt.png"   width='25px' alt = 'Cổng thông tin điện tử Sở Y tế TP. Hồ Chí Minh'  />
+                                        <img  src="<?php echo $template_path; ?>/assets/vnt_upload/menu/logoyt.png"   width='25px' alt = 'Cổng thông tin điện tử Sở Y tế TP. Hồ Chí Minh'  />
                                     </a>
                                 </div>
                                 <div class='vtext'>
@@ -201,7 +201,7 @@
                                 </li><li>
                               <div class='vlogo'>
                                   <a href='https://medinet.gov.vn/thong-bao-tb1013.aspx' target='_self'>
-                                      <img  src="<?php echo $template_path; ?>/assets/vnt_upload/menu/04_2024/logoyt.png"   width='25px' alt = 'Cập nhật thông báo Sở Y tế TP. Hồ Chí Minh'  />
+                                      <img  src="<?php echo $template_path; ?>/assets/vnt_upload/menu/logoyt.png"   width='25px' alt = 'Cập nhật thông báo Sở Y tế TP. Hồ Chí Minh'  />
                                   </a>
                               </div>
                               <div class='vtext'>
@@ -262,16 +262,12 @@
                 </div>
                 <div class="mmtools">
                     <div class="tplinkhead">
-                        <ul><li class="vhh"><a href="vn/dang-ky-lich-kham.html" target=_self><img src="<?php echo $template_path; ?>/assets/vnt_upload/menu/04_2024/iedit.png" alt="Đặt lịch khám"><span>Đặt lịch khám</span></a></li></ul>
+                        <ul><li class="vhh"><a href="vn/dang-ky-lich-kham.html" target=_self><img src="<?php echo $template_path; ?>/assets/vnt_upload/menu/iedit.png" alt="Đặt lịch khám"><span>Đặt lịch khám</span></a></li></ul>
                     </div>
                 </div>
                 <ul class="mmMain"><li ><a href='vn/gioi-thieu.html' target='_self'>Giới thiệu</a></li><li ><a href='vn/dich-vu.html' target='_self'>Dịch vụ</a><div class='submenuMb'><div class='titleSub'>Dịch vụ</div><div class='lstSub'><ul ><li ><a href='vn/kham-vip-doanh-nhan.html' target='_self'>Khám VIP - VIP doanh nhân</a></li><li ><a href='vn/chuyen-khoa.html' target='_self'>Khám Bệnh Đa Chuyên Khoa</a></li><li ><a href='vn/kham-bao-hiem-y-te.html' target='_self'>Khám BHYT - Dịch Vụ</a></li><li ><a href='vn/goi-kham-lai-xe.html' target='_self'>Gói Khám Sức Khỏe Lái Xe</a></li><li ><a href='vn/goi-kham-cap-giay-kham-suc-khoe.html' target='_self'>Gói Khám Sức Khỏe Đi Học, Đi Làm TT32</a></li><li ><a href='javascript:;' target='_self'>Tầm Soát Ung Thư</a><div class='submenuMb'><div class='titleSub'>Tầm Soát Ung Thư</div><div class='lstSub'><ul ><li ><a href='vn/tam-soat-ung-thu-tuoi-18-30.html' target='_self'>Gói Tầm Soát Ung Thư 18 - 30</a></li><li ><a href='vn/tam-soat-ung-thu-tuoi-30-40.html' target='_self'>Gói Tầm Soát Ung Thư 30 - 40</a></li><li ><a href='vn/tam-soat-ung-thu-tren-40.html' target='_self'>Gói Tầm Soát Ung Thư Trên 40</a></li></ul></div></div></li><li ><a href='javascript:;' target='_self'>Gói Khám Sức Khỏe</a><div class='submenuMb'><div class='titleSub'>Gói Khám Sức Khỏe</div><div class='lstSub'><ul ><li ><a href='vn/kham-suc-khoe-tien-hon-nhan.html' target='_self'>Gói Khám Sức Khỏe Tiền Hôn Nhân</a></li><li ><a href='vn/goi-kham-an-toan-thuc-pham.html' target='_self'>Gói Khám An Toàn Thực Phẩm</a></li></ul></div></div></li><li ><a href='<?php echo $template_path; ?>/lay-mau-xet-nghiem-tai-nha.html' target='_self'>Lấy Mẫu Xét Nghiệm Tại Nhà</a></li><li ><a href='vn/bao-hiem-y-te-ho-gia-dinh.html' target='_self'>Bảo Hiểm Y Tế Hộ Gia Đình</a></li></ul></div></div></li><li ><a href='vn/chuyen-khoa.html' target='_self'>Chuyên khoa</a></li><li ><a href='vn/doi-ngu-bac-si.html' target='_self'>Bác sĩ</a></li><li ><a href='vn/huong-dan.html' target='_self'>Hướng dẫn khám bệnh</a></li><li ><a href='vn/tin-tuc.html' target='_self'>Tin tức</a></li><li ><a href='vn/lien-he.html' target='_self'>Liên hệ</a></li></ul>
                 <div class="mmsearch">
-                    <form id="formSearchMb" name="formSearch" method="GET" action="https://phongkhamcaodangkontum.edu.vn/vn/tim-kiem.html/" onSubmit="return check_search(this);" class="box_search box-search">
-    <input name="keyword" type="text" class="text_search" value="" placeholder="Nhập từ khóa" autocomplete="off" />
-    <button type="submit" class="btn-search"><i class="fa fa-search"></i></button>
-    <div class="clear"></div>
-</form>
+                  
 <div class="ajax_search"></div>
                 </div>
             </div>
@@ -282,12 +278,12 @@
 
 <div class="vnt-tool">
     <div id="vnt-menu-fixed" class="hidden-xs hidden-sm "><ul><li class='fxphone'>
-                      <a href='javascript:;' style='background-color: #ed2024;' rel='nofollow'><img src='<?php echo $template_path; ?>/assets/vnt_upload/menu/04_2024/callw.png' alt='Hotline' class='vhrung' /></a>
+                      <a href='javascript:;' style='background-color: #ed2024;' rel='nofollow'><img src='<?php echo $template_path; ?>/assets/vnt_upload/menu/callw.png' alt='Hotline' class='vhrung' /></a>
                       <span style='background: #ed2024;'>
                           Hotline: <span> <a href='tel:0828 228 339'>0828 228 339</a></span>
                       </span>
                   </li><li class='fxmess'>
-                    <a href='https://m.me/378129682322155' target='_blank' style='background-color: #8c38eb;' rel='nofollow'><img src='<?php echo $template_path; ?>/assets/vnt_upload/menu/08_2024/pngwing.com_16_04_2025.webp' alt='Chát cùng chúng tôi' /></a>
+                    <a href='https://m.me/378129682322155' target='_blank' style='background-color: #8c38eb;' rel='nofollow'><img src='<?php echo $template_path; ?>/assets/vnt_upload/menu/pngwing.com_16_04_2025.webp' alt='Chát cùng chúng tôi' /></a>
                     <span style='background: #8c38eb;'><a href='https://m.me/378129682322155' target='_blank' rel='nofollow'>Chát cùng chúng tôi</a></span>
                   </li><li class='fxtop go_top'>
                       <a href='javascript:;' target='_self' onclick="jQuery('html,body').animate({scrollTop: 0},1000);" style='background-color: #6bc0e7;' rel='nofollow'><i class='fa fa-arrow-up'></i></a>
@@ -295,12 +291,12 @@
                   </li></ul></div>
     <div class="support-hotline hidden-md hidden-lg"><ul><li class='fxphone'>
                         <a href='tel:0828 228 339'>
-                            <img src='<?php echo $template_path; ?>/assets/vnt_upload/menu/04_2024/callw.png' alt='Hotline' width='16px' />
+                            <img src='<?php echo $template_path; ?>/assets/vnt_upload/menu/callw.png' alt='Hotline' width='16px' />
                             <span class='txt'>Hotline</span>
                         </a>
                     </li><li class='fxchat'>
                         <a href='https://m.me/378129682322155' target='_blank' rel='nofollow'>
-                            <img src='<?php echo $template_path; ?>/assets/vnt_upload/menu/08_2024/pngwing.com_16_04_2025.webp' alt='Chát cùng chúng tôi' width='20px' />
+                            <img src='<?php echo $template_path; ?>/assets/vnt_upload/menu/pngwing.com_16_04_2025.webp' alt='Chát cùng chúng tôi' width='20px' />
                             <span class='txt'>Messenger</span>
                         </a>
                     </li><li class='backFx'>

@@ -177,6 +177,21 @@ private function getController() {
 				$this->args = $args;
 			}
 		}
+		elseif($parts[0] == "nha-thuoc.html")
+		{
+			// echo $parts[0];
+			$this->controller = "page";
+			$this->action = "products";
+			if(isset( $parts[1]))
+			{
+				$count_args = count($parts);
+				$k = 1;
+				$args = array();
+				for($i = 1; $i < $count_args; $i++)
+					$args[$k++] = $parts[$i]; 
+				$this->args = $args;
+			}
+		}
 		//Router backend
 		elseif($parts[1] == "admin")
 		{

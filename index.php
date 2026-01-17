@@ -20,5 +20,7 @@ error_reporting(~E_ALL);
  $registry->router->setPath (__SITE_PATH . '/controller');
 
  /*** load the controller ***/
+
  $registry->router->loader();
+    
 ?>

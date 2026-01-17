@@ -10,6 +10,17 @@ Class pageController extends baseController
 		var_dump($para);
 	}
 	public function introduce(){
+		global $db;
+		$db->query("SELECT * FROM hicrm_type WHERE type_detail = 1 AND type_status NOT IN(99) ORDER BY id ASC");
+		$type_introduce = $db->fetch_object();
+		$db->query("SELECT *, i.id as id FROM hicrm_introduce as i
+					LEFT JOIN hicrm_type as t ON i.introduce_id_type = t.type_detail WHERE i.id= '1'");
+		$introduce = $db->fetch_object(true);
+		
+		$this->view->data['introduce'] = $introduce;
+
+		$this->view->data['type_introduce'] = $type_introduce;
+		
 		$this->view->show("gioithieu");
 	}
 	public function demo()
@@ -23,6 +34,16 @@ Class pageController extends baseController
 		$doctors = $db->fetch_object();
 		$this->view->data['doctors'] = $doctors;
 		$this->view->show('booking');
+	}
+	public function products(){
+		global $db;
+		$db->query("SELECT * FROM hicrm_product_categories ORDER BY id ASC");
+		$this->view->data['product_category'] = $db->fetch_object();
+		$db->query("SELECT *, p.id as pid FROM hicrm_products as p 
+					LEFT JOIN hicrm_product_categories pc ON p.product_category = pc.id WHERE p.product_status NOT IN (99) ORDER BY p.product_created_time DESC
+		");
+		$this->view->data['products'] = $db->fetch_object();
+		$this->view->show("products");
 	}
 	public function profile($para){
 		$id = $para[1];

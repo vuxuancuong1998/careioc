@@ -24,7 +24,7 @@ Class adminController extends baseController
 		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
 		if(isset($para[1]) && $para[1] == "detail" ){
 			$id = $para[2];
-			print_r('aaa');
+			// print_r('aaa');
 			$db->query("SELECT *, u.id as uid FROM hicrm_users as u 
 					LEFT JOIN hicrm_status as s ON u.user_status = s.id
 					LEFT JOIN hicrm_user_groups as g ON u.user_group = g.id
