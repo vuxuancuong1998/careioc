@@ -15,6 +15,8 @@
                ['style', ['style']],
                ['font', ['bold', 'underline', 'clear', 'italic']],
                ['color', ['color']],
+                ['fontname', ['fontname']],   // chọn font chữ
+        ['fontsize', ['fontsize']],   // chọn cỡ chữ
                ['para', ['ul', 'ol', 'paragraph']],
                ['table', ['table']], // Nút kẻ bảng
                ['insert', ['link', 'picture', 'video']], // Nút chèn link, ảnh, video

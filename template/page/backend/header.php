@@ -213,8 +213,8 @@
                       <li class="submenu"> 
                         <a href="#"><i data-feather="slack"></i> <span>Dịch vụ</span> <span class="menu-arrow"></span></a>
                         <ul>
-                           <li><a href="<?php echo XC_URL?>/admin/service/ck">Chuyên khoa</a></li>
-                            <li><a href="<?php echo XC_URL?>/admin/service/gk">Gói khám</a></li>
+                           <li><a href="<?php echo XC_URL?>/admin/service/6">Chuyên khoa</a></li>
+                            <li><a href="<?php echo XC_URL?>/admin/service/7">Gói khám</a></li>
                         </ul>
                          
                      </li>

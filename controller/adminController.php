@@ -308,8 +308,53 @@ Class adminController extends baseController
 		}
 	}
 	public function service($para){
+		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/login"); }
 		global $db;
+		if(isset($para) && $para[2] == "add"){
+			$db->query("SELECT * FROM hicrm_categories WHERE id = '".$para[1]."'");
+			$nameCategory = $db->fetch_object(true)->category_name;
+			$this->view->data['category_name'] = $nameCategory;
+			$this->view->data['service_category'] = $para[1];
+			$this->view->data['method'] = 'add';
+			$this->view->show('backend/service_action');
+		}elseif(isset($para) && $para[2] == "edit"){
+			$db->query("SELECT * FROM hicrm_service WHERE id = '".$para[3]."'");
+			$service_detail = $db->fetch_object(true);
+			$db->query("SELECT * FROM hicrm_categories WHERE id = '".$para[1]."'");
+			$nameCategory = $db->fetch_object(true)->category_name;
+			$this->view->data['category_name'] = $nameCategory;
+			$this->view->data['service_detail'] = $service_detail;
+
+			$this->view->data['service_category'] = $para[1];
+			$this->view->data['service_id'] = $para[3];
+			$this->view->data['method'] = 'edit';
+			$this->view->show('backend/service_action');
+
+		}elseif(isset($para) && $para[2] == "detail"){
+			$db->query("SELECT * FROM hicrm_service WHERE id = '".$para[3]."'");
+			$service_detail = $db->fetch_object(true);
+			$this->view->data['service_detail'] = $service_detail;
+			$this->view->data['id'] = $para[1];
+			$this->view->show('backend/service_detail');
+			
+		}else{
+			$db->query("SELECT * FROM hicrm_categories WHERE id = '".$para[1]."'");
+			$nameCategory = $db->fetch_object(true)->category_name;
+			$db->query("SELECT *, s.id as sid FROM hicrm_service as s
+						LEFT JOIN hicrm_categories as c ON s.service_category = c.id WHERE c.id = '".$para[1]."'AND s.service_status NOT IN(99) ORDER BY s.service_created_date DESC
+			");
+			$services = $db->fetch_object();
+			$this->view->data['category_name'] = $nameCategory;
+			$this->view->data['id'] = $para[1];
+			$this->view->data['services'] = $services;
+			$this->view->show("backend/service");
+		}
+
 		
+	}
+	public function calendarword(){
+		global $db;
+		$this->view->show('backend/lichcongtac');
 	}
 	public function categories($para)
 	{
@@ -411,10 +456,7 @@ Class adminController extends baseController
 			header("Location: ".XC_URL."/admin");
 		}
 	}
-	public function calendarword(){
-		global $db;
-
-	}
+	
 	public function profile(){
 		$model_user = $this->model->get('user');
 		$get_user = $model_user -> get_user($_SESSION['user']['id']);

@@ -1052,6 +1052,12 @@ Class general{
 		}
  
 	}
+    function limit_text($text, $limit) {
+    if (mb_strlen($text, 'UTF-8') <= $limit) {
+        return $text;
+    }
+    return mb_substr($text, 0, $limit, 'UTF-8') . '...';
+}
 	
 	
 }
