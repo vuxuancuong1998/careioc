@@ -90,9 +90,9 @@
             <div class="card-body">
                <form action="#">
                <div class="form-group row">
-               <?php foreach($type as $type){?>
+               <?php foreach($category as $category){?>
                 <div class="col-md-2">
-                  <a href='<?php echo XC_URL?>/admin/gioithieu/<?php echo $type->id;?>' class='btn btn-primary text-white' value='<?php echo $type->type_name;?>'><?php echo $type->type_name;?></a>
+                  <a href='<?php echo XC_URL?>/admin/gioithieu/<?php echo $category->id;?>' class='btn btn-primary text-white' value='<?php echo $category->category_name;?>'><?php echo $category->category_name;?></a>
                 </div>
                 <?php }?>
                 </div>

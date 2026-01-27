@@ -253,29 +253,47 @@ Class general{
             return "";
         }
     }
-    public function bodau($title) {
-        $title = preg_replace('/(")/','',$title);
-        $url_pattern = array('` &(amp;|"| |"|#)?[a-z0-9]+;`i', '`[^a-z0-9]`i');
+   public function bodau($title)
+{
+    // 1. Chuẩn hóa chuỗi
+    $title = trim($title);
+    $title = mb_strtolower($title, 'UTF-8');
 
-        $title = htmlentities($title, ENT_COMPAT, 'utf-8');
-        $title = preg_replace( '`&([a-z]+)(acute|uml|circ|quot|grave|ring|cedil|slash|tilde|caron|lig);`i', "\\1", $title );
-        $title = preg_replace('`\[.*\]`U','',$title);
-        $title = strtolower(trim($title, '-'));
+    // 2. Bỏ dấu tiếng Việt
+    $viet = [
+        'à','á','ạ','ả','ã','â','ầ','ấ','ậ','ẩ','ẫ','ă','ằ','ắ','ặ','ẳ','ẵ',
+        'è','é','ẹ','ẻ','ẽ','ê','ề','ế','ệ','ể','ễ',
+        'ì','í','ị','ỉ','ĩ',
+        'ò','ó','ọ','ỏ','õ','ô','ồ','ố','ộ','ổ','ỗ','ơ','ờ','ớ','ợ','ở','ỡ',
+        'ù','ú','ụ','ủ','ũ','ư','ừ','ứ','ự','ử','ữ',
+        'ỳ','ý','ỵ','ỷ','ỹ',
+        'đ'
+    ];
 
-        $title = preg_replace("/(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ|À|Á|Ả|Ã|Ạ|Ằ|Ắ|Ẳ|Ẵ|Ặ|Ầ|Ấ|Ẩ|Ẫ|Ậ)/", 'a', $title);
-        $title = preg_replace("/(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ|È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ể|Ễ|Ệ)/", 'e', $title);
-        $title = preg_replace("/(ì|í|ị|ỉ|ĩ)/", 'i', $title);
-        $title = preg_replace("/(-)/", '', $title);
-        $title = preg_replace("/(ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ|Ồ|Ố|Ổ|Ỗ|Ộ|Ờ|Ớ|Ở|Ỡ|Ợ)/", 'o', $title);
-        $title = preg_replace("/(ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ|Ù|Ú|Ủ|Ũ|Ụ|Ừ|Ứ|Ử|Ữ|Ự)/", 'u', $title);
-        $title = preg_replace("/(ỳ|ý|ỵ|ỷ|ỹ|Ỳ|Ý|Ỷ|Ỹ|Ỵ)/", 'y', $title);
-        $title = preg_replace("/(đ)/", 'd', $title);
-        $title = preg_replace("/(Đ)/", 'd', $title);
-        $title = preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', $title);
-        $title = preg_replace($url_pattern , '-', $title);
-        $title = preg_replace("/(--)/",'-',$title);
-        return $title;
-    }
+    $latin = [
+        'a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a',
+        'e','e','e','e','e','e','e','e','e','e','e',
+        'i','i','i','i','i',
+        'o','o','o','o','o','o','o','o','o','o','o','o','o','o','o','o','o',
+        'u','u','u','u','u','u','u','u','u','u','u',
+        'y','y','y','y','y',
+        'd'
+    ];
+
+    $title = str_replace($viet, $latin, $title);
+
+    // 3. Xóa ký tự đặc biệt (chỉ giữ a-z 0-9 và khoảng trắng)
+    $title = preg_replace('/[^a-z0-9\s]/', '', $title);
+
+    // 4. Đổi khoảng trắng thành dấu -
+    $title = preg_replace('/\s+/', '-', $title);
+
+    // 5. Xóa dấu - dư
+    $title = trim($title, '-');
+
+    return $title;
+}
+
 
 	public function bodau_ten($title) {
         $title = preg_replace('/(")/','',$title);
@@ -342,6 +360,21 @@ Class general{
 				$fs = XC_URL."/tin-rao/".$bl->id."-".$this->bodau($bl->post_title).".html";
 				break;
 			}
+            case "events":
+			{
+				$db->query("SELECT * FROM hicrm_categories WHERE id = '1'");
+				$bl = $db->fetch_object(true);
+				$fs = XC_URL."/tin-tuc-su-kien/".$bl->id."-".$this->bodau($bl->category_name).".html";
+				break;
+			}
+             case "introduce":
+			{
+				$db->query("SELECT *, i.id as iid FROM hicrm_introduce as i 
+                LEFT JOIN hicrm_categories as c ON i.introduce_id_type = c.id WHERE c.id = '".$id."'");
+				$bl = $db->fetch_object(true);
+				$fs = XC_URL."/gioi-thieu/".$bl->introduce_id_type."-".$this->bodau($bl->category_name).".html";
+				break;
+			}
 			case "project":
 			{
 				$db->query("SELECT * FROM bds_projects WHERE id = '".$id."'");
@@ -396,6 +429,13 @@ Class general{
                 $fs = XC_URL."/bai-viet/".$id."-".$this->bodau($bl->title).".html";
                 break;
             }
+            case "nhathuoc":
+            {
+                $db->query("SELECT * FROM hicrm_product_categories WHERE id = ".$id."");
+                $bl = $db->fetch_object($first_row = true);
+                $fs = XC_URL."/nha-thuoc/".$id."-".$this->bodau($bl->category_name).".html";
+                break;
+            }
             case "bst":
             {
                 $db->query("SELECT * FROM xiaob_bst_flat WHERE id = ".$id);
@@ -417,6 +457,7 @@ Class general{
                 $fs = $id."-".$this->bodau($bst->gradename);
                 break;
             }
+            
             default:
                 break;
         }

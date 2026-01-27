@@ -421,49 +421,35 @@ $(document).ready(function(){
             <div class="vhbothead hiddenmb">
                 <div class="wrapper">
                     <div class="hpbothead">
-                        <div class="grbot">
-                            <div class="mcol">
                                 <div class="tpsubmnhead ">
                                     <ul>
-                                        <li>
-                                            <a href='gioi-thieu.html' target='_self'>Giới thiệu</a>
+                                         <li>
+                                            <a href='<?php echo XC_URL; ?>' target='_self'><i class = 'fa fa-home'></i></a>
                                         </li>
                                         <li>
-                                            <a href='vn/dich-vu.html' target='_self'>Dịch vụ</a>
-                                            <ul>
-                                            <li>
-                                                <a href='vn/kham-vip-doanh-nhan.html' target='_self'>Khám Nội</a>
-                                            </li>
-                                            <li>
-                                                <a href='vn/chuyen-khoa.html' target='_self'>Khám Phụ Sản</a>
-                                            </li>
-                                            <li>
-                                                <a href='vn/kham-bao-hiem-y-te.html' target='_self'>Khám BHYT</a>
-                                            </li>
-                                            <li>
-                                                <a href='vn/goi-kham-lai-xe.html' target='_self'>Gói Khám Sức Khỏe</a>
-                                            </li>
-                                            </ul>
+                                            <a href='<?php echo XC_URL; ?>/gioi-thieu/2-ve-chung-toi.html' target='_self'>Về chúng tôi</a>
                                         </li>
                                         <li>
-                                            <a href='nha-thuoc.html' target='_self'>Nhà Thuốc</a>
+                                            <a href='<?php echo XC_URL; ?>/chuyen-khoa.html' target='_self'>Chuyên khoa & Gói khám</a>
+                                            
                                         </li>
                                         <li>
-                                            <a href='vn/doi-ngu-bac-si.html' target='_self'>Bác sĩ</a>
+                                            <a href='<?php echo $this->helper->permalink(1,'nhathuoc')?>' target='_self'>Nhà Thuốc</a>
                                         </li>
                                         <li>
-                                            <a href='vn/huong-dan.html' target='_self'>Lịch công tác</a>
+                                            <a href='doi-ngu-bac-si.html' target='_self'>Đội ngũ bác sĩ</a>
                                         </li>
                                         <li>
-                                            <a href='vn/tin-tuc.html' target='_self'>Tin tức</a>
+                                            <a href='<?php echo XC_URL;?>/lich-cong-tac.html' target='_self'>Lịch công tác</a>
+                                        </li>
+                                        <li>
+                                            <a href='<?php echo XC_URL;?>/tin-tuc-su-kien.html' target='_self'>Tin tức & Sự kiện</a>
                                         </li>
                                         <li>
                                             <a href='vn/lien-he.html' target='_self'>Liên hệ</a>
                                         </li>
                                         </ul>
                                     
-                                </div>
-                            </div>
                             <div class="hcol">
                                 <div class="tpfindshead">
                                     <script>

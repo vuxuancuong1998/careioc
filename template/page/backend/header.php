@@ -198,12 +198,9 @@
                         <a href="<?php echo XC_URL;?>/admin/bookings"><i data-feather="calendar"></i> <span>Lịch hẹn khám</span></a>
                      </li>
 					 
-                     <li class="submenu">
-                        <a href="#"><i data-feather="credit-card"></i> <span>Tin tức & sự kiện</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                           <li><a href="<?php echo XC_URL;?>/admin/news">Tin tức</a></li>
-                           <li><a href="<?php echo XC_URL;?>/admin/events">Sự kiện</a></li>
-                        </ul>
+                     <li >
+                        <a href="<?php echo XC_URL;?>/admin/events"><i data-feather="credit-card"></i> <span>Tin tức & sự kiện</span> </a>
+                        
                      </li>
                      
                       <li>
@@ -213,7 +210,14 @@
                      <li>
                         <a href="<?php echo XC_URL?>/admin/products"><i data-feather="plus-square"></i> <span>Nhà thuốc</span></a>
                      </li>
-
+                      <li class="submenu"> 
+                        <a href="#"><i data-feather="slack"></i> <span>Dịch vụ</span> <span class="menu-arrow"></span></a>
+                        <ul>
+                           <li><a href="<?php echo XC_URL?>/admin/service/ck">Chuyên khoa</a></li>
+                            <li><a href="<?php echo XC_URL?>/admin/service/gk">Gói khám</a></li>
+                        </ul>
+                         
+                     </li>
                      <li class="menu-title">
                         <span>Hệ thống</span>
                      </li>
@@ -248,7 +252,7 @@
                         <ul>
                            <li><a  href="<?php echo XC_URL?>/admin/categories/products">Quản lý loại thuốc </a></li>
                            <li><a href="<?php echo XC_URL;?>/admin/dmimages">Danh mục hình ảnh</a></li>   
-                           <li><a href="<?php echo XC_URL?>/admin/dmType">Quản lý danh mục chung</a></li> 
+                           <li><a href="<?php echo XC_URL?>/admin/categories/general">Quản lý danh mục chung</a></li> 
                         </ul>
                          
                      </li>

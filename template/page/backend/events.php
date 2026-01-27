@@ -86,13 +86,13 @@
 			}
 	});
 		$("#table-events").on('click', '.btn-delete-event', function(e) {
-			var eid = $(this).attr("data-id");
+			var id = $(this).attr("data-id");
 			var event_status =  $(this).attr("data-status");
 			$.ajax({
 				"type": "POST",
-				"url": "<?php echo XC_URL; ?>/api/deleteevents",
+				"url": "<?php echo XC_URL; ?>/api/deleteEvent",
 				"data": {
-					'id': eid,
+					'id': id,
 					'event_status': event_status
 				},
 				"dataType":'json',
@@ -215,15 +215,15 @@ label.error{
    <div class="page-header">
       <div class="row align-items-center">
          <div class="col">
-            <h3 class="page-title">Danh sách Sự kiện</h3>
+            <h3 class="page-title">Danh sách Tin tức & Sự kiện</h3>
             <ul class="breadcrumb">
                <!-- <li class="breadcrumb-item"><a href="<?php echo XC_URL?>">CloudERP</a></li> -->
-               <li class="breadcrumb-item active">Sự kiện</li>
+               <li class="breadcrumb-item active">Tin tức & Sự kiện</li>
             </ul>
          </div>
          <div class="col-auto">
              <a href="events/add" class="btn btn-primary" data-method = 'add' data-toggle="" data-target=".bd-example-modal-lg" >
-            Thêm Sự kiện
+            Thêm mới
             </a>
             <!-- <a class="btn btn-primary filter-btn" href="javascript:void(0);" id="filter_search">
             <i class="fas fa-filter"></i>
@@ -242,7 +242,7 @@ label.error{
                      <thead class="thead-light">
                         <tr>
                            <th>STT</th>
-                           <th>Tên Sự kiện</th>
+                           <th>Tiêu đề</th>
 						   <th>Ảnh đại diện</th>
 						   <th>Ngày đăng</th>
 						   <th>Tác giả</th>
@@ -298,185 +298,6 @@ label.error{
    
 		</div>
 
-
-		<!--- Modal lịch làm việc -->
-	<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-			<div class="modal-header">
-				<h1 class="modal-title fs-5" id="exampleModalToggleLabel">Lịch khám bệnh</h1>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-md-2">
-					<div class="form-group">
-					<label>Ngày:</label>
-						</div>	
-				</div>
-      			<div class="col-md-6">
-					<div class="form-group">
-					<input type="date"  value="<?php echo date('Y-m-d'); ?>" class="form-control" name='employee_calendar' id='employee_calendar'>
-					
-				</div>
-			</div>
-				<div class="col-md-4">
-					<div class="form-group" >
-						<select class="form-control" name='employee_shift' id='employee_shift' >
-							<option value="1">Sáng</option>
-							<option value="2">Chiều</option>
-						</select>
-						
-					</div>	
-				
-				</div>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<input type='hidden' value="" id="employee_id"/>
-				<button class="btn btn-primary" id='updateCalendarEmployee' data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Lưu</button>
-						   
-			</div>
-			</div>
-		</div>
-		</div>
-		
-		</div>
-		<!-- <button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">Open first modal</button>	 -->
-		<!-- end -->
-<!-- <div class="modal fade bd-example-modal-xl"  id="edit_tax" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-xl"> -->
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-	<div class="modal-content">
-		<div class="row">
-      <div class="col-md-12">
-         <div class="card">
-            <div class="card-header">
-               <h5 class="card-title">Thông tin Sự kiện</h5>
-            </div>
-            <div class="card-body">
-               <form action="#" data-select2-id="13" id="frm-action">
-                  <div class="row">
-                     <div class="col-md-12" data-select2-id="12">
-                        <div class="row">
-							<div class="col-md-2">
-                              <div class="form-group">
-                                 <label>Mã Sự kiện:</label>
-                                 <input type="text" readonly="true" value="<?php echo $employee_code;?>" class="form-control" name='employee_code' id='employee_code'>
-                              </div>
-                           </div>
-                           
-                           <div class="col-md-5">
-                              <div class="form-group">
-                                 <label>Họ và tên:</label><span class='text-danger'>*</span>
-                                 <input type="text" class="form-control" id='employee_name' name="employee_name">
-                              </div>
-                           </div>
-						    <div class="col-md-5">
-                               <div class="form-group" >
-                                 <label>Ngày sinh:</label><span class='text-danger'>*</span>
-                                 <div class="cal-icon">
-									<input class="form-control datetimepicker" type="text" id='employee_birthday' name="employee_birthday">
-									</div>
-                              </div>
-                           </div>
-						  
-                        </div>
-                     </div>
-                     <div class="col-md-12">
-                        <div class="row">
-                           <div class="col-md-4">
-                              <div class="form-group" >
-                                 <label>Số điện thoại: </label><span class='text-danger'>*</span>
-									<input class="form-control" type="text" id='employee_phone' name="employee_phone">
-                              </div>
-                           </div>
-						   <div class="col-md-4">
-                              <div class="form-group" >
-                                 <label>Email: </label><span class='text-danger'>*</span>
-									<input class="form-control" type="text" id='employee_email' name="employee_email">
-							
-                            </div>
-						</div>
-                           <div class="col-md-4">
-                              <div class="form-group" >
-                                 <label>Giới tính:</label><span class='text-danger'>*</span>
-						   		<select class='form-control' id='employee_gender' name='employee_gender'>
-						   		<option value='1'>Nam</option>
-								<option value='2'>Nữ</option>
-								</select>
-                                 
-								
-                              </div>
-                           </div>							  
-						   <div class="col-md-4">
-                              <div class="form-group" >
-                                 <label>CMND: </label><span class='text-danger'>*</span>
-									<input class="form-control" type="text" id='employee_national_id' name="employee_national_id">
-						
-                              </div>
-                           </div>
-						   <div class="col-md-4">
-                              <div class="form-group" >
-                                 <label>Ngày cấp:</label><span class='text-danger'>*</span>
-                                 <div class="cal-icon">
-									<input class="form-control datetimepicker" type="text" id='employee_issue_date' name="employee_issue_date" >
-									</div>
-                              </div>
-                           </div>
-						   <div class="col-md-4">
-                              <div class="form-group" >
-                                 <label>Nơi cấp: </label><span class='text-danger'>*</span>
-									<input class="form-control" type="text" id='employee_issue_by' name="employee_issue_by">
-							
-                              </div>
-                           </div>
-						   <div class="col-md-4">
-                              <div class="form-group" >
-                                 <label>Khoa</label><span class='text-danger'>*</span>
-									<select class="form-control" id='employee_department'>
-										<?php foreach($departments as $departments){?>
-										<option value = '<?php echo $departments->id?>'><?php echo $departments->depart_name;?></option>
-										<?php }?>
-									</select>
-							
-                              </div>
-                           </div>
-						   
-						   <div class="col-md-8">
-                              <div class="form-group" >
-                                 <label>Hình ảnh </label>
-									<input class="form-control" type="file" id='employee_image' name="employee_image">
-							
-                              </div>
-                           </div>
-						   <div class="col-md-12">
-                              <div class="form-group" >
-                                 <label>Giới thiệu ngắn về Sự kiện </label>
-								<textarea class='form-control' rows="5" cols="50" name = 'employee_des' id='employee_des'></textarea>
-							
-                              </div>
-                           </div>
-                        </div>
-                        
-                        
-                       
-                     </div>
-                  </div>
-                  <div class="text-end">
-                     <button type="button" class="btn btn-primary" id = 'addEmployee'>Thêm</button>
-                  </div>
-               </form>
-            </div>
-         </div>
-      </div>
-   </div>
-			</div>
-		  </div>
-		</div>
-   
-</div>
 
 
 <?php include_once "footer.php";?>

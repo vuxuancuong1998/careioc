@@ -82,10 +82,10 @@
    <div class="page-header">
       <div class="row">
          <div class="col">
-            <h3 class="page-title"><?php echo $method == 'add' ? "Thêm mới Sự Kiện" : "Sửa Sự Kiện";?></h3>
+            <h3 class="page-title"><?php echo $method == 'add' ? "Thêm mới " : "Chỉnh sửa";?></h3>
             <ul class="breadcrumb">
                <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
-               <li class="breadcrumb-item active"><?php echo $method == 'add' ? "Thêm mới Sự Kiện" : "Sửa Sự Kiện";?></li>
+               <li class="breadcrumb-item active"><?php echo $method == 'add' ? "Thêm mới" : "Chỉnh sửan";?></li>
             </ul>
          </div>
       </div>
@@ -94,13 +94,13 @@
       <div class="col-lg-12">
          <div class="card">
             <div class="card-header">
-               <h4 class="page-title">Thông tin Sự Kiện</h4>
+               <h4 class="page-title">Thông tin chung</h4>
             </div>
             <div class="card-body">
                <form action="#">
                 <div class="form-group row">
                      <div class="col-md-2">
-                       <label>Tên Sự Kiện</label><span class='text-danger'>*</span>
+                       <label>Tiêu đề</label><span class='text-danger'>*</span>
                      </div>
                      <div class="col-md-10">
                        <input type = 'text' id='event_name' name='event_name' class='form-control' value='<?php echo $event_detail->event_name ?? '';?>'/>

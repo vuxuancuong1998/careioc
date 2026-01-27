@@ -1,146 +1,194 @@
-<?php include_once "header.php";?>
-<div class="content">
-   <div class="container">
-      <div class="row">
-         <div class="col-md-4 col-lg-4 col-xl-3 theiaStickySidebar">
-            <div class="theiaStickySidebar" style="padding-top: 0px; padding-bottom: 1px; position: static; transform: none; left: 243.5px; top: 0px;">
-			   <div class="card search-filter">
-				  <div class="card-header">
-					 <h4 class="card-title mb-0">Lọc sự kiện</h4>
-				  </div>
-				  <div class="card-body">
-					 <div class="filter-widget">
-						<h4>Thời gian</h4>
-						<div>
-							<input type="text" class="form-control" id="event_filter_date_range" placeholder="Select Date">
-						</div>
-						
-					 </div>
-					 <div class="filter-widget">
-						<h4>Loại sự kiện</h4>
-						<div>
-						   <label class="custom_check">
-						   <input type="checkbox" name="gender_type" checked="">
-						   <span class="checkmark"></span> Online
-						   </label>
-						</div>
-						<div>
-						   <label class="custom_check">
-						   <input type="checkbox" checked="" name="gender_type">
-						   <span class="checkmark"></span> Offline
-						   </label>
-						</div>
-					 </div>
-					 <div class="filter-widget">
-						<h4>Danh mục</h4>
-						<?php
-						foreach($categories as $category)
-						{
-						?>
-						<div>
-						   <label class="custom_check">
-						   <input type="checkbox" name="select_specialist" checked="">
-						   <span class="checkmark"></span> <?php echo $category->category_name;?>
-						   </label>
-						</div>
-						<?php
-						}
-						?>
-					 </div>
-					 <div class="btn-search">
-						<button type="button" class="btn btn-block w-100">Tìm kiếm</button>
-					 </div>
-				  </div>
-			   </div>
-			   <div class="resize-sensor" style="position: absolute; inset: 0px; overflow: hidden; z-index: -1; visibility: hidden;">
-				  <div class="resize-sensor-expand" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; z-index: -1; visibility: hidden;">
-					 <div style="position: absolute; left: 0px; top: 0px; transition: all 0s ease 0s; width: 370px; height: 1710px;"></div>
-				  </div>
-				  <div class="resize-sensor-shrink" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; z-index: -1; visibility: hidden;">
-					 <div style="position: absolute; left: 0; top: 0; transition: 0s; width: 200%; height: 200%"></div>
-				  </div>
-			   </div>
-			</div>
-         </div>
-         <div class="col-md-8 col-lg-8 col-xl-9">
-            <div class="card event-service">
-               <div class="card-body">
-					<div class="row row-grid">
-							<?php
-							foreach($events as $event)
-							{
-							?>
-                           <div class="col-md-6 col-lg-4 testimonial-slider event-slider slider event-page">
-                              <div class="profile-widget">
-                                    <div class="doc-img">
-                                        <a href="#">
-                                            <img class="img-fluid" alt="Speaker Avatar" src="https://digifox.vn/wp-content/uploads/2022/06/facebooksharing-768x402.jpeg" />
-                                        </a>
-										<a href="javascript:void(0)" class="fav-btn" title="Inactive">
-											<i class="far fa-heart"></i>
-										</a>
-                                    </div>
-                                    <div class="pro-content">
-                                        <div class="date-sec">
-                                            <h3>
-                                                <?php echo date("d",strtotime($event->event_from));?>
-                                                <span><?php echo date("m",strtotime($event->event_from));?></span>
-                                            </h3>
-                                        </div>
-                                        <h3 class="title">
-                                            <span><?php echo $event->category_name;?></span>
-                                            <a href="#"><?php echo $event->event_title;?></a>
-                                        </h3>
-                                        <p class="add-cont"><?php echo ($event->event_location == 1)? "Offline" : "Online"; ?> | <?php echo ($event->event_location == 2) ? $event->channel_name : $event->event_address; ?></p>
-                                        <div class="profile-info d-flex">
-                                            <a href="#" class="profile-img">
-                                                <img src="https://cestalk.com/wp-content/uploads/2022/06/Hung-Vu.png" alt="" />
-                                            </a>
-                                            <a href="#">
-                                                <span class="profile-name"><?php echo $event->host_fullname;?></span>
-                                                <span class="profile-pro"><?php echo $event->org_job_title;?> of <?php echo $event->org_name;?></span>
-                                            </a>
-                                        </div>
-                                        <div class="row row-sm seat-details">
-                                            <div class="col-6">
-                                                <div class="d-flex align-items-center">
-                                                    <a href="javascript:void(0);"><img src="<?php echo $template_path; ?>/assets/img/icon-04.png" alt="" /></a>
-                                                    <a href="#">
-                                                        <span class="available-info">Vé còn lại</span>
-                                                        <span class="price-info"><?php echo number_format($event->event_ticket - $event->event_ticket_sold,0);?>/<?php echo number_format($event->event_ticket,0);?></span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="d-flex align-items-center">
-                                                    <a href="javascript:void(0);"><img src="<?php echo $template_path; ?>/assets/img/icon-05.png" alt="" /></a>
-                                                    <a href="javascript:void(0);">
-                                                        <span class="available-info">Thời gian</span>
-                                                        <span class="price-info"><?php echo date("H:i",strtotime($event->event_from));?> - <?php echo date("H:i",strtotime($event->event_to));?></span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row row-sm align-items-center d-flex">
-                                            <div class="col-6">
-                                                <a href="#" class="now-btn">Mua vé <i class="fas fa-long-arrow-alt-right"></i></a>
-                                            </div>
-                                            <div class="col-6 text-end">
-                                                <a href="javascript:void(0);" class="amt-txt"><?php echo number_format($event->event_price,0,",",".");?>đ</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                           </div>
-						   <?php
-							}
-						   ?>
-                        </div>
-                  
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
+<?php include "header.php"; ?>
+<link rel="stylesheet" href="<?php echo $template_path; ?>/assets/modules/doctor/css/specialistad59.css?vs=1.0.9" type="text/css" />
+<script type="text/javascript" src="<?php echo $template_path; ?>/assets/js/jquery.numeric/jquery.numeric.js"></script>
+<!-- <script type="text/javascript" src="<?php echo $template_path; ?>/assets/modules/doctor/js/specialistad59.js?vs=1.0.9"></script> -->
+<style>
+    .itspecimm{
+        background-color:#fff;
+    }
+ .news-card {
+  width: 350px;
+  font-family: Arial, sans-serif;
+  border: 1px solid #eee;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Phần hình ảnh và hiệu ứng Read More */
+.image-container {
+  position: relative;
+  width: 100%;
+}
+
+.image-container img {
+  width: 100%;
+  height: 60%;
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 40%;
+  background: rgba(180, 0, 0, 0.7); /* Màu đỏ mờ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Phần nội dung văn bản */
+.content {
+  padding: 20px;
+}
+
+.category {
+  color: #888;
+  /* font-size: 16px; */
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.dot {
+  height: 8px;
+  width: 8px;
+  background-color: #b40000;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.title {
+  /* font-size: 1.1rem; */
+  line-height: 1.4;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.date {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.description {
+  color: #444;
+  /* font-size: 0.95rem; */
+  line-height: 1.5;
+}
+.itspecimm{
+    padding: 0;
+}
+
+/* Phân trang */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  gap: 8px; /* Khoảng cách giữa các nút */
+}
+
+.pagination a {
+  color: #333;
+  padding: 8px 16px;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 9px;
+  transition: all 0.3s ease;
+}
+
+/* Nút đang được chọn */
+.pagination a.active {
+  background-color: #6bc0e7; /* Màu đỏ đồng bộ với card */
+  color: white;
+  border-color: #6bc0e7;
+}
+
+/* Hiệu ứng khi di chuột qua các nút chưa chọn */
+.pagination a:hover:not(.active) {
+  background-color: #f2f2f2;
+  border-color: #ccc;
+}
+
+/* Định dạng dấu ba chấm */
+.dots {
+  color: #888;
+  padding: 0 5px;
+}
+
+/* Nút Trước/Sau */
+.prev, .next {
+  font-weight: bold;
+}
+</style>
+
+</script>
+<div class="gdnavatio">
+    <div id="vnt-navation" class="breadcrumb hidden-xs hidden-sm"><div class="wrapper"><div class="navation"><ul><li><a href="index.html" ><span>trang chủ</span></a></li><li><span>Tin tức & Sự kiện</span></li></ul></div></div></div>
 </div>
-<?php include_once "footer.php";?>
+    <div class="gdcontent">
+    <div class="vhspeciapg">
+        <div class="wrapper">
+            <div class="hpspeciapg">
+                <div class="vnttitle vcolor vupper vcenter">
+                    <div class="inline-block ">
+                        <h1>TIN TỨC & SỰ KIỆN</h1>
+                    </div>
+                </div>
+            
+                <div class="vntconts">
+                    <div class="tpspeciamm">
+                        <div class="mmlist">
+                            <div class="pggrip">
+                                <?php foreach($events as $event){ ?>
+                                      <div class="mcol">
+                                        <div class="itspecimm">
+
+                                            <a class="" href="#"></a>
+                                        
+                                            <!-- IMAGE + BADGE -->
+                                            <div class="image-container">
+                                                <img src="https://www.kthcm.edu.vn/wp-content/uploads/2025/12/2-7-480x320.jpg" alt="News Image">
+                                                
+                                            </div>
+
+                                            <!-- CONTENT -->
+                                                <div class="content">
+                                                   
+                                                    <h2 class="title">Lễ Bế Mạc Hội Thao Học Sinh – Sinh Viên Lần Thứ XI, Năm Học 2025-2026</h2>
+                                                    <p class="date">Dec 25, 2025</p>
+                                                    
+                                                </div>
+
+                                        </div>
+                                    </div>
+
+                                    <?php } ?>
+                                                    
+                                    
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pagination">
+                    <a href="#" class="prev">&laquo; Trước</a>
+                    <a href="#" class="page-number active">1</a>
+                    <a href="#" class="page-number">2</a>
+                    <span class="dots">...</span>
+                    <a href="#" class="page-number">10</a>
+                    <a href="#" class="next">Sau &raquo;</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php include "footer.php"; ?>

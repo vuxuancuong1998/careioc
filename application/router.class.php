@@ -191,6 +191,90 @@ private function getController() {
 					$args[$k++] = $parts[$i]; 
 				$this->args = $args;
 			}
+		}elseif($parts[0] == "nha-thuoc")
+		{
+			// echo $parts[0];
+			$this->controller = "page";
+			$this->action = "products";
+			if(isset( $parts[1]))
+			{
+				$count_args = count($parts);
+				$k = 1;
+				$args = array();
+				for($i = 1; $i < $count_args; $i++)
+					$args[$k++] = $parts[$i]; 
+				$this->args = $args;
+			}
+		}elseif($parts[0] == "tin-tuc-su-kien.html")
+		{
+			// echo $parts[0];
+			$this->controller = "page";
+			$this->action = "events";
+			if(isset( $parts[1]))
+			{
+				$count_args = count($parts);
+				$k = 1;
+				$args = array();
+				for($i = 1; $i < $count_args; $i++)
+					$args[$k++] = $parts[$i]; 
+				$this->args = $args;
+			}
+		}elseif($parts[0] == "lich-cong-tac.html")
+		{
+			// echo $parts[0];
+			$this->controller = "page";
+			$this->action = "lichcongtac";
+			if(isset( $parts[1]))
+			{
+				$count_args = count($parts);
+				$k = 1;
+				$args = array();
+				for($i = 1; $i < $count_args; $i++)
+					$args[$k++] = $parts[$i]; 
+				$this->args = $args;
+			}
+		}elseif($parts[0] == "doi-ngu-bac-si.html")
+		{
+			// echo $parts[0];
+			$this->controller = "page";
+			$this->action = "doctors";
+			if(isset( $parts[1]))
+			{
+				$count_args = count($parts);
+				$k = 1;
+				$args = array();
+				for($i = 1; $i < $count_args; $i++)
+					$args[$k++] = $parts[$i]; 
+				$this->args = $args;
+			}
+		}elseif($parts[0] == "chuyen-khoa.html")
+		{
+			// echo $parts[0];
+			$this->controller = "page";
+			$this->action = "chuyenkhoa";
+			if(isset( $parts[1]))
+			{
+				$count_args = count($parts);
+				$k = 1;
+				$args = array();
+				for($i = 1; $i < $count_args; $i++)
+					$args[$k++] = $parts[$i]; 
+				$this->args = $args;
+			}
+		}elseif($parts[0] == "gioi-thieu")
+		{
+			// echo $parts[0];
+			$this->controller = "page";
+			$this->action = "introduce";
+			if(isset( $parts[1]))
+			{
+				$count_args = count($parts);
+				$k = 1;
+				$args = array();
+				for($i = 1; $i < $count_args; $i++)
+					$args[$k++] = $parts[$i]; 
+				$this->args = $args;
+			}
 		}
 		//Router backend
 		elseif($parts[1] == "admin")

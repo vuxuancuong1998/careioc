@@ -8,7 +8,7 @@
  * Website: www.xiao.vn
  */
 Class apiController extends baseController
-{
+{ 
     public function index()
     {
 		
@@ -248,6 +248,7 @@ Class apiController extends baseController
 		echo json_encode($result);
 
 	}
+	
 	public function calendarEmployee(){
 		global $db;
 		$result = array();
@@ -726,6 +727,17 @@ Class apiController extends baseController
 		}
 		echo json_encode($result);
 	}
+	//==========API Category ==============//
+	public function addCategory(){
+		global $db;
+		$result = array();
+		$db->query("INSERT INTO hicrm_categories(category_name, category_description, category_parent, category_orderby, category_status) 
+		VALUES ('".$_POST['category_name']."','".$_POST['category_des']."','".$_POST['category_parent']."','".$_POST['category_orderby']."','1')");
+		$result['status'] = 200;
+        $result['message'] = "Thêm hành công!";
+        echo json_encode($result);
+	}
+	//====END====//
 	//======================== ORDER API =================================//
     
 	public function addorders(){
@@ -797,6 +809,16 @@ Class apiController extends baseController
 		$result["suggestions"]= $s;
 		
 		echo json_encode($result);
+	}
+	
+	public function deleteEvent(){
+		$id = $_POST['id'];
+		$table = 'hicrm_events';
+		$row = 'event_status';
+		$this->model->action($id, $row, $table);
+		$result['status'] = 200;
+		echo json_encode($result);
+
 	}
 	public function orderGetBranch(){
 		global $db;

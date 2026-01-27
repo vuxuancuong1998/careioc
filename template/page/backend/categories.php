@@ -192,31 +192,19 @@
 			return false;
 		});
 	
-		$('#addEmployee').click(function(e) {
+		$('#addCategory').click(function(e) {
 			if ($("#frm-action").valid()) {
 				var formData = new FormData();
 
-				formData.append('employee_code', $('#employee_code').val());
-				formData.append('employee_name', $('#employee_name').val());
-				formData.append('employee_address', $('#employee_address').val());
-				formData.append('employee_birthday', $('#employee_birthday').val());
-				formData.append('employee_gender', $('#employee_gender').val());
-				formData.append('employee_phone', $('#employee_phone').val());
-				formData.append('employee_email', $('#employee_email').val());
-				formData.append('employee_department', $('#employee_department').val());
-				formData.append('employee_national_id', $('#employee_national_id').val());
-				formData.append('employee_issue_date', $('#employee_issue_date').val());
-				formData.append('employee_issue_by', $('#employee_issue_by').val());
-				formData.append('employee_des', $('#employee_des').val());
+				formData.append('category_name', $('#category_name').val());
+				formData.append('category_parent', $('#category_parent').val());
+				formData.append('category_des', $('#category_des').val());
+				formData.append('category_orderby', $('#category_orderby').val());
+				
 
-				// Upload file
-				var file = $('#employee_image')[0].files[0];
-				if (file) {
-					formData.append('employee_image', file);
-				}
 			$.ajax({
 				type: "POST",
-				url: "<?php echo XC_URL;?>/api/addEmployee",
+				url: "<?php echo XC_URL;?>/api/addCategory",
 				data:formData,
 				dataType: 'json',
 				enctype: 'multipart/form-data',
@@ -293,13 +281,14 @@ label.error{
                         <tr>
                            <th>STT</th>
                            <th>Tên danh mục</th>
-                           <th>Thao tác</th>
+							<?php echo (isset($general)) ? "<th>Danh mục cha</th>": ""; ?>
+                           <!-- <th>Thao tác</th> -->
                         </tr>
                      </thead>
                      <tbody>
                         <?php 
 							$i = 1;
-							foreach($category_products as $category_product)
+							foreach($category as $category_product)
                            {
                            ?>
                         <tr>
@@ -308,10 +297,11 @@ label.error{
                            </td>
 						   
                            <td >
-                              <?php echo $category_product->cat_product_name;?>
+                              <?php echo $category_product->category_name;?>
                            </td>
+						   <?php echo (isset($general)) ? "<td >".$category_product->category_parent_name."</td>" : ""; ?>
 						   
-                           <td>
+                           <!-- <td>
                               <div class="btn-group">
 								    <a href="#" class="btn btn-sm btn-white text-success btn-edit" data-id='<?php echo $category_product->pid;?>' >Sửa</a>
 								   <button type="button" class="btn btn-sm btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -322,7 +312,7 @@ label.error{
 									  
 									 </div>
 								</div>
-                           </td>
+                           </td> -->
                         </tr>
                         <?php
 							$i++;
@@ -393,32 +383,29 @@ label.error{
       <div class="col-md-12">
          <div class="card">
             <div class="card-header">
-               <h5 class="card-title">Thông tin Bác sĩ</h5>
+               <h5 class="card-title">Thêm mới danh mục</h5>
             </div>
             <div class="card-body">
                <form action="#" data-select2-id="13" id="frm-action">
                   <div class="row">
                      <div class="col-md-12" data-select2-id="12">
                         <div class="row">
-							<div class="col-md-2">
-                              <div class="form-group">
-                                 <label>Mã Bác sĩ:</label>
-                                 <input type="text" readonly="true" value="<?php echo $employee_code;?>" class="form-control" name='employee_code' id='employee_code'>
-                              </div>
-                           </div>
+							
                            
-                           <div class="col-md-5">
+                           <div class="col-md-6">
                               <div class="form-group">
-                                 <label>Họ và tên:</label><span class='text-danger'>*</span>
-                                 <input type="text" class="form-control" id='employee_name' name="employee_name">
+                                 <label>Tên danh mục:</label><span class='text-danger'>*</span>
+                                 <input type="text" class="form-control" id='category_name' name="category_name">
                               </div>
                            </div>
-						    <div class="col-md-5">
+						    <div class="col-md-6">
                                <div class="form-group" >
-                                 <label>Ngày sinh:</label><span class='text-danger'>*</span>
-                                 <div class="cal-icon">
-									<input class="form-control datetimepicker" type="text" id='employee_birthday' name="employee_birthday">
-									</div>
+                                 <label>Danh mục cha:</label><span class='text-danger'>*</span>
+								 <select class="form-control" id='category_parent'>
+									<?php foreach($category_parent as $category_parent){ ?>
+									<option value="<?php echo $category_parent->id; ?>"><?php echo $category_parent->category_parent_name;?></option>
+									<?php } ?>
+								 </select>
                               </div>
                            </div>
 						  
@@ -426,78 +413,19 @@ label.error{
                      </div>
                      <div class="col-md-12">
                         <div class="row">
-                           <div class="col-md-4">
+                           <div class="col-md-8">
                               <div class="form-group" >
-                                 <label>Số điện thoại: </label><span class='text-danger'>*</span>
-									<input class="form-control" type="text" id='employee_phone' name="employee_phone">
+                                 <label>Mô tả</label>
+									<textarea class="form-control" type="text" id='category_des' name="category_des" ></textarea>
                               </div>
                            </div>
 						   <div class="col-md-4">
                               <div class="form-group" >
-                                 <label>Email: </label><span class='text-danger'>*</span>
-									<input class="form-control" type="text" id='employee_email' name="employee_email">
-							
+                                 <label>Thứ tự sắp xếp:</label>
+									<input class="form-control" type="text" id='category_orderby' name="category_orderby">
                             </div>
 						</div>
-                           <div class="col-md-4">
-                              <div class="form-group" >
-                                 <label>Giới tính:</label><span class='text-danger'>*</span>
-						   		<select class='form-control' id='employee_gender' name='employee_gender'>
-						   		<option value='1'>Nam</option>
-								<option value='2'>Nữ</option>
-								</select>
-                                 
-								
-                              </div>
-                           </div>							  
-						   <div class="col-md-4">
-                              <div class="form-group" >
-                                 <label>CMND: </label><span class='text-danger'>*</span>
-									<input class="form-control" type="text" id='employee_national_id' name="employee_national_id">
-						
-                              </div>
-                           </div>
-						   <div class="col-md-4">
-                              <div class="form-group" >
-                                 <label>Ngày cấp:</label><span class='text-danger'>*</span>
-                                 <div class="cal-icon">
-									<input class="form-control datetimepicker" type="text" id='employee_issue_date' name="employee_issue_date" >
-									</div>
-                              </div>
-                           </div>
-						   <div class="col-md-4">
-                              <div class="form-group" >
-                                 <label>Nơi cấp: </label><span class='text-danger'>*</span>
-									<input class="form-control" type="text" id='employee_issue_by' name="employee_issue_by">
-							
-                              </div>
-                           </div>
-						   <div class="col-md-4">
-                              <div class="form-group" >
-                                 <label>Khoa</label><span class='text-danger'>*</span>
-									<select class="form-control" id='employee_department'>
-										<?php foreach($departments as $departments){?>
-										<option value = '<?php echo $departments->id?>'><?php echo $departments->depart_name;?></option>
-										<?php }?>
-									</select>
-							
-                              </div>
-                           </div>
-						   
-						   <div class="col-md-8">
-                              <div class="form-group" >
-                                 <label>Hình ảnh </label>
-									<input class="form-control" type="file" id='employee_image' name="employee_image">
-							
-                              </div>
-                           </div>
-						   <div class="col-md-12">
-                              <div class="form-group" >
-                                 <label>Giới thiệu ngắn về Bác sĩ </label>
-								<textarea class='form-control' rows="5" cols="50" name = 'employee_des' id='employee_des'></textarea>
-							
-                              </div>
-                           </div>
+                          
                         </div>
                         
                         
@@ -505,7 +433,7 @@ label.error{
                      </div>
                   </div>
                   <div class="text-end">
-                     <button type="button" class="btn btn-primary" id = 'addEmployee'>Thêm</button>
+                     <button type="button" class="btn btn-primary" id = 'addCategory'>Thêm</button>
                   </div>
                </form>
             </div>

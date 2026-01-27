@@ -23,6 +23,11 @@ class baseModel {
 		}		
 		return NULL;
 	}
+	public function action($id, $row, $table){
+		global $db;
+		return $db->query("UPDATE ".$table." SET ".$row." = 99 WHERE id = '".$id."'  ");
+	}
+	
 	function __destruct() {
 	}
 }

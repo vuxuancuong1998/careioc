@@ -3,24 +3,27 @@ Class pageController extends baseController
 {
 	public function index()
 	{
-		
+		 
 	}
 	public function data($para)
 	{
 		var_dump($para);
 	}
-	public function introduce(){
+	public function introduce($para){
+		$id = $para[1];
+		$id = explode("-",$id);
+		$id = $id[0];
 		global $db;
-		$db->query("SELECT * FROM hicrm_type WHERE type_detail = 1 AND type_status NOT IN(99) ORDER BY id ASC");
-		$type_introduce = $db->fetch_object();
+		$db->query("SELECT * FROM hicrm_categories WHERE category_parent = 1 AND category_status NOT IN(99) ORDER BY category_orderby ASC");
+		$category = $db->fetch_object();
 		$db->query("SELECT *, i.id as id FROM hicrm_introduce as i
-					LEFT JOIN hicrm_type as t ON i.introduce_id_type = t.type_detail WHERE i.id= '1'");
-		$introduce = $db->fetch_object(true);
+					LEFT JOIN hicrm_categories as c ON i.introduce_id_type = c.id WHERE i.introduce_id_type= '".$id."'");
+		$introduce = $db->fetch_object(true);	
 		
 		$this->view->data['introduce'] = $introduce;
 
-		$this->view->data['type_introduce'] = $type_introduce;
-		
+		$this->view->data['category'] = $category;
+		$this->view->data['id'] = $id;
 		$this->view->show("gioithieu");
 	}
 	public function demo()
@@ -35,15 +38,60 @@ Class pageController extends baseController
 		$this->view->data['doctors'] = $doctors;
 		$this->view->show('booking');
 	}
-	public function products(){
+	public function products($para){
+		$proid = $para[1];
+		$proid = explode("-",$proid);
+		$id = $proid[0];
 		global $db;
 		$db->query("SELECT * FROM hicrm_product_categories ORDER BY id ASC");
 		$this->view->data['product_category'] = $db->fetch_object();
 		$db->query("SELECT *, p.id as pid FROM hicrm_products as p 
-					LEFT JOIN hicrm_product_categories pc ON p.product_category = pc.id WHERE p.product_status NOT IN (99) ORDER BY p.product_created_time DESC
+					LEFT JOIN hicrm_product_categories pc ON p.product_category = pc.id WHERE p.product_category = ".$id." AND  p.product_status NOT IN (99) ORDER BY p.product_created_time DESC LIMIT 12
 		");
 		$this->view->data['products'] = $db->fetch_object();
+		$this->view->data['id'] = $id;
 		$this->view->show("products");
+	}
+	public function events($para){
+		$proid = $para[1];
+		$proid = explode("-",$proid);
+		$id = $proid[0];
+		global $db;
+		$db->query("SELECT * FROM hicrm_events WHERE event_status NOT IN (99) ORDER BY event_created_date DESC LIMIT 15");
+		$this->view->data['events'] = $db->fetch_object();
+		$this->view->data['id'] = $id;
+		$this->view->show("events");
+	}
+	
+	public function lichcongtac($para){
+		$proid = $para[1];
+		$proid = explode("-",$proid);
+		$id = $proid[0];
+		global $db;
+		// $db->query("SELECT * FROM hicrm_events WHERE event_status NOT IN (99) ORDER BY event_created_date DESC LIMIT 15");
+		// $this->view->data['events'] = $db->fetch_object();
+		$this->view->data['id'] = $id;
+		$this->view->show("lichcongtac");
+	}
+	public function doctors($para){
+		$proid = $para[1];
+		$proid = explode("-",$proid);
+		$id = $proid[0];
+		global $db;
+		// $db->query("SELECT * FROM hicrm_events WHERE event_status NOT IN (99) ORDER BY event_created_date DESC LIMIT 15");
+		// $this->view->data['events'] = $db->fetch_object();
+		$this->view->data['id'] = $id;
+		$this->view->show("doctors");
+	}
+	public function chuyenkhoa($para){
+		$proid = $para[1];
+		$proid = explode("-",$proid);
+		$id = $proid[0];
+		global $db;
+		// $db->query("SELECT * FROM hicrm_events WHERE event_status NOT IN (99) ORDER BY event_created_date DESC LIMIT 15");
+		// $this->view->data['events'] = $db->fetch_object();
+		$this->view->data['id'] = $id;
+		$this->view->show("chuyenkhoa");
 	}
 	public function profile($para){
 		$id = $para[1];

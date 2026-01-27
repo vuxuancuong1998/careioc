@@ -124,14 +124,14 @@ Class adminController extends baseController
 		// 			 WHERE u.user_status NOT IN(99) and u.id = '$id'
 		// 			");
 		$db->query("SELECT *, i.id as iid FROM hicrm_introduce  as i
-					LEFT JOIN hicrm_type as t ON i.introduce_id_type = t.id
+					LEFT JOIN hicrm_categories as c ON i.introduce_id_type = c.id
 					where i.introduce_id_type = '".$id."' " );
 		$introduce = $db->fetch_object(true);
-		$db->query("SELECT * FROM hicrm_type WHERE type_status NOT IN (99) AND type_detail = 1");
-		$type = $db->fetch_object();
+		$db->query("SELECT * FROM hicrm_categories WHERE category_status NOT IN (99) AND category_parent = 1");
+		$category = $db->fetch_object();
 		$this->view->data['id'] = $id;
 		$this->view->data['introduce'] = $introduce;
-		$this->view->data['type'] = $type;
+		$this->view->data['category'] = $category;
 		$this->view->show('backend/gioithieu');
 	}
 	public function dmType(){
@@ -230,10 +230,10 @@ Class adminController extends baseController
 		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
 		$db->query("SELECT *, e.id as eid FROM hicrm_events as e
 					LEFT JOIN hicrm_users as u ON e.event_user_created = u.id
-					LEFT JOIN hicrm_type as t ON e.event_type = t.type_detail WHERE e.event_status NOT IN (99) ORDER BY e.event_created_date DESC
+					LEFT JOIN hicrm_categories as c ON e.event_type = c.id WHERE e.event_status NOT IN (99) ORDER BY e.event_created_date DESC
 					");
 		$events = $db->fetch_object();
-		$db->query("SELECT * FROM hicrm_dmtype");
+		// $db->query("SELECT * FROM hicrm_dmtype");
 		if(isset($method) && $method == 'add'){
 			$this->view->data['method'] = 'add';
 			$this->view->show("backend/event-add");
@@ -257,7 +257,7 @@ Class adminController extends baseController
 		else{
 		$dmtype = $db->fetch_object();
 		$this->view->data["events"] = $events;
-		$this->view->data["dmtype"] = $dmtype;
+		// $this->view->data["dmtype"] = $dmtype;
 		$this->view->show("backend/events");
 		}
 	}
@@ -306,6 +306,10 @@ Class adminController extends baseController
 			$this->view->show("backend/products");
 			//Danh sách sản phẩm
 		}
+	}
+	public function service($para){
+		global $db;
+		
 	}
 	public function categories($para)
 	{
@@ -362,10 +366,9 @@ Class adminController extends baseController
 				case "products":
 				{
 					// echo 'sss';
-					$db->query("SELECT *, p.id as pid FROM hicrm_category_products as p
-					LEFT JOIN hicrm_status as st ON p.cat_product_status = st.id
-					LEFT JOIN hicrm_units as u ON p.cat_product_unit = u.id
-					WHERE p.cat_product_status NOT IN(99) ORDER BY p.id ASC");
+					$db->query("SELECT *, p.id as pid FROM hicrm_product_categories as p
+					LEFT JOIN hicrm_status as st ON p.category_status = st.id
+					WHERE p.category_status NOT IN(99) ORDER BY p.id ASC");
 					$this->view->data["category_products"] = $db->fetch_object();
 					$page = "category_products";
 					$title = "Danh sách danh mục loại thuốc";
@@ -374,6 +377,22 @@ Class adminController extends baseController
 					$this->view->data["add"] = $add;
 
 					$this->view->show('backend/categories');
+					break;
+				}
+				case "general":
+				{
+					global $db;
+					if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
+					$db->query("SELECT *, c.id as cid FROM hicrm_categories as c
+								LEFT JOIN hicrm_category_parent as cp ON c.category_parent = cp.id
+								WHERE c.category_status NOT IN(99)");
+					$category = $db->fetch_object();
+					$db->query("SELECT * FROM hicrm_category_parent");
+					$category_parent = $db->fetch_object();
+					$this->view->data['general'] = 'Danh mục cha';
+					$this->view->data["category"] = $category;
+					$this->view->data["category_parent"] = $category_parent;
+					$this->view->show("backend/categories");
 					break;
 				}
 				

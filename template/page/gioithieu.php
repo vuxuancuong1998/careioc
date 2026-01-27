@@ -53,8 +53,8 @@ $(document).ready(function(e){
                             </div>
                             <div class="mnconts">
                                 <ul>
-                                  <?php foreach($type_introduce as $type_introduce){?>
-                                <li class="current"><a href="#" data-id='<?php echo $type_introduce->id;?>' id='introduce_type' rel="nofollow"><?php echo $type_introduce -> type_name;?></a></li>
+                                  <?php foreach($category as $category){?>
+                                <li class="current" ><a class='<?php echo ($category->id===$id) ? "text-success" : "";?>' href="<?php echo $this->helper->permalink($category->id, 'introduce');?>" data-id='<?php echo $category->id;?>' rel="nofollow"><?php echo $category -> category_name;?></a></li>
                                 <?php }?>
                               </ul>
                             </div>
@@ -66,7 +66,7 @@ $(document).ready(function(e){
                                 <div class="tpaboutpg " id="vtab1">
   <div class="tpaboutmm">
 <div class="iftitle" >
-<h1 class='introduce_1'><span class='introduce_title'><?php echo $introduce->type_name;?></span></h1>
+<h1 class='introduce_1'><span class='introduce_title'><?php echo $introduce->category_name;?></span></h1>
 </div>
 
 <div class="vcontsab">

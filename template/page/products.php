@@ -117,8 +117,52 @@
     color: #666;
     font-weight: 500;
 }
+/* Phân trang */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  gap: 8px; /* Khoảng cách giữa các nút */
+}
 
+.pagination a {
+  color: #333;
+  padding: 8px 16px;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 9px;
+  transition: all 0.3s ease;
+}
+
+/* Nút đang được chọn */
+.pagination a.active {
+  background-color: #6bc0e7; /* Màu đỏ đồng bộ với card */
+  color: white;
+  border-color: #6bc0e7;
+}
+
+/* Hiệu ứng khi di chuột qua các nút chưa chọn */
+.pagination a:hover:not(.active) {
+  background-color: #f2f2f2;
+  border-color: #ccc;
+}
+
+/* Định dạng dấu ba chấm */
+.dots {
+  color: #888;
+  padding: 0 5px;
+}
+
+/* Nút Trước/Sau */
+.prev, .next {
+  font-weight: bold;
+}
 </style>
+<div class="gdnavatio">
+    <div id="vnt-navation" class="breadcrumb hidden-xs hidden-sm"><div class="wrapper"><div class="navation"><ul><li><a href="index.html" ><span>Trang chủ</span></a></li><li><span>Nhà thuốc</span></li></ul></div></div></div>
+</div>
     <div class="gdcontent">
     <div class="vhspeciapg">
         <div class="wrapper">
@@ -131,7 +175,7 @@
                 <div class="menuTab" bis_skin_checked="1">
                         <ul>
                                 <?php foreach($product_category as $product_category){?>
-                                <li class="current"><a href="#" rel="nofollow"><?php echo $product_category->category_name; ?> </a></li>
+                                <li class="current" ><a <?php echo ($product_category->id == $id) ? "style=background-color:#00a651;" : ''; ?>  id='product_category' href="<?php echo $this->helper->permalink($product_category->id,'nhathuoc');?>" rel="nofollow" data-id='<?php echo $product_category->id;?>'><?php echo $product_category->category_name; ?> </a></li>
                             <?php }?>
                         </ul>
                     </div>
@@ -143,16 +187,18 @@
                                       <div class="mcol">
                                         <div class="itspecimm">
 
-                                            <a class="mlinks" href="trung-tam-noi-soi-tieu-hoa.html"></a>
+                                            <a class="mlinks" href="#"></a>
 
                                             <!-- IMAGE + BADGE -->
                                             <div class="mthumb-wrap">
-                                                <div class="mthumb">
+                                                <div class="mthumb product-image">
                                                     <img src="<?php echo XC_URL; ?>/uploads/products/<?php echo $product->product_image; ?>" 
                                                         alt="<?php echo $product->product_name; ?>">
                                                 </div>
                                                 <?php if($product->product_discount != 0){ ?>
-                                                <div class="discount-badge">-<?php echo (int) $product->product_discount; ?>%</div>
+                                                <div class='box-discount'>
+                                                    <div class="discount-badge">-<?php echo (int) $product->product_discount; ?>%</div>
+                                                </div>
                                                 <?php }else{echo '';}?>
                                             </div>
 
@@ -192,6 +238,14 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="pagination">
+                    <a href="#" class="prev">&laquo; Trước</a>
+                    <a href="#" class="page-number active">1</a>
+                    <a href="#" class="page-number">2</a>
+                    <span class="dots">...</span>
+                    <a href="#" class="page-number">10</a>
+                    <a href="#" class="next">Sau &raquo;</a>
                 </div>
             </div>
         </div>
