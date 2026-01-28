@@ -243,7 +243,7 @@
                         <ul>
                            <!-- <li><a href="<?php echo XC_URL?>/admin/addusers">Thêm mới người dùng</a></li> -->
                            <li><a href="<?php echo XC_URL?>/admin/users">Quản lý tài khoản</a></li>
-                            <li><a href="<?php echo XC_URL?>/admin/calendarword">Lịch công tác</a></li>
+                            <li><a href="<?php echo XC_URL?>/admin/lichcongtac">Lịch công tác</a></li>
                         </ul>
                          
                      </li>

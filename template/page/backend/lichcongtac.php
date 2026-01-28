@@ -122,41 +122,7 @@
 			$('#employee_id').val($(this).data('id'));
 
 		});
-		$('#updateCalendarEmployee').click(function(e) {
-			var eid =  $('#employee_id').val();
-			var employee_calendar =  $('#employee_calendar').val();
-			var employee_shift = $('#employee_shift').val();
-			$.ajax({
-				"type": "POST",
-				"url": "<?php echo XC_URL; ?>/api/calendarEmployee",
-				"data": {
-					'eid': eid,
-					'employee_shift': employee_shift,
-					'employee_calendar': employee_calendar
-				},
-				"dataType":'json',
-				success:function(data){
-					if(data.status == 200){
-						Swal.fire({
-						  icon: 'success',
-						  title: "Lưu thành công",
-						  footer: '<a href=""></a>',
-						  timer: 1700
-						})
-						setTimeout(function(){ location.reload();     }, 2000);
-					}else{
-						Swal.fire({
-						  icon: 'error',
-						  title: "Lỗi",
-						  text: data.message,
-						  footer: '<a href=""></a>'
-						})
-					}
-				}
-			
-			});
-			return false;
-		});
+		
 		
 		
 		$("#table-employee").on('click', '.btn-duplicate-employee', function(e) {
@@ -222,7 +188,7 @@ label.error{
             </ul>
          </div>
          <div class="col-auto">
-             <a href="add" class="btn btn-primary" data-method = 'add' data-toggle="" data-target=".bd-example-modal-lg" >
+             <a href="lichcongtac/add" class="btn btn-primary" data-method = 'add' data-toggle="" data-target=".bd-example-modal-lg" >
             Thêm mới
             </a>
             <!-- <a class="btn btn-primary filter-btn" href="javascript:void(0);" id="filter_search">
@@ -275,7 +241,7 @@ label.error{
                            <td><?php echo $calendar_work->user_fullname;?></td>	
                            <td>
                               <div class="btn-group">
-								    <a href="<?php echo $id; ?>/edit/<?php echo $calendar_work->sid;?>" data-method='update' class="btn btn-sm btn-white text-success btn-edit" >Sửa</a>
+								    <a href="lichcongtac/edit/<?php echo $calendar_work->wid;?>" data-method='update' class="btn btn-sm btn-white text-success btn-edit" >Sửa</a>
 								   <button type="button" class="btn btn-sm btn-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								   <span class="sr-only">Toggle Dropdown</span>
 								   </button>

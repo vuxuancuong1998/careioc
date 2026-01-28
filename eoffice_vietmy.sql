@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th1 27, 2026 lúc 03:59 PM
+-- Thời gian đã tạo: Th1 28, 2026 lúc 03:52 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -452,6 +452,14 @@ CREATE TABLE `hicrm_calendar_works` (
   `calendar_work_user_created` int(2) NOT NULL,
   `calendar_status` int(2) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `hicrm_calendar_works`
+--
+
+INSERT INTO `hicrm_calendar_works` (`id`, `calendar_work_name`, `calendar_work_content`, `calendar_work_file`, `calendar_work_from_date`, `calendar_work_to_date`, `calendar_work_created_date`, `calendar_work_user_created`, `calendar_status`) VALUES
+(1, 'aaa', '', '8116651572e45c53f12eb849040c04f8-PL7.Bocosdngvttyttiuhao.pdf', '2026-01-28 00:00:00', '2026-01-29 00:00:00', '2026-01-28 20:46:47', 24, 1),
+(2, 'Lịch tuần 2', '', '770753b334723db19fbb7a2300a4d669-rp_phieunhapvien_1769486261.pdf', '2026-01-28 00:00:00', '2026-01-30 00:00:00', '2026-01-28 21:44:15', 24, 1);
 
 -- --------------------------------------------------------
 
@@ -1564,10 +1572,11 @@ INSERT INTO `hicrm_service` (`id`, `service_name`, `service_description`, `servi
 (1, 'Gói khám sức khỏe', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.', NULL, 7, '2026-01-27 13:33:22', 1),
 (2, 'aaaa', 'undefined', 'd25e5a510b4127a0bcb0af41dc049935-Screenshot_10.png', 6, '2026-01-27 20:09:40', 99),
 (3, 'CHUYÊN KHOA SIÊU ÂM', 'undefined', '0aba10ab9a03e4df4b9b92369adc5416-tixung.png', 6, '2026-01-27 20:10:45', 99),
-(4, 'CHUYÊN KHOA SIÊU ÂM', '<p>aasdasdasd</p>', 'a86c142ee6aff64c3936ea6824f66005-Screenshot_10.png', 6, '2026-01-27 20:18:21', 1),
+(4, 'CHUYÊN KHOA SIÊU ÂM', '<p>aasdasdasd</p>', 'ad4a40eaae9fd0a23b496bfcc9659fc2-PL7.Bocosdngvttyttiuhao.pdf', 6, '2026-01-27 20:18:21', 1),
 (5, 'aasdasdasdas', '<p>ấdasdasdasd</p>', '10c35a605065990f54139d0a5c186e39-SDTCR1.png', 7, '2026-01-27 20:20:37', 1),
 (6, 'ádasdasd', '<p>âdasdasd</p>', '0b90857b3e07bce8eb2f76531306cf69-SDTCR1.png', 7, '2026-01-27 20:21:49', 1),
-(7, 'GÓI KHÁM PHỤ SẢN 1', '<div style=\"color: rgb(0, 0, 0); font-family: Consolas, \" courier=\"\" new\",=\"\" monospace;=\"\" font-size:=\"\" 18px;=\"\" line-height:=\"\" 24px;=\"\" white-space:=\"\" pre;\"=\"\" bis_skin_checked=\"1\"><span style=\"font-family: \" open=\"\" sans\",=\"\" arial,=\"\" sans-serif;=\"\" font-size:=\"\" 14px;=\"\" text-align:=\"\" justify;=\"\" white-space:=\"\" normal;\"=\"\">t is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for \'lorem ipsum\' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by&nbsp;</span></div>', 'e5881e2f63e45fdb3b73b56eb648daee-Screenshot_5.png', 7, '2026-01-27 20:23:21', 1);
+(7, 'GÓI KHÁM PHỤ SẢN 1', '<div style=\"color: rgb(0, 0, 0); font-family: Consolas, \" courier=\"\" new\",=\"\" monospace;=\"\" font-size:=\"\" 18px;=\"\" line-height:=\"\" 24px;=\"\" white-space:=\"\" pre;\"=\"\" bis_skin_checked=\"1\"><span style=\"font-family: \" open=\"\" sans\",=\"\" arial,=\"\" sans-serif;=\"\" font-size:=\"\" 14px;=\"\" text-align:=\"\" justify;=\"\" white-space:=\"\" normal;\"=\"\">t is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for \'lorem ipsum\' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by&nbsp;</span></div>', 'e5881e2f63e45fdb3b73b56eb648daee-Screenshot_5.png', 7, '2026-01-27 20:23:21', 1),
+(8, 'aaaa', '<p>sdasdasdasd</p>', '2ae43ec5307c5622dd1ca9e54b95ec68-SDTCR1.png', 6, '2026-01-28 20:03:04', 1);
 
 -- --------------------------------------------------------
 
@@ -2423,7 +2432,7 @@ ALTER TABLE `hicrm_branchs`
 -- AUTO_INCREMENT cho bảng `hicrm_calendar_works`
 --
 ALTER TABLE `hicrm_calendar_works`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `hicrm_caludar_employees`
@@ -2627,7 +2636,7 @@ ALTER TABLE `hicrm_request_salary`
 -- AUTO_INCREMENT cho bảng `hicrm_service`
 --
 ALTER TABLE `hicrm_service`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `hicrm_spend_collectes`

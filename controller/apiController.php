@@ -851,6 +851,115 @@ Class apiController extends baseController
 		echo json_encode($result);
 	}
 	//===========END==============//
+	//==============API LỊCH CÔNG TÁC ===========//
+	public function calendar_works(){
+		global $db;
+		$calendar_work_name = $_POST['calendar_work_name'];
+		$calendar_work_to = $_POST['calendar_work_to'];
+		$calendar_work_from = $_POST['calendar_work_from'];
+		$calendar_work_content = $db->escapestring($_POST['calendar_work_description']);
+		$calendar_work_created_date = date('Y-m-d H:i:s');
+		$FinalFilenameFront = "";
+		$FinalFilenameFront2 = "";
+		$expensions = array("pdf","doc");
+		$method = $_POST['method'];
+		$result = array();
+		$id = $_POST['wid'];
+		$uid = $_POST['uid'];
+		
+		if(isset($method) && $method == "add")
+		{
+			$FinalFilenameFront = "";
+			$FinalFilenameFront2 = "";
+			
+			//echo $_FILES['hinhanh']['name']."ssss";
+			if ($_FILES['calendar_work_file']['error'] == 4) {
+				// Không có file upload → gán hình mặc định
+				$FinalFilenameFront = '';
+			}else{
+				$errors= array();
+				$file_name = $_FILES['calendar_work_file']['name'];
+				$file_size =$_FILES['calendar_work_file']['size'];
+				$file_tmp =$_FILES['calendar_work_file']['tmp_name'];
+				$file_type=$_FILES['calendar_work_file']['type'];
+				$file_ext=strtolower(end(explode('.',$_FILES['calendar_work_file']['name'])));
+				$OriginalFilename = $FinalFilename = preg_replace('`[^a-z0-9-_.]`i','',$_FILES['calendar_work_file']['name']); 
+				$FinalFilenameFront = md5(time())."-".$FinalFilename;
+				if(in_array($file_ext,$expensions)=== false){
+					$errors[]="Extension not allowed, please choose a .pdf, .doc file.";
+				}
+				if($file_size > 5242880){
+					$errors[]='File size must be max 2Mb';
+				}
+				if(empty($errors)==true){
+					move_uploaded_file($file_tmp,"./uploads/files/".$FinalFilenameFront);
+					
+				}else
+				{
+					$result["status"] = 500;
+				}
+				
+			}
+			$db->query("INSERT INTO hicrm_calendar_works(calendar_work_name, calendar_work_content, calendar_work_file, calendar_work_from_date, calendar_work_to_date, calendar_work_created_date, calendar_work_user_created, calendar_status) VALUES ('".$_POST['calendar_work_name']."','".$_POST['calendar_work_content']."','".$FinalFilenameFront."','".$_POST['calendar_work_from']."','".$_POST['calendar_work_to']."','".$calendar_work_created_date."','".$_POST['uid']."','1')");
+
+			
+			$result["status"] = 200;
+			$result["url"] = XC_URL."/uploads/files/".$FinalFilenameFront;
+			$result["id"] = $FinalFilenameFront;
+			$result['message'] = 'Thêm thành công';
+			$result['returnUrl'] = XC_URL."/admin/lichcongtac/";
+		}
+		elseif(isset($method) && $method == "edit")
+		{
+			$db->query("SELECT * FROM hicrm_service WHERE id = '".$id."'");
+			$db->fetch_object(true);
+			if($db->num_row())
+			{
+				// echo "aa";
+				$FinalFilenameFront = "";
+				//echo $_FILES['hinhanh']['name']."ssss";
+				if(isset($_FILES['service_image']))
+				{
+					$errors= array();
+					$file_name = $_FILES['service_image']['name'];
+					$file_size =$_FILES['service_image']['size'];
+					$file_tmp =$_FILES['service_image']['tmp_name'];
+					$file_type=$_FILES['service_image']['type'];
+					$file_ext=strtolower(end(explode('.',$_FILES['service_image']['name'])));
+					$OriginalFilename = $FinalFilename = preg_replace('`[^a-z0-9-_.]`i','',$_FILES['service_image']['name']); 
+					$FinalFilenameFront = md5(time())."-".$FinalFilename;
+					if(in_array($file_ext,$expensions)=== false){
+						$errors[]="Extension not allowed, please choose a .png, .jpg file.";
+					}
+					if($file_size > 5242880){
+						$errors[]='File size must be max 2Mb';
+					}
+					if(empty($errors)==true){
+						move_uploaded_file($file_tmp,"./uploads/services/".$FinalFilenameFront);
+						
+					}else
+					{
+						$result["status"] = 500;
+					}
+					
+				}
+				
+				$updateimage = ($FinalFilenameFront != "")? ", service_image = '".$FinalFilenameFront."'" : "";
+				// echo "UPDATE hicrm_service SET service_name='".$service_name."',service_description='".$service_description."', ".$updateimage." service_category='".$service_category."' WHERE id = '".$id."'";
+				$db->query("UPDATE hicrm_service SET service_name='".$service_name."',service_description='".$service_description."' ".$updateimage." ,service_category='".$service_category."' WHERE id = '".$id."'");
+				$result["status"] = 200;
+				$result['message'] = 'Sửa thành công';
+				$result['returnUrl'] = XC_URL."/admin/service/".$service_category;
+			}
+			else
+			{
+				$result["status"] = 500;
+				$result["message"] = "Không tồn tại nội dung này!";
+			}
+		}
+		echo json_encode($result);
+	}
+	//=========END=========//
 	//======================== ORDER API =================================//
     
 	public function addorders(){

@@ -352,9 +352,35 @@ Class adminController extends baseController
 
 		
 	}
-	public function calendarword(){
+	public function lichcongtac($para){
+		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/login"); }
 		global $db;
-		$this->view->show('backend/lichcongtac');
+		if(isset($para) && $para[1] == "add"){
+			$db->query("SELECT * FROM hicrm_calendar_works WHERE id = '".$para[1]."'");
+			$calendar_work_name = $db->fetch_object(true)->calendar_work_name;
+			$this->view->data['calendar_work_name'] = $calendar_work_name;
+			$this->view->data['method'] = 'add';
+			$this->view->show('backend/lichcongtac_action');
+		}elseif(isset($para) && $para[1] == "edit"){
+			$db->query("SELECT *, w.id as wid FROM hicrm_calendar_works as w
+						LEFT JOIN hicrm_users as u ON w.calendar_work_user_created = u.id
+			 WHERE w.id = '".$para[2]."'");
+			$calendar_work_detail = $db->fetch_object(true);
+			$this->view->data['calendar_work_detail'] = $calendar_work_detail;
+			$this->view->data['id'] = $para[1];
+			$this->view->data['method'] = 'edit';
+			$this->view->show('backend/lichcongtac_action');
+		}else{
+			$db->query("SELECT *, w.id as wid FROM hicrm_calendar_works as w
+						LEFT JOIN hicrm_users as u ON w.calendar_work_user_created = u.id ORDER BY w.calendar_work_created_date DESC
+			 ");
+			$calendar_work = $db->fetch_object();
+			$this->view->data['calendar_work'] = $calendar_work;
+			$this->view->data['id'] = $para[1];
+			$this->view->show("backend/lichcongtac");
+		}
+
+		
 	}
 	public function categories($para)
 	{
