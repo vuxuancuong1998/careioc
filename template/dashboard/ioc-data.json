@@ -1,0 +1,218 @@
+{
+    "date": "26\/08\/2026",
+    "updated_at": "12:00",
+    "source": "Cập nhật từ Cổng Quản trị IOC",
+    "coso1": {
+        "tong": 90,
+        "kham": 11,
+        "kedon": 1,
+        "ngoai": 51,
+        "noi": 25,
+        "banngay": 14,
+        "cls": 5,
+        "thuthuat": 273,
+        "yhct": 67,
+        "phcn": 204,
+        "caychi": 0
+    },
+    "coso2": {
+        "tong": 24,
+        "kham": 6,
+        "kedon": 4,
+        "ngoai": 10,
+        "noi": 11,
+        "banngay": 3,
+        "cls": 0,
+        "thuthuat": 70,
+        "yhct": 33,
+        "phcn": 37,
+        "caychi": 2
+    },
+    "phong_dalieu": {
+        "dang_quan_ly": 43,
+        "noi_tru": 14
+    },
+    "rac_thai_y_te_kg": 293,
+    "overview": {
+        "kham_thang": 3486,
+        "kham_ngay": 120,
+        "ra_vien": 37,
+        "dang_dieu_tri": 82,
+        "giuong_ke_hoach": 150,
+        "cong_suat_giuong": 78,
+        "emr_rate": 91.6,
+        "it_availability": 97.8,
+        "giuong_dang_dung": 82,
+        "giuong_trong": 23,
+        "ngay_dt_tb": 6.4,
+        "khoa_phcn_rate": 92,
+        "emr_digital": 94.2,
+        "digital_sign": 91.6,
+        "data_link": 98.7,
+        "cashless": 63.4,
+        "satisfaction": 96.1,
+        "cccd_count": 134,
+        "driving_license_count": 25,
+        "bhxh_tt25_rate": 60,
+        "emhc_count": 13
+    },
+    "infra": {
+        "monitored": 128,
+        "online": 124,
+        "warning": 3,
+        "offline": 1,
+        "mttr": "18'",
+        "uptime": "99.72%",
+        "devices": {
+            "server_his": {
+                "cpu": 34,
+                "ram": 61,
+                "disk": 58,
+                "uptime": "47d",
+                "status": "Online",
+                "badge": "ok"
+            },
+            "server_pacs": {
+                "cpu": 41,
+                "ram": 72,
+                "disk": 88,
+                "uptime": "47d",
+                "status": "Warning",
+                "badge": "warn"
+            },
+            "firewall": {
+                "sessions": "1,428",
+                "wan1": "62Mbps",
+                "wan2": "31Mbps",
+                "status": "Online",
+                "badge": "ok"
+            },
+            "core_switch": {
+                "ports": "24\/24",
+                "traffic": "412Mbps",
+                "poe": "0%",
+                "status": "Online",
+                "badge": "ok"
+            },
+            "database_his": {
+                "connections": 84,
+                "query": "31ms",
+                "backup": "OK",
+                "status": "Online",
+                "badge": "ok"
+            },
+            "internet_1": {
+                "latency": "12ms",
+                "loss": "0.0%",
+                "util": "48%",
+                "status": "Online",
+                "badge": "ok"
+            },
+            "internet_2": {
+                "latency": "68ms",
+                "loss": "1.7%",
+                "util": "29%",
+                "status": "Latency",
+                "badge": "warn"
+            },
+            "backup_nas": {
+                "last_job": "02:10 - Success",
+                "used": "71%",
+                "restore": "OK",
+                "status": "Online",
+                "badge": "ok"
+            }
+        },
+        "incidents": {
+            "mang": {
+                "count": 7,
+                "mttr": "16'"
+            },
+            "may_chu": {
+                "count": 3,
+                "mttr": "24'"
+            },
+            "ung_dung": {
+                "count": 5,
+                "mttr": "19'"
+            },
+            "may_tram": {
+                "count": 11,
+                "mttr": "12'"
+            },
+            "attt": {
+                "count": 2,
+                "mttr": "31'"
+            }
+        }
+    },
+    "alerts_security": {
+        "alerts_24h": 18,
+        "critical": 2,
+        "acknowledged": 13,
+        "resolved": 11,
+        "failed_logins": 23,
+        "backup_errors": 0,
+        "logs": [
+            {
+                "time": "14:12",
+                "level": "Nghiêm trọng",
+                "type": "bad",
+                "event": "Dung lượng ổ đĩa > 85%",
+                "target": "Server PACS",
+                "status": "Đang xử lý",
+                "status_type": "yellow"
+            },
+            {
+                "time": "13:48",
+                "level": "Cảnh báo",
+                "type": "warn",
+                "event": "Thời gian chờ khám > ngưỡng",
+                "target": "Phòng khám 01",
+                "status": "Đã xác nhận",
+                "status_type": "blue"
+            },
+            {
+                "time": "13:25",
+                "level": "Cảnh báo",
+                "type": "warn",
+                "event": "Độ trễ Internet tăng cao",
+                "target": "WAN2",
+                "status": "Theo dõi",
+                "status_type": "blue"
+            },
+            {
+                "time": "12:54",
+                "level": "Nghiêm trọng",
+                "type": "bad",
+                "event": "Máy trạm mất kết nối",
+                "target": "Khoa PHCN - PC07",
+                "status": "Đã khắc phục",
+                "status_type": "ok"
+            },
+            {
+                "time": "11:42",
+                "level": "Thông tin",
+                "type": "info",
+                "event": "5 lần đăng nhập thất bại",
+                "target": "EMR Admin",
+                "status": "Đóng",
+                "status_type": "ok"
+            }
+        ],
+        "security": {
+            "login_abnormal": 3,
+            "scan_account": 1,
+            "malware": 0,
+            "unauth_config": 0,
+            "firewall_events": 37
+        },
+        "backup": {
+            "his": "Thành công 02:05",
+            "lis": "Thành công 02:08",
+            "pacs": "Thành công 02:10",
+            "restore_test": "Đạt",
+            "storage_used": 71
+        }
+    }
+}

@@ -8,7 +8,7 @@
 session_start();
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 //=============== Custom configuration ==================//
-define('DB_NAME', 'eoffice_vietmy'); //database name
+define('DB_NAME', 'careioc'); //database name
 define('DB_USER', 'root'); //database user
 define('DB_PASSWORD', ''); //database password
 define('DB_HOST', 'localhost'); //sql server
@@ -29,18 +29,20 @@ define('SMS_API_SECRECT', 'C09E8A7C0D6A47BA117A3964A94EB8');
 
 /*** define Theme ***/
 
-define('ThemeMaster', 'page'); //Replace xpanel by your theme's name
-define('AdminThemeMaster', 'sms'); //Replace xpanel by your admin theme's name
+define('dashboard', 'dashboard'); //Replace xpanel by your theme's name
+define('backend', 'backend'); //Replace xpanel by your admin theme's name
+define('admin', 'admin'); //Replace xpanel by your admin theme's name
 
 /*** define site path ***/
-define('XC_URL','http://localhost/caodangkontum.edu.vn');
+define('XC_URL','http://localhost/careioc');
 $siteurl = XC_URL;
 /*** template path ***/
-$template_path = XC_URL.'/template/'.ThemeMaster; //Warning: Don't change here
-$admintemplate_path = XC_URL.'/template/'.AdminThemeMaster; //Warning: Don't change here
+$dashboard_path = XC_URL.'/template/'.dashboard; //Warning: Don't change here
+$backend_path = XC_URL.'/template/'.backend; //Warning: Don't change here
+$admin_path = XC_URL.'/template/'.admin; //Warning: Don't change here
 $upload_path = XC_URL.'/uploads';
 $image_path = XC_URL.'/uploads/images';
 
 /*** Set Application Name ***/
-$app_name = 'Phong kham va nha thuoc CDKT';
+$app_name = 'He thong dieu hanh thong minh CARE IOC';
 ?>

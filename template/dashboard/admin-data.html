@@ -1,0 +1,3226 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CỔNG NHẬP LIỆU & QUẢN TRỊ CHỈ SỐ IOC – BVĐK KHU VỰC ĐĂK TÔ</title>
+  
+  <!-- Meta & Favicon -->
+  <meta name="description" content="Hệ thống nhập liệu và quản trị chỉ số điều hành IOC Bệnh viện Đa khoa Khu vực Đăk Tô">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-body: #060e18;
+      --bg-sidebar: #091524;
+      --bg-header: rgba(9, 21, 36, 0.85);
+      --bg-card: #0d1e33;
+      --bg-card-alt: #10253f;
+      --bg-input: #081422;
+      --bg-hover: #142e4e;
+      --border-color: #1a3654;
+      --border-focus: #00f2fe;
+      
+      --text-main: #f0f6fc;
+      --text-muted: #8ea3bf;
+      --text-dim: #547192;
+      
+      --primary: #00f2fe;
+      --primary-hover: #38f9d7;
+      --accent: #20c6b7;
+      --info: #39a0ff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --purple: #a855f7;
+
+      --sidebar-width: 280px;
+      --header-height: 68px;
+      --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.35);
+      --shadow-glow: 0 0 20px rgba(0, 242, 254, 0.2);
+    }
+
+    [data-theme="light"] {
+      --bg-body: #f4f7fb;
+      --bg-sidebar: #ffffff;
+      --bg-header: rgba(255, 255, 255, 0.9);
+      --bg-card: #ffffff;
+      --bg-card-alt: #f0f4f9;
+      --bg-input: #f8fafc;
+      --bg-hover: #e2e8f0;
+      --border-color: #cbd5e1;
+      --border-focus: #0284c7;
+      
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --accent: #0d9488;
+      --info: #2563eb;
+      --shadow-card: 0 6px 20px rgba(0, 0, 0, 0.06);
+      --shadow-glow: 0 0 15px rgba(2, 132, 199, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+      transition: background-color var(--transition-normal), color var(--transition-normal);
+    }
+
+    /* ============================================================
+       SIDEBAR NAVIGATION (MENU BÊN TRÁI)
+    ============================================================ */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 100;
+      transition: transform var(--transition-normal), width var(--transition-normal);
+    }
+
+    .sidebar-brand {
+      height: var(--header-height);
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px solid var(--border-color);
+      background: linear-gradient(180deg, rgba(0,242,254,0.06), transparent);
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #00f2fe, #39a0ff);
+      display: grid;
+      place-items: center;
+      color: #040914;
+      font-weight: 800;
+      font-size: 16px;
+      box-shadow: 0 0 16px rgba(0, 242, 254, 0.35);
+      flex-shrink: 0;
+    }
+
+    .brand-info h2 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .brand-info p {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .sidebar-search {
+      padding: 14px 18px 6px;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-input-wrap i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 12px 8px 34px;
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+      transition: border-color var(--transition-fast);
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    .sidebar-menu {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 14px;
+      list-style: none;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-color) transparent;
+    }
+
+    .sidebar-menu::-webkit-scrollbar {
+      width: 4px;
+    }
+    .sidebar-menu::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    .menu-category {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-dim);
+      padding: 12px 10px 6px;
+    }
+
+    .menu-item {
+      margin-bottom: 4px;
+    }
+
+    .menu-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: all var(--transition-fast);
+      position: relative;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .menu-link i {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+      color: var(--text-dim);
+      transition: color var(--transition-fast);
+    }
+
+    .menu-link:hover {
+      background-color: var(--bg-hover);
+      color: var(--text-main);
+    }
+
+    .menu-link:hover i {
+      color: var(--primary);
+    }
+
+    .menu-link.active {
+      background: linear-gradient(90deg, rgba(0, 242, 254, 0.15), rgba(57, 160, 255, 0.05));
+      color: var(--primary);
+      border-color: rgba(0, 242, 254, 0.3);
+      font-weight: 600;
+    }
+
+    .menu-link.active i {
+      color: var(--primary);
+    }
+
+    .menu-badge {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(0, 242, 254, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(0, 242, 254, 0.25);
+    }
+
+    .sidebar-footer {
+      padding: 14px 18px;
+      border-top: 1px solid var(--border-color);
+      background-color: var(--bg-sidebar);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #00f2fe);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 13px;
+      color: #040914;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      flex-shrink: 0;
+    }
+
+    .user-avatar:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 18px rgba(0, 242, 254, 0.6);
+    }
+
+    .user-details {
+      flex: 1;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .user-details .name {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-details .role {
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    /* USER DROPDOWN MENU */
+    .user-menu-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .user-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      z-index: 9999;
+      width: 250px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 10px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 242, 254, 0.15);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: none;
+      animation: userDropIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .user-dropdown-menu.user-dropdown-upward {
+      top: auto;
+      bottom: calc(100% + 12px);
+      left: 0;
+      right: auto;
+    }
+
+    .user-dropdown-menu.show {
+      display: block;
+    }
+
+    @keyframes userDropIn {
+      from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .user-menu-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 8px 12px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 6px;
+    }
+
+    .user-menu-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00f2fe, #39a0ff);
+      color: #040914;
+      font-weight: 800;
+      font-size: 15px;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+      flex-shrink: 0;
+    }
+
+    .user-menu-info .user-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .user-menu-info .user-role {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .user-menu-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .user-menu-link {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 12.5px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      background: transparent;
+      border: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .user-menu-link:hover {
+      background: var(--bg-hover);
+      color: var(--primary);
+    }
+
+    .user-menu-link.logout {
+      color: var(--danger);
+      margin-top: 4px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 9px;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .user-menu-link.logout:hover {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ff5c5c;
+    }
+
+    /* ============================================================
+       MAIN CONTENT LAYOUT
+    ============================================================ */
+    .main-wrapper {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 100vh;
+      transition: margin-left var(--transition-normal);
+    }
+
+    /* TOP HEADER */
+    .topbar {
+      height: var(--header-height);
+      background-color: var(--bg-header);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .sidebar-toggle-btn {
+      display: none;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      cursor: pointer;
+      place-items: center;
+      font-size: 16px;
+    }
+
+    .page-title-wrap h1 {
+      font-size: 17px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .page-title-wrap p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .date-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      color: var(--text-main);
+      position: relative;
+    }
+
+    .cal-trigger-btn {
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      font-size: 15px;
+      display: inline-flex;
+      align-items: center;
+      transition: transform var(--transition-fast);
+    }
+    .cal-trigger-btn:hover {
+      transform: scale(1.15);
+    }
+
+    .date-badge input[type="date"] {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 12.5px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* POPUP LƯỚI LỊCH (CALENDAR GRID POPUP) */
+    .calendar-grid-popup {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      z-index: 9999;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 14px;
+      width: 290px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.85), 0 0 25px rgba(0, 242, 254, 0.2);
+      display: none;
+      animation: calPopIn .2s cubic-bezier(0.16,1,0.3,1);
+    }
+    .calendar-grid-popup.show { display: block; }
+    @keyframes calPopIn { from { opacity: 0; transform: translateY(-6px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
+    .cal-head-title { font-size: 13.5px; font-weight: 800; color: var(--text-main); letter-spacing: .3px; }
+    .cal-nav-btn { background: var(--bg-card-alt); border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 6px; width: 28px; height: 28px; cursor: pointer; display: grid; place-items: center; font-size: 14px; font-weight: 700; transition: all var(--transition-fast); }
+    .cal-nav-btn:hover { background: var(--primary); color: #040914; border-color: var(--primary); }
+    .cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 11px; font-weight: 700; color: var(--text-dim); margin-bottom: 6px; }
+    .cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .cal-day-cell { aspect-ratio: 1; border-radius: 8px; display: grid; place-items: center; font-size: 12px; font-weight: 600; color: var(--text-main); cursor: pointer; background: var(--bg-input); border: 1px solid transparent; transition: all var(--transition-fast); }
+    .cal-day-cell:hover { background: var(--bg-hover); border-color: var(--primary); color: #fff; }
+    .cal-day-cell.other-month { color: var(--text-dim); background: transparent; opacity: 0.4; }
+    .cal-day-cell.today { border: 1px solid var(--primary); color: var(--primary); }
+    .cal-day-cell.selected { background: linear-gradient(135deg, var(--primary), var(--info)); color: #040914; font-weight: 800; box-shadow: 0 0 10px rgba(0, 242, 254, 0.4); }
+    .cal-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-color); font-size: 11.5px; }
+    .cal-today-link { color: var(--primary); font-weight: 700; cursor: pointer; text-decoration: none; }
+    .cal-today-link:hover { text-decoration: underline; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      border: 1px solid transparent;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00f2fe, #39a0ff);
+      color: #040914;
+      box-shadow: 0 4px 14px rgba(0, 242, 254, 0.25);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 20px rgba(0, 242, 254, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: var(--bg-input);
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-hover);
+      border-color: var(--text-dim);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+    }
+
+    .btn-icon {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .btn-icon:hover {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* CONTENT BODY */
+    .content-area {
+      padding: 24px 28px 40px;
+      flex: 1;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* MODULE PAGES */
+    .module-page {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .module-page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CARDS & CONTAINERS */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-main);
+    }
+
+    .card-title i {
+      color: var(--primary);
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* STATS & METRICS ROW */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: linear-gradient(180deg, var(--bg-card), var(--bg-card-alt));
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+    }
+
+    .stat-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      background: rgba(0, 242, 254, 0.1);
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .stat-info .label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .stat-info .val {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 2px;
+    }
+
+    /* FORM STYLES */
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .form-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .facility-box {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .facility-box.facility-1 {
+      border-top: 3px solid var(--primary);
+    }
+
+    .facility-box.facility-2 {
+      border-top: 3px solid var(--accent);
+    }
+
+    .facility-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .form-label .sub {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .input-control-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-control {
+      width: 100%;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', 'Plus Jakarta Sans', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+      transition: all var(--transition-fast);
+    }
+
+    .form-control:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.15);
+      background-color: var(--bg-card);
+    }
+
+    .quick-steppers {
+      position: absolute;
+      right: 6px;
+      display: flex;
+      gap: 3px;
+    }
+
+    .btn-step {
+      background: var(--bg-hover);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .btn-step:hover {
+      background: var(--primary);
+      color: #040914;
+      border-color: var(--primary);
+    }
+
+    /* MATRIX TABLE */
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      width: 100%;
+    }
+
+    .matrix-table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .matrix-table th, .matrix-table td {
+      border: 1px solid var(--border-color);
+      padding: 10px 8px;
+      vertical-align: middle;
+    }
+
+    .matrix-table th {
+      background-color: #14283f;
+      color: #e2eefb;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .matrix-table th.header-group {
+      background-color: #1b3552;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .matrix-table td {
+      background-color: var(--bg-card);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+    }
+
+    .matrix-table tr:hover td {
+      background-color: var(--bg-hover);
+    }
+
+    .matrix-table .row-total {
+      background-color: #10263f !important;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .matrix-table .val-highlight {
+      color: #ff7777;
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    /* DEVICE CARDS GRID */
+    .device-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 16px;
+    }
+
+    .device-box {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      transition: transform var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .device-box:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .device-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .device-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-status {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-status.ok {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-status.warn {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .badge-status.bad {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* TOAST NOTIFICATION */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--primary);
+      border-radius: 10px;
+      padding: 14px 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 300px;
+      animation: slideInRight 0.3s ease;
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.error { border-left-color: var(--danger); }
+    .toast.warning { border-left-color: var(--warning); }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* BACKDROP & MODAL */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(4, 9, 20, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: none;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.active {
+      display: grid;
+    }
+
+    .modal-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 900px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      animation: scaleUp 0.25s ease;
+    }
+
+    @keyframes scaleUp {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* ============================================================
+       RESPONSIVE DESIGN BREAKPOINTS & MOBILE FIXES
+    ============================================================ */
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 95;
+      display: none;
+      opacity: 0;
+      transition: opacity var(--transition-normal);
+    }
+    .sidebar-overlay.active {
+      display: block;
+      opacity: 1;
+    }
+
+    @media (max-width: 1100px) {
+      .form-grid-2, .form-grid-3, .form-grid-4 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 10px 0 40px rgba(0,0,0,0.8);
+      }
+
+      .main-wrapper {
+        margin-left: 0;
+      }
+
+      .sidebar-toggle-btn {
+        display: grid;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .topbar {
+        height: auto;
+        min-height: 60px;
+        padding: 10px 14px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .topbar-left {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 10px;
+      }
+
+      .page-title-wrap h1 {
+        font-size: 15px;
+      }
+
+      .topbar-right {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .date-badge {
+        flex: 1;
+        min-width: 180px;
+        font-size: 11.5px;
+        padding: 5px 8px;
+        justify-content: space-between;
+      }
+
+      .calendar-grid-popup {
+        width: calc(100vw - 28px);
+        max-width: 300px;
+        left: 0;
+      }
+
+      .btn {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .content-area {
+        padding: 12px 12px 30px;
+      }
+
+      .card {
+        padding: 14px;
+        border-radius: 12px;
+        margin-bottom: 14px;
+      }
+
+      .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .stat-card {
+        padding: 10px;
+        gap: 10px;
+      }
+
+      .stat-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
+        border-radius: 8px;
+      }
+
+      .stat-info .label {
+        font-size: 10.5px;
+      }
+
+      .stat-info .val {
+        font-size: 18px;
+      }
+
+      .facility-box {
+        padding: 12px;
+      }
+
+      .facility-title {
+        font-size: 13.5px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+
+      .device-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar {
+        padding: 8px 10px;
+      }
+      .page-title-wrap h1 {
+        font-size: 13.5px;
+      }
+      .page-title-wrap p {
+        font-size: 10.5px;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .stat-card {
+        padding: 8px;
+      }
+      .stat-info .val {
+        font-size: 16px;
+      }
+      .date-badge {
+        width: 100%;
+      }
+      .topbar-right {
+        gap: 6px;
+      }
+      .topbar-right .btn {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+
+    /* ===== TIẾN TRÌNH XỬ LÝ LOAD DỮ LIỆU ĐẶC TRƯNG IOC (IOC HUD CIRCULAR LOADER) ===== */
+    .ioc-loader-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(0, 0, 0, 0.48);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .ioc-loader-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .ioc-loader-hud {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      display: grid;
+      place-items: center;
+    }
+    .ioc-pulse-wave {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 242, 254, 0.4);
+      animation: iocWave 2s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
+    }
+    .ioc-ring-outer {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px dashed rgba(32, 198, 183, 0.4);
+      animation: iocRotateCW 8s linear infinite;
+    }
+    .ioc-ring-scanner {
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #00f2fe;
+      border-right-color: #39a0ff;
+      box-shadow: 0 0 22px rgba(0, 242, 254, 0.5);
+      animation: iocRotateCW 1.4s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+    }
+    .ioc-ring-reverse {
+      position: absolute;
+      inset: 18px;
+      border-radius: 50%;
+      border: 2px dotted rgba(57, 160, 255, 0.65);
+      animation: iocRotateCCW 2.5s linear infinite;
+    }
+    .ioc-core-pulse {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(6, 16, 28, 0.75);
+      backdrop-filter: blur(6px);
+      border: 1.5px solid rgba(0, 242, 254, 0.7);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 25px rgba(32, 198, 183, 0.5), inset 0 0 15px rgba(0, 242, 254, 0.3);
+      animation: iocCoreBeat 1.5s ease-in-out infinite alternate;
+    }
+    .ioc-core-logo {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      background: linear-gradient(135deg, #00f2fe, #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .ioc-loader-title {
+      margin-top: 22px;
+      font-size: 13.5px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      color: #f0f8ff;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-shadow: 0 0 14px rgba(0, 242, 254, 0.5);
+    }
+    .ioc-loader-desc {
+      margin-top: 6px;
+      font-size: 11.5px;
+      color: #7fa5c7;
+      font-weight: 500;
+      text-align: center;
+    }
+    .ioc-loader-bar {
+      width: 180px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      margin-top: 14px;
+      overflow: hidden;
+      position: relative;
+    }
+    .ioc-loader-bar::after {
+      content: "";
+      position: absolute;
+      left: -50%;
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, transparent, #00f2fe, #39a0ff, transparent);
+      animation: iocProgress 1.4s ease-in-out infinite;
+    }
+
+    @keyframes iocRotateCW { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes iocRotateCCW { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+    @keyframes iocCoreBeat {
+      0% { transform: scale(0.92); box-shadow: 0 0 15px rgba(32, 198, 183, 0.3); }
+      100% { transform: scale(1.06); box-shadow: 0 0 30px rgba(0, 242, 254, 0.7); }
+    }
+    @keyframes iocWave {
+      0% { transform: scale(0.6); opacity: 0.8; }
+      100% { transform: scale(1.35); opacity: 0; }
+    }
+    @keyframes iocProgress {
+      0% { left: -50%; width: 30%; }
+      50% { width: 60%; }
+      100% { left: 100%; width: 30%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TIẾN TRÌNH XỬ LÝ LOAD DỮ LIỆU ĐẶC TRƯNG IOC -->
+  <div class="ioc-loader-overlay" id="ioc-loader-overlay">
+    <div class="ioc-loader-hud">
+      <div class="ioc-pulse-wave"></div>
+      <div class="ioc-ring-outer"></div>
+      <div class="ioc-ring-scanner"></div>
+      <div class="ioc-ring-reverse"></div>
+      <div class="ioc-core-pulse">
+        <span class="ioc-core-logo">IOC</span>
+      </div>
+    </div>
+    <div class="ioc-loader-title">
+      <span class="status-dot"></span>
+      <span id="ioc-loader-msg">ĐANG ĐỒNG BỘ DỮ LIỆU...</span>
+    </div>
+    <div class="ioc-loader-desc" id="ioc-loader-sub">Cổng Nhập liệu & Quản trị Trung tâm Điều hành IOC BVĐK KV Đăk Tô</div>
+    <div class="ioc-loader-bar"></div>
+  </div>
+
+  <!-- BACKDROP OVERLAY CHO SIDEBAR TRÊN MOBILE -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- ============================================================
+       SIDEBAR MENU (BÊN TRÁI)
+  ============================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">IOC</div>
+      <div class="brand-info">
+        <h2>QUẢN TRỊ & NHẬP LIỆU</h2>
+        <p>BVĐK Khu vực Đăk Tô</p>
+      </div>
+    </div>
+
+    <div class="sidebar-search">
+      <div class="search-input-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="search-input" id="menu-search" placeholder="Tìm chỉ số, chức năng..." oninput="filterMenuItems(this.value)">
+      </div>
+    </div>
+
+    <ul class="sidebar-menu" id="sidebar-menu">
+      <li class="menu-category">Phân hệ Chính</li>
+      
+      <li class="menu-item">
+        <a class="menu-link active" onclick="switchTab('tab-dashboard', this)">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span>Bàn làm việc tổng quan</span>
+          <span class="menu-badge">Hôm nay</span>
+        </a>
+      </li>
+
+      <li class="menu-item">
+        <a class="menu-link" onclick="switchTab('tab-kcb', this)">
+          <i class="fa-solid fa-stethoscope"></i>
+          <span>Khám Chữa Bệnh (Hằng ngày)</span>
+          <span class="menu-badge" style="background:rgba(32,198,183,0.15);color:var(--accent)">2 Cơ sở</span>
+        </a>
+      </li>
+
+      <li class="menu-item">
+        <a class="menu-link" onclick="switchTab('tab-overview', this)">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Chỉ số Điều hành & KPIs</span>
+        </a>
+      </li>
+
+      <li class="menu-category">Kỹ thuật & Giám sát</li>
+
+      <li class="menu-item">
+        <a class="menu-link" onclick="switchTab('tab-infra', this)">
+          <i class="fa-solid fa-server"></i>
+          <span>Hạ tầng & CNTT Bệnh viện</span>
+          <span class="menu-badge" style="background:rgba(16,185,129,0.15);color:var(--success)">8 Node</span>
+        </a>
+      </li>
+
+      <li class="menu-item">
+        <a class="menu-link" onclick="switchTab('tab-alerts', this)">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Cảnh báo, ATTT & Sao lưu</span>
+          <span class="menu-badge" style="background:rgba(239,68,68,0.15);color:var(--danger)">2 Cấp bách</span>
+        </a>
+      </li>
+
+      <li class="menu-category">Hệ thống & Tích hợp</li>
+
+      <li class="menu-item">
+        <a class="menu-link" onclick="switchTab('tab-settings', this)">
+          <i class="fa-solid fa-sliders"></i>
+          <span>Cấu hình API & Đồng bộ</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar" onclick="toggleUserDropdown('user-dropdown-sidebar')" title="Nhấp vào avatar để xem menu & Đăng xuất">AD</div>
+        <div class="user-details" onclick="toggleUserDropdown('user-dropdown-sidebar')" title="Nhấp để xem menu & Đăng xuất">
+          <div class="name">Trực ban Điều hành</div>
+          <div class="role"><span class="status-dot"></span> Sẵn sàng đồng bộ</div>
+        </div>
+        <button class="btn-icon" onclick="toggleTheme()" title="Chuyển đổi giao diện Sáng / Tối">
+          <i class="fa-solid fa-circle-half-stroke"></i>
+        </button>
+
+        <!-- USER DROPDOWN MENU SIDEBAR -->
+        <div class="user-dropdown-menu user-dropdown-upward" id="user-dropdown-sidebar">
+          <div class="user-menu-header">
+            <div class="user-menu-avatar">AD</div>
+            <div class="user-menu-info">
+              <div class="user-name">Trực ban Điều hành</div>
+              <div class="user-role">Quản trị viên Hệ thống IOC</div>
+            </div>
+          </div>
+          <ul class="user-menu-list">
+            <li><a class="user-menu-link" href="index.html" target="_blank"><i class="fa-solid fa-gauge-high"></i> Màn hình IOC Dashboard</a></li>
+            <li><button class="user-menu-link" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i> Đổi giao diện Sáng / Tối</button></li>
+            <li><button class="user-menu-link logout" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> <b>Đăng xuất</b></button></li>
+          </ul>
+        </div>
+      </div>
+      
+      <a href="index.html" target="_blank" class="btn btn-outline" style="width:100%;justify-content:center;font-size:12px">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i> Mở Màn hình IOC Dashboard
+      </a>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       MAIN CONTENT CONTAINER
+  ============================================================ -->
+  <div class="main-wrapper">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle-btn" id="sidebar-toggle" onclick="toggleSidebar()">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="page-title-wrap">
+          <h1 id="current-page-title"><i class="fa-solid fa-gauge-high"></i> Bàn làm việc Quản trị & Nhập liệu</h1>
+          <p id="current-page-sub">Cập nhật số liệu tức thời cho Trung tâm điều hành thông minh IOC</p>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div class="date-badge">
+          <button class="cal-trigger-btn" onclick="toggleCalendarGrid('cal-popup-admin', 'input-record-date')" title="Nhấp để hiển thị Lưới Lịch chọn ngày">
+            <i class="fa-regular fa-calendar"></i>
+          </button>
+          <span>Ngày nhập:</span>
+          <input type="date" id="input-record-date" onchange="onDateChanged(this.value)">
+          <div style="display:flex;gap:4px;margin-left:4px">
+            <button class="btn-step" onclick="setDatePreset('today')" title="Chọn ngày hôm nay">Hôm nay</button>
+            <button class="btn-step" onclick="setDatePreset('yesterday')" title="Chọn ngày hôm qua">Hôm qua</button>
+          </div>
+
+          <!-- LƯỚI LỊCH POPUP ADMIN -->
+          <div class="calendar-grid-popup" id="cal-popup-admin">
+            <div class="cal-head">
+              <button class="cal-nav-btn" onclick="calNavigateMonth(-1, 'cal-popup-admin', 'input-record-date')">‹</button>
+              <span class="cal-head-title" id="cal-month-title-admin">Tháng 08/2026</span>
+              <button class="cal-nav-btn" onclick="calNavigateMonth(1, 'cal-popup-admin', 'input-record-date')">›</button>
+            </div>
+            <div class="cal-weekdays">
+              <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span style="color:var(--danger)">CN</span>
+            </div>
+            <div class="cal-days" id="cal-days-grid-admin">
+              <!-- Rendered by JS -->
+            </div>
+            <div class="cal-foot">
+              <span class="cal-today-link" onclick="selectCalendarDate(new Date(), 'cal-popup-admin', 'input-record-date')">Hôm nay</span>
+              <button class="btn-step" onclick="document.getElementById('cal-popup-admin').classList.remove('show')">Đóng</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-outline" onclick="openPreviewModal()" title="Xem nhanh bảng số liệu KCB">
+          <i class="fa-solid fa-eye"></i> Xem trước
+        </button>
+
+        <button class="btn btn-primary" onclick="saveAllData()" id="btn-save-main">
+          <i class="fa-solid fa-floppy-disk"></i> Lưu & Đồng bộ
+        </button>
+
+        <!-- USER AVATAR TOPBAR -->
+        <div class="user-menu-wrap">
+          <div class="user-avatar" onclick="toggleUserDropdown('user-dropdown-topbar')" title="Nhấp vào avatar để xem menu & Đăng xuất">AD</div>
+
+          <!-- USER DROPDOWN MENU TOPBAR -->
+          <div class="user-dropdown-menu" id="user-dropdown-topbar">
+            <div class="user-menu-header">
+              <div class="user-menu-avatar">AD</div>
+              <div class="user-menu-info">
+                <div class="user-name">Trực ban Điều hành</div>
+                <div class="user-role">Quản trị viên Hệ thống IOC</div>
+              </div>
+            </div>
+            <ul class="user-menu-list">
+              <li><a class="user-menu-link" href="index.html" target="_blank"><i class="fa-solid fa-gauge-high"></i> Màn hình IOC Dashboard</a></li>
+              <li><button class="user-menu-link" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i> Đổi giao diện Sáng / Tối</button></li>
+              <li><button class="user-menu-link logout" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> <b>Đăng xuất</b></button></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <main class="content-area">
+
+      <!-- ============================================================
+           TAB 1: BÀN LÀM VIỆC TỔNG QUAN
+      ============================================================ -->
+      <section id="tab-dashboard" class="module-page active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-hospital-user"></i></div>
+            <div class="stat-info">
+              <div class="label">Tổng BN đang điều trị</div>
+              <div class="val" id="dash-stat-dieu-tri">114</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(32,198,183,0.1);color:var(--accent)"><i class="fa-solid fa-user-doctor"></i></div>
+            <div class="stat-info">
+              <div class="label">Lượt khám hôm nay</div>
+              <div class="val" id="dash-stat-kham">17</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(57,160,255,0.1);color:var(--info)"><i class="fa-solid fa-bed-pulse"></i></div>
+            <div class="stat-info">
+              <div class="label">BN Nội trú toàn viện</div>
+              <div class="val" id="dash-stat-noi-tru">36</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(16,185,129,0.1);color:var(--success)"><i class="fa-solid fa-hand-holding-medical"></i></div>
+            <div class="stat-info">
+              <div class="label">Thủ thuật thực hiện</div>
+              <div class="val" id="dash-stat-thu-thuat">343</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <!-- Hướng dẫn & Phím tắt -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fa-solid fa-bolt"></i> Thao tác & Lối tắt nhanh</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <p style="font-size:13px;color:var(--text-muted);line-height:1.6">
+                Hệ thống hỗ trợ nhập liệu đa phân hệ với tính năng <b>Tự động tính tổng (Auto-Sum)</b>, xác thực tính toàn vẹn dữ liệu và đồng bộ trực tiếp lên Màn hình Dashboard 65-inch.
+              </p>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
+                <button class="btn btn-outline" onclick="switchTab('tab-kcb', document.querySelectorAll('.menu-link')[1])" style="justify-content:center">
+                  <i class="fa-solid fa-file-pen" style="color:var(--accent)"></i> Nhập số liệu KCB
+                </button>
+                <button class="btn btn-outline" onclick="switchTab('tab-overview', document.querySelectorAll('.menu-link')[2])" style="justify-content:center">
+                  <i class="fa-solid fa-sliders" style="color:var(--primary)"></i> Nhập KPI điều hành
+                </button>
+                <button class="btn btn-outline" onclick="switchTab('tab-infra', document.querySelectorAll('.menu-link')[3])" style="justify-content:center">
+                  <i class="fa-solid fa-network-wired" style="color:var(--success)"></i> Cập nhật Hạ tầng
+                </button>
+                <button class="btn btn-outline" onclick="switchTab('tab-alerts', document.querySelectorAll('.menu-link')[4])" style="justify-content:center">
+                  <i class="fa-solid fa-bell" style="color:var(--danger)"></i> Quản lý Cảnh báo
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trạng thái kết nối & Đồng bộ -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fa-solid fa-cloud-arrow-up"></i> Trạng thái kết nối & Lưu trữ</div>
+              <span class="badge-status ok" id="sync-status-badge"><i class="fa-solid fa-circle-check"></i> Sẵn sàng</span>
+            </div>
+            <div style="font-size:13px;line-height:1.8">
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-color)">
+                <span style="color:var(--text-muted)">API Endpoint Backend:</span>
+                <b id="lbl-api-status" style="color:var(--primary)">/template/dashboard/api-kcb.php</b>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-color)">
+                <span style="color:var(--text-muted)">Lưu trữ dự phòng:</span>
+                <span style="color:var(--success)"><i class="fa-solid fa-database"></i> LocalStorage + JSON Storage</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-color)">
+                <span style="color:var(--text-muted)">Lần cập nhật gần nhất:</span>
+                <b id="lbl-last-sync-time">--:--</b>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;">
+                <span style="color:var(--text-muted)">Tiến độ cập nhật ngày:</span>
+                <b style="color:var(--accent)">100% Hoàn tất</b>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BẢNG MA TRẬN KCB TỔNG HỢP HIỆN TẠI -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-table-cells"></i> Ma trận Số liệu Khám chữa bệnh hôm nay</div>
+            <button class="btn btn-outline" style="font-size:12px;padding:5px 10px" onclick="switchTab('tab-kcb', document.querySelectorAll('.menu-link')[1])">
+              <i class="fa-solid fa-pencil"></i> Chỉnh sửa số liệu
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th rowspan="3">TT</th>
+                  <th rowspan="3">Cơ sở</th>
+                  <th rowspan="3">ĐVT</th>
+                  <th rowspan="3" style="color:#ff7777">Tổng BN<br>điều trị</th>
+                  <th colspan="7" class="header-group">Chi tiết chuyên khoa</th>
+                  <th rowspan="3">Ghi chú Dịch vụ</th>
+                </tr>
+                <tr>
+                  <th colspan="3">Khoa Khám bệnh</th>
+                  <th colspan="2">Khoa Nội TH - Nhi - An dưỡng</th>
+                  <th rowspan="2">Cận lâm sàng<br>(XN, CĐHA, TDCN)</th>
+                  <th rowspan="2">Thủ thuật</th>
+                </tr>
+                <tr>
+                  <th>Khám</th>
+                  <th>Kê đơn thuốc</th>
+                  <th>BN Ngoại trú</th>
+                  <th>BN Nội trú</th>
+                  <th>Nội trú ban ngày</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td><td><b>Cơ sở I</b></td><td>Lượt</td>
+                  <td class="val-highlight" id="preview-cs1-tong">90</td>
+                  <td id="preview-cs1-kham">11</td><td id="preview-cs1-kedon">1</td><td id="preview-cs1-ngoai">51</td>
+                  <td id="preview-cs1-noi">25</td><td id="preview-cs1-banngay">14</td><td id="preview-cs1-cls">5</td><td id="preview-cs1-thuthuat">273</td>
+                  <td style="text-align:left;font-size:12px">+ YHCT: <b id="preview-cs1-yhct">67</b> | PHCN: <b id="preview-cs1-phcn">204</b> | Cấy chỉ: <b id="preview-cs1-caychi">00</b></td>
+                </tr>
+                <tr>
+                  <td>2</td><td><b>Cơ sở II</b></td><td>Lượt</td>
+                  <td class="val-highlight" id="preview-cs2-tong">24</td>
+                  <td id="preview-cs2-kham">6</td><td id="preview-cs2-kedon">4</td><td id="preview-cs2-ngoai">10</td>
+                  <td id="preview-cs2-noi">11</td><td id="preview-cs2-banngay">3</td><td id="preview-cs2-cls">0</td><td id="preview-cs2-thuthuat">70</td>
+                  <td style="text-align:left;font-size:12px">+ YHCT: <b id="preview-cs2-yhct">33</b> | PHCN: <b id="preview-cs2-phcn">37</b> | Cấy chỉ: <b id="preview-cs2-caychi">02</b></td>
+                </tr>
+                <tr class="row-total">
+                  <td colspan="3">TỔNG TOÀN VIỆN</td>
+                  <td class="val-highlight" id="preview-sum-tong">114</td>
+                  <td id="preview-sum-kham">17</td><td id="preview-sum-kedon">5</td><td id="preview-sum-ngoai">61</td>
+                  <td id="preview-sum-noi">36</td><td id="preview-sum-banngay">17</td><td id="preview-sum-cls">5</td><td id="preview-sum-thuthuat">343</td>
+                  <td style="text-align:left;font-size:12px">Tổng YHCT: <b id="preview-sum-yhct">100</b> | Tổng PHCN: <b id="preview-sum-phcn">241</b> | Cấy chỉ: <b id="preview-sum-caychi">02</b></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 2: NHẬP SỐ LIỆU KCB HẰNG NGÀY
+      ============================================================ -->
+      <section id="tab-kcb" class="module-page">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title"><i class="fa-solid fa-stethoscope"></i> Nhập số liệu Khám chữa bệnh theo 2 Cơ sở</div>
+              <div class="card-subtitle">Số liệu tự động tính toán tổng số BN điều trị = Ngoại trú + Nội trú + Ban ngày</div>
+            </div>
+            <button class="btn btn-outline" onclick="resetKcbDefaults()"><i class="fa-solid fa-rotate-left"></i> Đặt lại giá trị mặc định</button>
+          </div>
+
+          <div class="form-grid-2">
+            <!-- CƠ SỞ I -->
+            <div class="facility-box facility-1">
+              <div class="facility-title">
+                <span><i class="fa-solid fa-hospital" style="color:var(--primary)"></i> 1. SỐ LIỆU CƠ SỞ I</span>
+                <span class="badge-status ok" id="badge-cs1-total">Tổng điều trị: 90</span>
+              </div>
+
+              <div class="form-grid-3">
+                <div class="form-group">
+                  <label class="form-label">Khám bệnh (lượt)</label>
+                  <div class="input-control-wrap">
+                    <input type="number" min="0" class="form-control" id="cs1-kham" value="11" oninput="calculateKcbSums()">
+                    <div class="quick-steppers">
+                      <button class="btn-step" onclick="stepVal('cs1-kham',1)">+1</button>
+                      <button class="btn-step" onclick="stepVal('cs1-kham',5)">+5</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Kê đơn thuốc thang</label>
+                  <div class="input-control-wrap">
+                    <input type="number" min="0" class="form-control" id="cs1-kedon" value="1" oninput="calculateKcbSums()">
+                    <div class="quick-steppers">
+                      <button class="btn-step" onclick="stepVal('cs1-kedon',1)">+1</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">BN Ngoại trú</label>
+                  <div class="input-control-wrap">
+                    <input type="number" min="0" class="form-control" id="cs1-ngoai" value="51" oninput="calculateKcbSums()">
+                    <div class="quick-steppers">
+                      <button class="btn-step" onclick="stepVal('cs1-ngoai',5)">+5</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">BN Nội trú</label>
+                  <div class="input-control-wrap">
+                    <input type="number" min="0" class="form-control" id="cs1-noi" value="25" oninput="calculateKcbSums()">
+                    <div class="quick-steppers">
+                      <button class="btn-step" onclick="stepVal('cs1-noi',1)">+1</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Nội trú ban ngày</label>
+                  <div class="input-control-wrap">
+                    <input type="number" min="0" class="form-control" id="cs1-banngay" value="14" oninput="calculateKcbSums()">
+                    <div class="quick-steppers">
+                      <button class="btn-step" onclick="stepVal('cs1-banngay',1)">+1</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Cận lâm sàng (CLS)</label>
+                  <div class="input-control-wrap">
+                    <input type="number" min="0" class="form-control" id="cs1-cls" value="5" oninput="calculateKcbSums()">
+                    <div class="quick-steppers">
+                      <button class="btn-step" onclick="stepVal('cs1-cls',1)">+1</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-top:6px">
+                <label class="form-label">Tổng số Thủ thuật</label>
+                <div class="input-control-wrap">
+                  <input type="number" min="0" class="form-control" id="cs1-thuthuat" value="273" oninput="calculateKcbSums()">
+                  <div class="quick-steppers">
+                    <button class="btn-step" onclick="stepVal('cs1-thuthuat',10)">+10</button>
+                  </div>
+                </div>
+              </div>
+
+              <div style="border-top:1px dashed var(--border-color);padding-top:12px;margin-top:12px">
+                <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px">Dịch vụ & Kỹ thuật Cơ sở I:</div>
+                <div class="form-grid-3">
+                  <div class="form-group">
+                    <label class="form-label">DV Y học Cổ truyền</label>
+                    <input type="number" min="0" class="form-control" id="cs1-yhct" value="67" oninput="calculateKcbSums()">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">DV Phục hồi CN</label>
+                    <input type="number" min="0" class="form-control" id="cs1-phcn" value="204" oninput="calculateKcbSums()">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Cấy chỉ KK</label>
+                    <input type="number" min="0" class="form-control" id="cs1-caychi" value="0" oninput="calculateKcbSums()">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CƠ SỞ II -->
+            <div class="facility-box facility-2">
+              <div class="facility-title">
+                <span><i class="fa-solid fa-hospital-alt" style="color:var(--accent)"></i> 2. SỐ LIỆU CƠ SỞ II</span>
+                <span class="badge-status ok" id="badge-cs2-total">Tổng điều trị: 24</span>
+              </div>
+
+              <div class="form-grid-3">
+                <div class="form-group">
+                  <label class="form-label">Khám bệnh (lượt)</label>
+                  <div class="input-control-wrap">
+                    <input type="number" min="0" class="form-control" id="cs2-kham" value="6" oninput="calculateKcbSums()">
+                    <div class="quick-steppers">
+                      <button class="btn-step" onclick="stepVal('cs2-kham',1)">+1</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Kê đơn thuốc thang</label>
+                  <div class="input-control-wrap">
+                    <input type="number" min="0" class="form-control" id="cs2-kedon" value="4" oninput="calculateKcbSums()">
+                    <div class="quick-steppers">
+                      <button class="btn-step" onclick="stepVal('cs2-kedon',1)">+1</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">BN Ngoại trú</label>
+                  <div class="input-control-wrap">
+                    <input type="number" min="0" class="form-control" id="cs2-ngoai" value="10" oninput="calculateKcbSums()">
+                    <div class="quick-steppers">
+                      <button class="btn-step" onclick="stepVal('cs2-ngoai',2)">+2</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">BN Nội trú</label>
+                  <div class="input-control-wrap">
+                    <input type="number" min="0" class="form-control" id="cs2-noi" value="11" oninput="calculateKcbSums()">
+                    <div class="quick-steppers">
+                      <button class="btn-step" onclick="stepVal('cs2-noi',1)">+1</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Nội trú ban ngày</label>
+                  <div class="input-control-wrap">
+                    <input type="number" min="0" class="form-control" id="cs2-banngay" value="3" oninput="calculateKcbSums()">
+                    <div class="quick-steppers">
+                      <button class="btn-step" onclick="stepVal('cs2-banngay',1)">+1</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Cận lâm sàng (CLS)</label>
+                  <div class="input-control-wrap">
+                    <input type="number" min="0" class="form-control" id="cs2-cls" value="0" oninput="calculateKcbSums()">
+                    <div class="quick-steppers">
+                      <button class="btn-step" onclick="stepVal('cs2-cls',1)">+1</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-top:6px">
+                <label class="form-label">Tổng số Thủ thuật</label>
+                <div class="input-control-wrap">
+                  <input type="number" min="0" class="form-control" id="cs2-thuthuat" value="70" oninput="calculateKcbSums()">
+                  <div class="quick-steppers">
+                    <button class="btn-step" onclick="stepVal('cs2-thuthuat',5)">+5</button>
+                  </div>
+                </div>
+              </div>
+
+              <div style="border-top:1px dashed var(--border-color);padding-top:12px;margin-top:12px">
+                <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px">Dịch vụ & Kỹ thuật Cơ sở II:</div>
+                <div class="form-grid-3">
+                  <div class="form-group">
+                    <label class="form-label">DV Y học Cổ truyền</label>
+                    <input type="number" min="0" class="form-control" id="cs2-yhct" value="33" oninput="calculateKcbSums()">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">DV Phục hồi CN</label>
+                    <input type="number" min="0" class="form-control" id="cs2-phcn" value="37" oninput="calculateKcbSums()">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Cấy chỉ KK</label>
+                    <input type="number" min="0" class="form-control" id="cs2-caychi" value="2" oninput="calculateKcbSums()">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CHUYÊN KHOA ĐẶC THÙ & MÔI TRƯỜNG -->
+          <div style="margin-top:20px;border-top:1px solid var(--border-color);padding-top:16px">
+            <div class="card-title" style="margin-bottom:14px"><i class="fa-solid fa-notes-medical"></i> Chuyên khoa Đặc thù & Kiểm soát Nhiễm khuẩn</div>
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label class="form-label">Phong - Da liễu (Đang quản lý)</label>
+                <input type="number" min="0" class="form-control" id="phong-dang-quan-ly" value="43">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phong - Da liễu (Nội trú)</label>
+                <input type="number" min="0" class="form-control" id="phong-noi-tru" value="14">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Rác thải y tế trong ngày (Kg)</label>
+                <input type="number" min="0" class="form-control" id="rac-thai-kg" value="293">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 3: NHẬP CHỈ SỐ TỔNG QUAN & KPIS
+      ============================================================ -->
+      <section id="tab-overview" class="module-page">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-chart-line"></i> Chỉ số Điều hành Tổng quan Toàn viện</div>
+          </div>
+
+          <div class="form-grid-4">
+            <div class="form-group">
+              <label class="form-label">Tổng lượt khám bệnh tháng</label>
+              <input type="number" min="0" class="form-control" id="kpi-kham-thang" value="3486">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Lượt khám ngày</label>
+              <input type="number" min="0" class="form-control" id="kpi-kham-ngay" value="120">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ra viện trong ngày</label>
+              <input type="number" min="0" class="form-control" id="kpi-ra-vien" value="37">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Đang điều trị nội viện</label>
+              <input type="number" min="0" class="form-control" id="kpi-dang-dieu-tri" value="82">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Giường kế hoạch giao</label>
+              <input type="number" min="0" class="form-control" id="kpi-giuong-ke-hoach" value="150">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Công suất giường (%)</label>
+              <input type="number" min="0" max="100" step="0.1" class="form-control" id="kpi-cong-suat-giuong" value="78">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hồ sơ EMR trong ngày (%)</label>
+              <input type="number" min="0" max="100" step="0.1" class="form-control" id="kpi-emr-rate" value="91.6">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hệ thống CNTT Availability (%)</label>
+              <input type="number" min="0" max="100" step="0.1" class="form-control" id="kpi-it-availability" value="97.8">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <!-- CHUYỂN ĐỔI SỐ & CHẤT LƯỢNG -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fa-solid fa-digital-ocean"></i> Chuyển đổi số & Chất lượng Bệnh viện</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hồ sơ bệnh án điện tử (%)</label>
+              <input type="number" min="0" max="100" step="0.1" class="form-control" id="cds-emr" value="94.2">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ký số biểu mẫu y tế (%)</label>
+              <input type="number" min="0" max="100" step="0.1" class="form-control" id="cds-sign" value="91.6">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Liên thông dữ liệu BHXH / BYT (%)</label>
+              <input type="number" min="0" max="100" step="0.1" class="form-control" id="cds-sync" value="98.7">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Thanh toán viện phí không tiền mặt (%)</label>
+              <input type="number" min="0" max="100" step="0.1" class="form-control" id="cds-cashless" value="63.4">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hài lòng người bệnh (%)</label>
+              <input type="number" min="0" max="100" step="0.1" class="form-control" id="cds-satisfaction" value="96.1">
+            </div>
+          </div>
+
+          <!-- TRẠNG THÁI HỆ THỐNG NGHIỆP VỤ QUỐC GIA -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fa-solid fa-network-wired"></i> Trạng thái Hệ thống Nghiệp vụ Liên thông</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Chỉ số tiếp nhận CCCD gắn chip / VNeID (Lượt)</label>
+              <input type="number" min="0" class="form-control" id="nv-cccd" value="134">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Liên thông Giấy khám sức khoẻ Lái xe (Hồ sơ)</label>
+              <input type="number" min="0" class="form-control" id="nv-laixe" value="25">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tỷ lệ cấp chế độ BHXH theo TT25/2025 (%)</label>
+              <input type="number" min="0" max="100" class="form-control" id="nv-bhxh-tt25" value="60">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Liên thông Sức khỏe bà mẹ trẻ em - eMHC (Hồ sơ)</label>
+              <input type="number" min="0" class="form-control" id="nv-emhc" value="13">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ngày điều trị Trung bình toàn viện (Ngày)</label>
+              <input type="number" min="0" step="0.1" class="form-control" id="nv-ngay-dt-tb" value="6.4">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 4: HẠ TẦNG & CNTT BỆNH VIỆN
+      ============================================================ -->
+      <section id="tab-infra" class="module-page">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-server"></i> Chỉ số Tổng quan Hạ tầng CNTT</div>
+          </div>
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">Tổng thiết bị đang giám sát</label>
+              <input type="number" min="0" class="form-control" id="infra-monitored" value="128">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Số thiết bị Online bình thường</label>
+              <input type="number" min="0" class="form-control" id="infra-online" value="124">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Số thiết bị cảnh báo hiệu năng</label>
+              <input type="number" min="0" class="form-control" id="infra-warning" value="3">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Số thiết bị mất kết nối (Offline)</label>
+              <input type="number" min="0" class="form-control" id="infra-offline" value="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">MTTR thời gian xử lý sự cố TB (Phút)</label>
+              <input type="text" class="form-control" id="infra-mttr" value="18'">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tỷ lệ Uptime tháng dịch vụ trọng yếu (%)</label>
+              <input type="text" class="form-control" id="infra-uptime" value="99.72%">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-microchip"></i> Thông số Trọng yếu 8 Thiết bị / Máy chủ Lõi</div>
+          </div>
+
+          <div class="device-grid">
+            <!-- Server HIS -->
+            <div class="device-box">
+              <div class="device-top">
+                <span class="device-name"><i class="fa-solid fa-server" style="color:var(--primary)"></i> Server HIS</span>
+                <span class="badge-status ok">Online</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">CPU / RAM / Disk (%)</label>
+                <div style="display:flex;gap:6px">
+                  <input type="number" class="form-control" id="dev-his-cpu" value="34" placeholder="CPU" title="CPU">
+                  <input type="number" class="form-control" id="dev-his-ram" value="61" placeholder="RAM" title="RAM">
+                  <input type="number" class="form-control" id="dev-his-disk" value="58" placeholder="Disk" title="Disk">
+                </div>
+              </div>
+            </div>
+
+            <!-- Server PACS -->
+            <div class="device-box">
+              <div class="device-top">
+                <span class="device-name"><i class="fa-solid fa-x-ray" style="color:var(--warning)"></i> Server PACS</span>
+                <span class="badge-status warn">Warning</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">CPU / RAM / Disk (%)</label>
+                <div style="display:flex;gap:6px">
+                  <input type="number" class="form-control" id="dev-pacs-cpu" value="41" placeholder="CPU">
+                  <input type="number" class="form-control" id="dev-pacs-ram" value="72" placeholder="RAM">
+                  <input type="number" class="form-control" id="dev-pacs-disk" value="88" placeholder="Disk">
+                </div>
+              </div>
+            </div>
+
+            <!-- Firewall -->
+            <div class="device-box">
+              <div class="device-top">
+                <span class="device-name"><i class="fa-solid fa-shield-halved" style="color:var(--success)"></i> Firewall</span>
+                <span class="badge-status ok">Online</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Sessions / WAN1 / WAN2</label>
+                <div style="display:flex;gap:6px">
+                  <input type="text" class="form-control" id="dev-fw-sess" value="1,428" placeholder="Sessions">
+                  <input type="text" class="form-control" id="dev-fw-wan1" value="62Mbps" placeholder="WAN1">
+                </div>
+              </div>
+            </div>
+
+            <!-- Core Switch -->
+            <div class="device-box">
+              <div class="device-top">
+                <span class="device-name"><i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--info)"></i> Core Switch</span>
+                <span class="badge-status ok">Online</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Ports Up / Traffic</label>
+                <div style="display:flex;gap:6px">
+                  <input type="text" class="form-control" id="dev-sw-ports" value="24/24" placeholder="Ports">
+                  <input type="text" class="form-control" id="dev-sw-traffic" value="412Mbps" placeholder="Traffic">
+                </div>
+              </div>
+            </div>
+
+            <!-- Database HIS -->
+            <div class="device-box">
+              <div class="device-top">
+                <span class="device-name"><i class="fa-solid fa-database" style="color:var(--primary)"></i> Database HIS</span>
+                <span class="badge-status ok">Online</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Connections / Query Latency</label>
+                <div style="display:flex;gap:6px">
+                  <input type="number" class="form-control" id="dev-db-conn" value="84" placeholder="Conn">
+                  <input type="text" class="form-control" id="dev-db-query" value="31ms" placeholder="Query">
+                </div>
+              </div>
+            </div>
+
+            <!-- Internet 1 -->
+            <div class="device-box">
+              <div class="device-top">
+                <span class="device-name"><i class="fa-solid fa-globe" style="color:var(--success)"></i> Internet 1</span>
+                <span class="badge-status ok">Online</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Latency / Loss / Util</label>
+                <div style="display:flex;gap:6px">
+                  <input type="text" class="form-control" id="dev-net1-lat" value="12ms" placeholder="Latency">
+                  <input type="text" class="form-control" id="dev-net1-util" value="48%" placeholder="Util">
+                </div>
+              </div>
+            </div>
+
+            <!-- Internet 2 -->
+            <div class="device-box">
+              <div class="device-top">
+                <span class="device-name"><i class="fa-solid fa-globe" style="color:var(--warning)"></i> Internet 2</span>
+                <span class="badge-status warn">Latency</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Latency / Loss / Util</label>
+                <div style="display:flex;gap:6px">
+                  <input type="text" class="form-control" id="dev-net2-lat" value="68ms" placeholder="Latency">
+                  <input type="text" class="form-control" id="dev-net2-loss" value="1.7%" placeholder="Loss">
+                </div>
+              </div>
+            </div>
+
+            <!-- Backup NAS -->
+            <div class="device-box">
+              <div class="device-top">
+                <span class="device-name"><i class="fa-solid fa-hard-drive" style="color:var(--accent)"></i> Backup NAS</span>
+                <span class="badge-status ok">Online</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Dung lượng sử dụng (%)</label>
+                <input type="text" class="form-control" id="dev-nas-used" value="71%">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 5: CẢNH BÁO, ATTT & SAO LƯU
+      ============================================================ -->
+      <section id="tab-alerts" class="module-page">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-shield-virus"></i> Thống kê An toàn Thông tin & Cảnh báo 24h</div>
+          </div>
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">Cảnh báo ghi nhận 24h</label>
+              <input type="number" min="0" class="form-control" id="sec-alerts-24h" value="18">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Sự cố Nghiêm trọng</label>
+              <input type="number" min="0" class="form-control" id="sec-critical" value="2" style="color:var(--danger)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Đã xác nhận xử lý</label>
+              <input type="number" min="0" class="form-control" id="sec-ack" value="13">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Đã khắc phục hoàn tất</label>
+              <input type="number" min="0" class="form-control" id="sec-resolved" value="11">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Đăng nhập thất bại (lần)</label>
+              <input type="number" min="0" class="form-control" id="sec-failed-login" value="23">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Sự kiện Firewall/IPS chặn</label>
+              <input type="number" min="0" class="form-control" id="sec-fw-events" value="37">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <!-- BẢNG CẢNH BÁO MẪU -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fa-solid fa-triangle-exclamation"></i> Nhật ký Cảnh báo Trọng yếu</div>
+            </div>
+            <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:12px">Danh sách các cảnh báo được hiển thị nổi bật trên màn hình điều hành trung tâm:</p>
+            <div style="display:flex;flex-direction:column;gap:8px" id="alert-items-list">
+              <div class="card" style="margin:0;padding:10px;background:var(--bg-card-alt);display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <span class="badge-status bad" style="margin-right:6px">14:12</span>
+                  <b>Ổ đĩa PACS > 85%</b>
+                  <div style="font-size:11px;color:var(--text-dim);margin-top:2px">Đối tượng: Server PACS</div>
+                </div>
+                <span class="badge-status warn">Đang xử lý</span>
+              </div>
+              <div class="card" style="margin:0;padding:10px;background:var(--bg-card-alt);display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <span class="badge-status warn" style="margin-right:6px">13:48</span>
+                  <b>Thời gian chờ khám > 35p</b>
+                  <div style="font-size:11px;color:var(--text-dim);margin-top:2px">Đối tượng: Phòng khám 01</div>
+                </div>
+                <span class="badge-status ok">Đã xác nhận</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TRẠNG THÁI SAO LƯU -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fa-solid fa-cloud-arrow-down"></i> Trạng thái Sao lưu & Phục hồi</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Sao lưu HIS</label>
+              <input type="text" class="form-control" id="bk-his" value="Thành công 02:05">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Sao lưu LIS (Xét nghiệm)</label>
+              <input type="text" class="form-control" id="bk-lis" value="Thành công 02:08">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Sao lưu PACS (Hình ảnh)</label>
+              <input type="text" class="form-control" id="bk-pacs" value="Thành công 02:10">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kiểm tra Restore gần nhất</label>
+              <input type="text" class="form-control" id="bk-restore" value="Đạt">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 6: CẤU HÌNH API & ĐỒNG BỘ DỮ LIỆU
+      ============================================================ -->
+      <section id="tab-settings" class="module-page">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-sliders"></i> Cấu hình Tích hợp API & Đồng bộ Dữ liệu</div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Đường dẫn API Backend nhận dữ liệu (Endpoint URL)</label>
+            <input type="text" class="form-control" id="cfg-api-url" value="api-kcb.php" style="font-family:monospace">
+            <p style="font-size:11.5px;color:var(--text-dim);margin-top:4px">
+              * Mặc định sử dụng API nội bộ <code>api-kcb.php</code>. Nếu tích hợp trực tiếp cổng HIS/LIS của bệnh viện, hãy nhập đường dẫn endpoint tương ứng.
+            </p>
+          </div>
+
+          <div style="display:flex;gap:12px;margin-top:18px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="exportDataJson()">
+              <i class="fa-solid fa-download"></i> Xuất file JSON (Backup dữ liệu)
+            </button>
+            <button class="btn btn-outline" onclick="triggerImportJson()">
+              <i class="fa-solid fa-upload"></i> Nhập từ file JSON
+            </button>
+            <input type="file" id="file-import-json" accept=".json" style="display:none" onchange="importDataJson(this)">
+            <button class="btn btn-outline" onclick="loadDefaultPreset()">
+              <i class="fa-solid fa-rotate-left"></i> Khôi phục dữ liệu mẫu
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-code"></i> Trình kiểm tra JSON Payload thời gian thực</div>
+          </div>
+          <textarea class="form-control" id="json-preview-box" rows="12" readonly style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg-input);color:var(--primary)"></textarea>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ============================================================
+       MODAL: XEM TRƯỚC BẢNG MA TRẬN KCB
+  ============================================================ -->
+  <div class="modal-backdrop" id="preview-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="card-title"><i class="fa-solid fa-eye" style="color:var(--primary)"></i> Xem trước Bảng Số liệu Khám chữa bệnh (Hiển thị 65 inch)</div>
+        <button class="btn-icon" onclick="closePreviewModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="matrix-table" id="modal-matrix-table">
+            <!-- Rendered by JavaScript -->
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closePreviewModal()">Đóng</button>
+        <button class="btn btn-primary" onclick="saveAllData(); closePreviewModal();">
+          <i class="fa-solid fa-floppy-disk"></i> Lưu & Đồng bộ ngay
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ============================================================
+       JAVASCRIPT LOGIC & DATA SYNC ENGINE
+  ============================================================ -->
+  <script>
+    // State Store
+    let IOC_DATA = {};
+    let API_URL = "api-kcb.php";
+
+    // Khởi tạo trang
+    document.addEventListener("DOMContentLoaded", () => {
+      // Thiết lập ngày mặc định là hôm nay
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      document.getElementById('input-record-date').value = `${yyyy}-${mm}-${dd}`;
+
+      // Tải dữ liệu từ API hoặc LocalStorage
+      loadInitialData();
+    });
+
+    // Chuyển đổi Menu Tabs
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.module-page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
+
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+      if (el) el.classList.add('active');
+
+      // Cập nhật Tiêu đề Topbar
+      const titleMap = {
+        'tab-dashboard': { title: '<i class="fa-solid fa-gauge-high"></i> Bàn làm việc Quản trị & Nhập liệu', sub: 'Tổng quan tiến độ cập nhật và ma trận chỉ số IOC' },
+        'tab-kcb': { title: '<i class="fa-solid fa-stethoscope"></i> Nhập số liệu Khám Chữa Bệnh', sub: 'Cập nhật số liệu lượt khám, điều trị nội trú, ngoại trú và cận lâm sàng' },
+        'tab-overview': { title: '<i class="fa-solid fa-chart-pie"></i> Nhập Chỉ số Điều hành & KPIs', sub: 'Cập nhật công suất giường bệnh, chuyển đổi số và cổng liên thông nghiệp vụ' },
+        'tab-infra': { title: '<i class="fa-solid fa-server"></i> Quản lý & Giám sát Hạ tầng CNTT', sub: 'Cập nhật trạng thái máy chủ, tải CPU/RAM, băng thông và sự cố mạng' },
+        'tab-alerts': { title: '<i class="fa-solid fa-triangle-exclamation"></i> Quản lý Cảnh báo, ATTT & Sao lưu', sub: 'Quản lý sự cố khẩn cấp, an toàn thông tin và tiến trình backup hệ thống' },
+        'tab-settings': { title: '<i class="fa-solid fa-sliders"></i> Cấu hình Tích hợp API & Đồng bộ', sub: 'Thiết lập endpoint HIS, kiểm tra JSON Payload và xuất nhập file' }
+      };
+
+      if (titleMap[tabId]) {
+        document.getElementById('current-page-title').innerHTML = titleMap[tabId].title;
+        document.getElementById('current-page-sub').textContent = titleMap[tabId].sub;
+      }
+
+      // Cập nhật JSON Preview nếu vào tab settings
+      if (tabId === 'tab-settings') {
+        updateJsonPreview();
+      }
+
+      // Đóng sidebar trên mobile sau khi chọn tab
+      if (window.innerWidth <= 900) {
+        document.getElementById('sidebar')?.classList.remove('open');
+        document.getElementById('sidebar-overlay')?.classList.remove('active');
+      }
+    }
+
+    // Toggle Sidebar trên Mobile
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      const isOpen = sidebar.classList.toggle('open');
+      if (overlay) {
+        overlay.classList.toggle('active', isOpen);
+      }
+    }
+
+    // Chuyển đổi Theme Dark / Light
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ioc_admin_theme', next);
+      showToast(`Đã chuyển sang giao diện ${next === 'light' ? 'Sáng' : 'Tối'}`, 'info');
+    }
+
+    // Đọc theme đã lưu
+    const savedTheme = localStorage.getItem('ioc_admin_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    // Tăng giảm nhanh giá trị (+1, +5...)
+    function stepVal(id, amount) {
+      const input = document.getElementById(id);
+      if (input) {
+        const val = Math.max(0, (parseInt(input.value) || 0) + amount);
+        input.value = val;
+        calculateKcbSums();
+      }
+    }
+
+    // Tự động tính tổng các cột KCB
+    function calculateKcbSums() {
+      const getNum = (id) => Math.max(0, parseInt(document.getElementById(id)?.value) || 0);
+
+      const cs1 = {
+        kham: getNum('cs1-kham'),
+        kedon: getNum('cs1-kedon'),
+        ngoai: getNum('cs1-ngoai'),
+        noi: getNum('cs1-noi'),
+        banngay: getNum('cs1-banngay'),
+        cls: getNum('cs1-cls'),
+        thuthuat: getNum('cs1-thuthuat'),
+        yhct: getNum('cs1-yhct'),
+        phcn: getNum('cs1-phcn'),
+        caychi: getNum('cs1-caychi')
+      };
+
+      const cs2 = {
+        kham: getNum('cs2-kham'),
+        kedon: getNum('cs2-kedon'),
+        ngoai: getNum('cs2-ngoai'),
+        noi: getNum('cs2-noi'),
+        banngay: getNum('cs2-banngay'),
+        cls: getNum('cs2-cls'),
+        thuthuat: getNum('cs2-thuthuat'),
+        yhct: getNum('cs2-yhct'),
+        phcn: getNum('cs2-phcn'),
+        caychi: getNum('cs2-caychi')
+      };
+
+      // Tổng điều trị từng cơ sở = Ngoại trú + Nội trú + Ban ngày
+      cs1.tong = cs1.ngoai + cs1.noi + cs1.banngay;
+      cs2.tong = cs2.ngoai + cs2.noi + cs2.banngay;
+
+      // Cập nhật badge tổng
+      const b1 = document.getElementById('badge-cs1-total');
+      if (b1) b1.textContent = `Tổng điều trị: ${cs1.tong}`;
+      const b2 = document.getElementById('badge-cs2-total');
+      if (b2) b2.textContent = `Tổng điều trị: ${cs2.tong}`;
+
+      // Tính tổng toàn viện
+      const sum = {
+        tong: cs1.tong + cs2.tong,
+        kham: cs1.kham + cs2.kham,
+        kedon: cs1.kedon + cs2.kedon,
+        ngoai: cs1.ngoai + cs2.ngoai,
+        noi: cs1.noi + cs2.noi,
+        banngay: cs1.banngay + cs2.banngay,
+        cls: cs1.cls + cs2.cls,
+        thuthuat: cs1.thuthuat + cs2.thuthuat,
+        yhct: cs1.yhct + cs2.yhct,
+        phcn: cs1.phcn + cs2.phcn,
+        caychi: cs1.caychi + cs2.caychi
+      };
+
+      // Cập nhật Dashboard stats
+      setText('dash-stat-dieu-tri', sum.tong);
+      setText('dash-stat-kham', sum.kham);
+      setText('dash-stat-noi-tru', sum.noi);
+      setText('dash-stat-thu-thuat', sum.thuthuat);
+
+      // Cập nhật Live Preview Table ở Tab 1
+      setText('preview-cs1-tong', cs1.tong);
+      setText('preview-cs1-kham', cs1.kham);
+      setText('preview-cs1-kedon', cs1.kedon);
+      setText('preview-cs1-ngoai', cs1.ngoai);
+      setText('preview-cs1-noi', cs1.noi);
+      setText('preview-cs1-banngay', cs1.banngay);
+      setText('preview-cs1-cls', cs1.cls);
+      setText('preview-cs1-thuthuat', cs1.thuthuat);
+      setText('preview-cs1-yhct', cs1.yhct);
+      setText('preview-cs1-phcn', cs1.phcn);
+      setText('preview-cs1-caychi', String(cs1.caychi).padStart(2, '0'));
+
+      setText('preview-cs2-tong', cs2.tong);
+      setText('preview-cs2-kham', cs2.kham);
+      setText('preview-cs2-kedon', cs2.kedon);
+      setText('preview-cs2-ngoai', cs2.ngoai);
+      setText('preview-cs2-noi', cs2.noi);
+      setText('preview-cs2-banngay', cs2.banngay);
+      setText('preview-cs2-cls', cs2.cls);
+      setText('preview-cs2-thuthuat', cs2.thuthuat);
+      setText('preview-cs2-yhct', cs2.yhct);
+      setText('preview-cs2-phcn', cs2.phcn);
+      setText('preview-cs2-caychi', String(cs2.caychi).padStart(2, '0'));
+
+      setText('preview-sum-tong', sum.tong);
+      setText('preview-sum-kham', sum.kham);
+      setText('preview-sum-kedon', sum.kedon);
+      setText('preview-sum-ngoai', sum.ngoai);
+      setText('preview-sum-noi', sum.noi);
+      setText('preview-sum-banngay', sum.banngay);
+      setText('preview-sum-cls', sum.cls);
+      setText('preview-sum-thuthuat', sum.thuthuat);
+      setText('preview-sum-yhct', sum.yhct);
+      setText('preview-sum-phcn', sum.phcn);
+      setText('preview-sum-caychi', String(sum.caychi).padStart(2, '0'));
+    }
+
+    function setText(id, val) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    }
+
+    // Thu thập toàn bộ dữ liệu từ các form
+    function collectAllFormData() {
+      const getVal = (id, def = 0) => {
+        const el = document.getElementById(id);
+        if (!el) return def;
+        return el.type === 'number' ? (parseFloat(el.value) || 0) : el.value;
+      };
+
+      const cs1 = {
+        kham: getVal('cs1-kham'),
+        kedon: getVal('cs1-kedon'),
+        ngoai: getVal('cs1-ngoai'),
+        noi: getVal('cs1-noi'),
+        banngay: getVal('cs1-banngay'),
+        cls: getVal('cs1-cls'),
+        thuthuat: getVal('cs1-thuthuat'),
+        yhct: getVal('cs1-yhct'),
+        phcn: getVal('cs1-phcn'),
+        caychi: getVal('cs1-caychi')
+      };
+      cs1.tong = cs1.ngoai + cs1.noi + cs1.banngay;
+
+      const cs2 = {
+        kham: getVal('cs2-kham'),
+        kedon: getVal('cs2-kedon'),
+        ngoai: getVal('cs2-ngoai'),
+        noi: getVal('cs2-noi'),
+        banngay: getVal('cs2-banngay'),
+        cls: getVal('cs2-cls'),
+        thuthuat: getVal('cs2-thuthuat'),
+        yhct: getVal('cs2-yhct'),
+        phcn: getVal('cs2-phcn'),
+        caychi: getVal('cs2-caychi')
+      };
+      cs2.tong = cs2.ngoai + cs2.noi + cs2.banngay;
+
+      const d = document.getElementById('input-record-date').value;
+      const formattedDate = d ? d.split('-').reverse().join('/') : new Date().toLocaleDateString('vi-VN');
+
+      const now = new Date();
+      const timeStr = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+
+      return {
+        date: formattedDate,
+        updated_at: timeStr,
+        source: 'Cổng Quản trị IOC BV Đăk Tô',
+        coso1: cs1,
+        coso2: cs2,
+        phong_dalieu: {
+          dang_quan_ly: getVal('phong-dang-quan-ly', 43),
+          noi_tru: getVal('phong-noi-tru', 14)
+        },
+        rac_thai_y_te_kg: getVal('rac-thai-kg', 293),
+        overview: {
+          kham_thang: getVal('kpi-kham-thang', 3486),
+          kham_ngay: getVal('kpi-kham-ngay', 120),
+          ra_vien: getVal('kpi-ra-vien', 37),
+          dang_dieu_tri: getVal('kpi-dang-dieu-tri', 82),
+          giuong_ke_hoach: getVal('kpi-giuong-ke-hoach', 150),
+          cong_suat_giuong: getVal('kpi-cong-suat-giuong', 78),
+          emr_rate: getVal('kpi-emr-rate', 91.6),
+          it_availability: getVal('kpi-it-availability', 97.8),
+          emr_digital: getVal('cds-emr', 94.2),
+          digital_sign: getVal('cds-sign', 91.6),
+          data_link: getVal('cds-sync', 98.7),
+          cashless: getVal('cds-cashless', 63.4),
+          satisfaction: getVal('cds-satisfaction', 96.1),
+          cccd_count: getVal('nv-cccd', 134),
+          driving_license_count: getVal('nv-laixe', 25),
+          bhxh_tt25_rate: getVal('nv-bhxh-tt25', 60),
+          emhc_count: getVal('nv-emhc', 13),
+          ngay_dt_tb: getVal('nv-ngay-dt-tb', 6.4)
+        },
+        infra: {
+          monitored: getVal('infra-monitored', 128),
+          online: getVal('infra-online', 124),
+          warning: getVal('infra-warning', 3),
+          offline: getVal('infra-offline', 1),
+          mttr: getVal('infra-mttr', "18'"),
+          uptime: getVal('infra-uptime', "99.72%"),
+          devices: {
+            server_his: { cpu: getVal('dev-his-cpu', 34), ram: getVal('dev-his-ram', 61), disk: getVal('dev-his-disk', 58), uptime: '47d', status: 'Online' },
+            server_pacs: { cpu: getVal('dev-pacs-cpu', 41), ram: getVal('dev-pacs-ram', 72), disk: getVal('dev-pacs-disk', 88), uptime: '47d', status: 'Warning' },
+            firewall: { sessions: getVal('dev-fw-sess', '1,428'), wan1: getVal('dev-fw-wan1', '62Mbps'), status: 'Online' },
+            core_switch: { ports: getVal('dev-sw-ports', '24/24'), traffic: getVal('dev-sw-traffic', '412Mbps'), status: 'Online' },
+            database_his: { connections: getVal('dev-db-conn', 84), query: getVal('dev-db-query', '31ms'), status: 'Online' },
+            internet_1: { latency: getVal('dev-net1-lat', '12ms'), util: getVal('dev-net1-util', '48%'), status: 'Online' },
+            internet_2: { latency: getVal('dev-net2-lat', '68ms'), loss: getVal('dev-net2-loss', '1.7%'), status: 'Latency' },
+            backup_nas: { used: getVal('dev-nas-used', '71%'), status: 'Online' }
+          }
+        },
+        alerts_security: {
+          alerts_24h: getVal('sec-alerts-24h', 18),
+          critical: getVal('sec-critical', 2),
+          acknowledged: getVal('sec-ack', 13),
+          resolved: getVal('sec-resolved', 11),
+          failed_logins: getVal('sec-failed-login', 23),
+          firewall_events: getVal('sec-fw-events', 37),
+          backup: {
+            his: getVal('bk-his', 'Thành công 02:05'),
+            lis: getVal('bk-lis', 'Thành công 02:08'),
+            pacs: getVal('bk-pacs', 'Thành công 02:10'),
+            restore_test: getVal('bk-restore', 'Đạt')
+          }
+        }
+      };
+    }
+
+    // Đổ dữ liệu vào Form
+    function populateFormData(data) {
+      if (!data) return;
+      IOC_DATA = data;
+
+      const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val !== undefined && val !== null) el.value = val;
+      };
+
+      if (data.coso1) {
+        setVal('cs1-kham', data.coso1.kham);
+        setVal('cs1-kedon', data.coso1.kedon);
+        setVal('cs1-ngoai', data.coso1.ngoai);
+        setVal('cs1-noi', data.coso1.noi);
+        setVal('cs1-banngay', data.coso1.banngay);
+        setVal('cs1-cls', data.coso1.cls);
+        setVal('cs1-thuthuat', data.coso1.thuthuat);
+        setVal('cs1-yhct', data.coso1.yhct);
+        setVal('cs1-phcn', data.coso1.phcn);
+        setVal('cs1-caychi', data.coso1.caychi);
+      }
+
+      if (data.coso2) {
+        setVal('cs2-kham', data.coso2.kham);
+        setVal('cs2-kedon', data.coso2.kedon);
+        setVal('cs2-ngoai', data.coso2.ngoai);
+        setVal('cs2-noi', data.coso2.noi);
+        setVal('cs2-banngay', data.coso2.banngay);
+        setVal('cs2-cls', data.coso2.cls);
+        setVal('cs2-thuthuat', data.coso2.thuthuat);
+        setVal('cs2-yhct', data.coso2.yhct);
+        setVal('cs2-phcn', data.coso2.phcn);
+        setVal('cs2-caychi', data.coso2.caychi);
+      }
+
+      if (data.phong_dalieu) {
+        setVal('phong-dang-quan-ly', data.phong_dalieu.dang_quan_ly);
+        setVal('phong-noi-tru', data.phong_dalieu.noi_tru);
+      }
+      setVal('rac-thai-kg', data.rac_thai_y_te_kg);
+
+      if (data.overview) {
+        const o = data.overview;
+        setVal('kpi-kham-thang', o.kham_thang);
+        setVal('kpi-kham-ngay', o.kham_ngay);
+        setVal('kpi-ra-vien', o.ra_vien);
+        setVal('kpi-dang-dieu-tri', o.dang_dieu_tri);
+        setVal('kpi-giuong-ke-hoach', o.giuong_ke_hoach);
+        setVal('kpi-cong-suat-giuong', o.cong_suat_giuong);
+        setVal('kpi-emr-rate', o.emr_rate);
+        setVal('kpi-it-availability', o.it_availability);
+        setVal('cds-emr', o.emr_digital);
+        setVal('cds-sign', o.digital_sign);
+        setVal('cds-sync', o.data_link);
+        setVal('cds-cashless', o.cashless);
+        setVal('cds-satisfaction', o.satisfaction);
+        setVal('nv-cccd', o.cccd_count);
+        setVal('nv-laixe', o.driving_license_count);
+        setVal('nv-bhxh-tt25', o.bhxh_tt25_rate);
+        setVal('nv-emhc', o.emhc_count);
+        setVal('nv-ngay-dt-tb', o.ngay_dt_tb);
+      }
+
+      if (data.infra) {
+        const inf = data.infra;
+        setVal('infra-monitored', inf.monitored);
+        setVal('infra-online', inf.online);
+        setVal('infra-warning', inf.warning);
+        setVal('infra-offline', inf.offline);
+        setVal('infra-mttr', inf.mttr);
+        setVal('infra-uptime', inf.uptime);
+        if (inf.devices) {
+          if (inf.devices.server_his) {
+            setVal('dev-his-cpu', inf.devices.server_his.cpu);
+            setVal('dev-his-ram', inf.devices.server_his.ram);
+            setVal('dev-his-disk', inf.devices.server_his.disk);
+          }
+          if (inf.devices.server_pacs) {
+            setVal('dev-pacs-cpu', inf.devices.server_pacs.cpu);
+            setVal('dev-pacs-ram', inf.devices.server_pacs.ram);
+            setVal('dev-pacs-disk', inf.devices.server_pacs.disk);
+          }
+        }
+      }
+
+      if (data.updated_at) {
+        setText('lbl-last-sync-time', `${data.updated_at} (${data.date || 'Hôm nay'})`);
+      }
+
+      // Tính toán lại tổng
+      calculateKcbSums();
+    }
+
+    // Chọn ngày nhanh (Hôm nay / Hôm qua)
+    function setDatePreset(type) {
+      const now = new Date();
+      if (type === 'yesterday') {
+        now.setDate(now.getDate() - 1);
+      }
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const iso = `${yyyy}-${mm}-${dd}`;
+      const input = document.getElementById('input-record-date');
+      if (input) input.value = iso;
+      onDateChanged(iso);
+    }
+
+    // Tiến trình xử lý Loading đặc trưng IOC
+    function showIocLoader(msg = "ĐANG ĐỒNG BỘ DỮ LIỆU...") {
+      const overlay = document.getElementById('ioc-loader-overlay');
+      const msgEl = document.getElementById('ioc-loader-msg');
+      if (msgEl) msgEl.textContent = msg;
+      if (overlay) overlay.classList.add('active');
+    }
+
+    function hideIocLoader() {
+      const overlay = document.getElementById('ioc-loader-overlay');
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    // Khi người dùng thay đổi ngày nhập liệu
+    async function onDateChanged(isoVal) {
+      if (!isoVal) return;
+      const parts = isoVal.split('-');
+      const formattedDate = parts[2] + '/' + parts[1] + '/' + parts[0];
+      
+      showIocLoader(`ĐANG TẢI SỐ LIỆU NGÀY ${formattedDate}...`);
+      const startTime = Date.now();
+      
+      try {
+        const res = await fetch(`${API_URL}?date=${encodeURIComponent(formattedDate)}`, { cache: 'no-store' });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            populateFormData(json.data);
+            showToast(`📅 Đã nạp dữ liệu ngày ${formattedDate}`, 'success');
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Không thể kết nối API, kiểm tra dữ liệu bộ nhớ cục bộ:', err);
+      } finally {
+        const elapsed = Date.now() - startTime;
+        setTimeout(hideIocLoader, Math.max(0, 400 - elapsed));
+      }
+
+      // Fallback sang LocalStorage
+      const local = localStorage.getItem('ioc_dakto_data');
+      if (local) {
+        try {
+          const parsed = JSON.parse(local);
+          if (parsed.date === formattedDate) {
+            populateFormData(parsed);
+            showToast(`📅 Đã nạp dữ liệu ngày ${formattedDate} từ LocalStorage`, 'info');
+            return;
+          }
+        } catch (e) {}
+      }
+
+      showToast(`Đã chuyển sang ngày ${formattedDate} (Sẵn sàng nhập mới)`, 'info');
+    }
+
+    // Tải dữ liệu ban đầu
+    async function loadInitialData() {
+      const todayInput = document.getElementById('input-record-date');
+      const curDateIso = todayInput?.value;
+      if (curDateIso) {
+        await onDateChanged(curDateIso);
+        return;
+      }
+
+      showIocLoader('ĐANG KẾT NỐI VÀ ĐỒNG BỘ MÁY CHỦ IOC...');
+      const startTime = Date.now();
+
+      try {
+        const res = await fetch(API_URL, { cache: 'no-store' });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            populateFormData(json.data);
+            showToast('Đã đồng bộ dữ liệu từ API máy chủ thành công!', 'success');
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('API chưa sẵn sàng hoặc ngoại tuyến, đọc từ LocalStorage:', err);
+      } finally {
+        const elapsed = Date.now() - startTime;
+        setTimeout(hideIocLoader, Math.max(0, 400 - elapsed));
+      }
+
+      // Fallback sang localStorage
+      const local = localStorage.getItem('ioc_dakto_data');
+      if (local) {
+        try {
+          const parsed = JSON.parse(local);
+          populateFormData(parsed);
+          showToast('Đã nạp dữ liệu từ bộ nhớ cục bộ (LocalStorage)', 'info');
+          return;
+        } catch (e) {}
+      }
+
+      // Khởi tạo tính toán ban đầu
+      calculateKcbSums();
+    }
+
+    // Lưu toàn bộ dữ liệu & Đồng bộ API
+    async function saveAllData() {
+      const data = collectAllFormData();
+      const saveBtn = document.getElementById('btn-save-main');
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
+      }
+
+      showIocLoader('ĐANG ĐỒNG BỘ DỮ LIỆU LÊN DASHBOARD IOC...');
+      const startTime = Date.now();
+
+      // Luôn lưu vào LocalStorage
+      localStorage.setItem('ioc_dakto_data', JSON.stringify(data));
+
+      let apiSaved = false;
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (res.ok) {
+          const resJson = await res.json();
+          if (resJson.success) {
+            apiSaved = true;
+            setText('lbl-last-sync-time', `${data.updated_at} (Vừa lưu)`);
+            showToast('✅ Đã lưu và đồng bộ thành công lên Dashboard IOC!', 'success');
+          }
+        }
+      } catch (err) {
+        console.error('Lỗi khi gửi API:', err);
+      } finally {
+        const elapsed = Date.now() - startTime;
+        setTimeout(hideIocLoader, Math.max(0, 450 - elapsed));
+      }
+
+      if (!apiSaved) {
+        showToast('⚠️ Đã lưu vào LocalStorage (Sẵn sàng kết nối API)', 'warning');
+      }
+
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Lưu & Đồng bộ';
+      }
+
+      updateJsonPreview();
+    }
+
+    // Xem trước Modal
+    function openPreviewModal() {
+      calculateKcbSums();
+      const modalTable = document.getElementById('modal-matrix-table');
+      const previewTable = document.querySelector('.matrix-table');
+      if (modalTable && previewTable) {
+        modalTable.innerHTML = previewTable.innerHTML;
+      }
+      document.getElementById('preview-modal').classList.add('active');
+    }
+
+    function closePreviewModal() {
+      document.getElementById('preview-modal').classList.remove('active');
+    }
+
+    // Toast Alert
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      const iconMap = {
+        success: 'fa-circle-check',
+        error: 'fa-circle-xmark',
+        warning: 'fa-triangle-exclamation',
+        info: 'fa-circle-info'
+      };
+
+      toast.innerHTML = `
+        <i class="fa-solid ${iconMap[type] || 'fa-circle-info'}" style="font-size:18px"></i>
+        <div style="flex:1;font-size:13px;font-weight:500">${message}</div>
+      `;
+
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = 'slideInRight 0.3s ease reverse forwards';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Xuất JSON
+    function exportDataJson() {
+      const data = collectAllFormData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ioc-dakto-data-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Đã tải xuống file JSON sao lưu thành công', 'success');
+    }
+
+    // Nhập JSON
+    function triggerImportJson() {
+      document.getElementById('file-import-json').click();
+    }
+
+    function importDataJson(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          populateFormData(data);
+          showToast('Đã nhập dữ liệu từ file JSON thành công!', 'success');
+        } catch (err) {
+          showToast('File JSON không hợp lệ hoặc bị lỗi định dạng', 'error');
+        }
+      };
+      reader.readAsText(file);
+      input.value = '';
+    }
+
+    // Cập nhật khung JSON Preview
+    function updateJsonPreview() {
+      const box = document.getElementById('json-preview-box');
+      if (box) {
+        box.value = JSON.stringify(collectAllFormData(), null, 2);
+      }
+    }
+
+    // Lọc menu bên trái
+    function filterMenuItems(query) {
+      const q = query.toLowerCase().trim();
+      document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(q) ? 'block' : 'none';
+      });
+    }
+
+    // Đặt lại mặc định KCB
+    function resetKcbDefaults() {
+      const def = {
+        coso1: { kham: 11, kedon: 1, ngoai: 51, noi: 25, banngay: 14, cls: 5, thuthuat: 273, yhct: 67, phcn: 204, caychi: 0 },
+        coso2: { kham: 6, kedon: 4, ngoai: 10, noi: 11, banngay: 3, cls: 0, thuthuat: 70, yhct: 33, phcn: 37, caychi: 2 }
+      };
+      populateFormData(def);
+      showToast('Đã đặt lại số liệu KCB về mẫu chuẩn', 'info');
+    }
+
+    // State Lưới Lịch Quản trị
+    let CAL_VIEW_DATE_ADMIN = new Date();
+
+    function toggleCalendarGrid(popupId, inputId) {
+      const popup = document.getElementById(popupId);
+      if (!popup) return;
+      const isShow = popup.classList.contains('show');
+      document.querySelectorAll('.calendar-grid-popup').forEach(p => p.classList.remove('show'));
+      if (!isShow) {
+        const inputVal = document.getElementById(inputId)?.value;
+        if (inputVal) {
+          const parts = inputVal.split('-');
+          CAL_VIEW_DATE_ADMIN = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        } else {
+          CAL_VIEW_DATE_ADMIN = new Date();
+        }
+        renderCalendarGrid(popupId, inputId);
+        popup.classList.add('show');
+      }
+    }
+
+    function calNavigateMonth(step, popupId, inputId) {
+      CAL_VIEW_DATE_ADMIN.setMonth(CAL_VIEW_DATE_ADMIN.getMonth() + step);
+      renderCalendarGrid(popupId, inputId);
+    }
+
+    function renderCalendarGrid(popupId, inputId) {
+      const titleEl = document.getElementById('cal-month-title-admin');
+      const gridEl = document.getElementById('cal-days-grid-admin');
+      if (!titleEl || !gridEl) return;
+
+      const year = CAL_VIEW_DATE_ADMIN.getFullYear();
+      const month = CAL_VIEW_DATE_ADMIN.getMonth();
+      
+      titleEl.textContent = `Tháng ${String(month + 1).padStart(2, '0')}/${year}`;
+
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const startOffset = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
+      const lastDate = new Date(year, month + 1, 0).getDate();
+      const prevMonthLastDate = new Date(year, month, 0).getDate();
+
+      const selectedInputVal = document.getElementById(inputId)?.value;
+      const today = new Date();
+      const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+      let html = '';
+
+      // Ngày tháng trước
+      for (let i = startOffset; i > 0; i--) {
+        const d = prevMonthLastDate - i + 1;
+        html += `<div class="cal-day-cell other-month" onclick="selectCalendarDate(new Date(${year}, ${month - 1}, ${d}), '${popupId}', '${inputId}')">${d}</div>`;
+      }
+
+      // Ngày tháng hiện tại
+      for (let i = 1; i <= lastDate; i++) {
+        const curIso = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+        const isSelected = selectedInputVal === curIso;
+        const isToday = todayStr === curIso;
+
+        let cls = 'cal-day-cell';
+        if (isSelected) cls += ' selected';
+        if (isToday) cls += ' today';
+
+        html += `<div class="${cls}" onclick="selectCalendarDate(new Date(${year}, ${month}, ${i}), '${popupId}', '${inputId}')">${i}</div>`;
+      }
+
+      // Ngày tháng tiếp theo
+      const totalRendered = startOffset + lastDate;
+      const remaining = (7 - (totalRendered % 7)) % 7;
+      for (let i = 1; i <= remaining; i++) {
+        html += `<div class="cal-day-cell other-month" onclick="selectCalendarDate(new Date(${year}, ${month + 1}, ${i}), '${popupId}', '${inputId}')">${i}</div>`;
+      }
+
+      gridEl.innerHTML = html;
+    }
+
+    function selectCalendarDate(dateObj, popupId, inputId) {
+      const yyyy = dateObj.getFullYear();
+      const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const dd = String(dateObj.getDate()).padStart(2, '0');
+      const iso = `${yyyy}-${mm}-${dd}`;
+      const input = document.getElementById(inputId);
+      if (input) {
+        input.value = iso;
+        onDateChanged(iso);
+      }
+      document.getElementById(popupId)?.classList.remove('show');
+    }
+
+    // Dropdown Menu Người dùng & Đăng xuất
+    function toggleUserDropdown(menuId) {
+      const menu = document.getElementById(menuId);
+      if (!menu) return;
+      const isShow = menu.classList.contains('show');
+      document.querySelectorAll('.user-dropdown-menu').forEach(m => m.classList.remove('show'));
+      if (!isShow) {
+        menu.classList.add('show');
+      }
+    }
+
+    // Xử lý Đăng xuất
+    function handleLogout() {
+      showIocLoader('ĐANG ĐĂNG XUẤT HỆ THỐNG...');
+      showToast('🚪 Đang kết thúc phiên làm việc...', 'info');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 600);
+    }
+
+    // Đóng popup khi bấm ra ngoài
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.date-badge') && !e.target.closest('.calendar-grid-popup')) {
+        document.querySelectorAll('.calendar-grid-popup').forEach(p => p.classList.remove('show'));
+      }
+      if (!e.target.closest('.user-profile') && !e.target.closest('.user-menu-wrap') && !e.target.closest('.user-dropdown-menu')) {
+        document.querySelectorAll('.user-dropdown-menu').forEach(m => m.classList.remove('show'));
+      }
+    });
+
+    // Phím tắt bàn phím
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        saveAllData();
+      }
+      if (e.key === 'Escape') {
+        closePreviewModal();
+        document.querySelectorAll('.calendar-grid-popup').forEach(p => p.classList.remove('show'));
+        document.querySelectorAll('.user-dropdown-menu').forEach(m => m.classList.remove('show'));
+      }
+    });
+  </script>
+</body>
+</html>

@@ -53,17 +53,36 @@ public static function getInstance() {
  }
 
 
-function show($name) {
-	// echo __SITE_PATH;
-	$path = __SITE_PATH . '/template/' .ThemeMaster. '/' . $name . '.php';
-	// echo 'link:'. $path;
+// function show($name) {
+// 	// echo __SITE_PATH;
+// 	$path = __SITE_PATH . '/template/' .ThemeMaster. '/' . $name . '.php';
+// 	// echo 'link:'. $path;
+// 	if (file_exists($path) == false)
+// 	{
+// 		$path = __SITE_PATH . '/template/' .ThemeMaster. '/404.php';
+// 		//throw new Exception('Template not found in '. $path);
+// 		//return false;
+// 	}
+
+// 	// Load variables
+// 	foreach ($this->data as $key => $value)
+// 	{
+// 		$$key = $value;
+// 	}
+
+// 	include ($path);               
+// }
+function admintmp($name) {
+	
+$path = __SITE_PATH . '/template/' .admin. '/' . $name . '.php';
 	if (file_exists($path) == false)
+		
 	{
-		$path = __SITE_PATH . '/template/' .ThemeMaster. '/404.php';
+		$path = __SITE_PATH . '/template/' .admin. '/404.php';
 		//throw new Exception('Template not found in '. $path);
 		//return false;
 	}
-
+	
 	// Load variables
 	foreach ($this->data as $key => $value)
 	{
@@ -72,13 +91,32 @@ function show($name) {
 
 	include ($path);               
 }
-function admintmp($name) {
+function backendtmp($name) {
 	
-$path = __SITE_PATH . '/template/' .AdminThemeMaster. '/' . $name . '.php';
+$path = __SITE_PATH . '/template/' .backend. '/' . $name . '.php';
 	if (file_exists($path) == false)
 		
 	{
-		$path = __SITE_PATH . '/template/' .AdminThemeMaster. '/404.php';
+		$path = __SITE_PATH . '/template/' .backend. '/404.php';
+		//throw new Exception('Template not found in '. $path);
+		//return false;
+	}
+	
+	// Load variables
+	foreach ($this->data as $key => $value)
+	{
+		$$key = $value;
+	}
+
+	include ($path);               
+}
+function dashboardtmp($name) {
+	
+$path = __SITE_PATH . '/template/' .dashboard. '/' . $name . '.php';
+	if (file_exists($path) == false)
+		
+	{
+		$path = __SITE_PATH . '/template/' .dashboard. '/404.php';
 		//throw new Exception('Template not found in '. $path);
 		//return false;
 	}
