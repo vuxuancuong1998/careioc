@@ -57,6 +57,11 @@ Class general{
 	}
 	private function get_permission()
 	{
+		if (empty($_SESSION['staff']['department']))
+		{
+			return array();
+		}
+
 		global $db;
 		$db->query("SELECT * FROM hicrm_permission_datas WHERE depart = '".$_SESSION['staff']['department']."'");
 		$listper = $db->fetch_object();
@@ -69,6 +74,11 @@ Class general{
 	}
 	public function check_permission($role)
 	{
+		if (empty($_SESSION['staff']))
+		{
+			return false;
+		}
+
 		if($_SESSION['staff']['group'] == 1)
 		{
 			return true;

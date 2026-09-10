@@ -84,7 +84,7 @@
             </div>
         </div>
         <div class="block-content block-content-full">
-            <strong>https://khachhang.mmexpress.vn/register?ref=<?php echo $_SESSION['staff']['id'];?></strong>
+			<strong>https://khachhang.mmexpress.vn/register?ref=<?php echo $_SESSION['staff']['id'] ?? '';?></strong>
         </div>
     </div>
     <div class="d-flex justify-content-between align-items-center py-3">

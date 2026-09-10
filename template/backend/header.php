@@ -1,4 +1,3 @@
-<?php include "config.php";?>
 <!doctype html>
 <html lang="en">
    <head>
@@ -28,8 +27,7 @@
    </head>
    <body>
       <div id="page-container" class="sidebar-o enable-page-overlay side-scroll page-header-fixed main-content-narrow side-trans-enabled page-header-dark">
-         <?php include_once "aside.php";?>
-         <?php include_once "nav.php";?>
+		 <?php include_once __DIR__ . '/nav.php';?>
 		 
 		 
          
@@ -47,7 +45,7 @@
                   <div class="dropdown d-inline-block">
                      <button type="button" class="btn btn-dual" id="page-header-user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                      <i class="fa fa-fw fa-user d-sm-none"></i>
-                     <span class="d-none d-sm-inline-block"><?php echo $_SESSION['staff']['fullname'];?></span>
+						<span class="d-none d-sm-inline-block"><?php echo $_SESSION['staff']['fullname'] ?? 'Khách';?></span>
                      <i class="fa fa-fw fa-angle-down ml-1 d-none d-sm-inline-block"></i>
                      </button>
                      <div class="dropdown-menu dropdown-menu-right p-0" aria-labelledby="page-header-user-dropdown">

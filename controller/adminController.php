@@ -3,9 +3,9 @@ Class adminController extends baseController
 {
     public function index()
     {
-		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
+		// if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
 		
-		$this->view->show("backend/index");
+		$this->view->admintmp("index");
     }
 	public function login()
 	{

@@ -8,6 +8,12 @@ Class baseView {
  * @access public
  */
 public $data = array();
+public $home;
+public $url;
+public $helper;
+public $shop;
+public $erp;
+public $pdf;
 private static $instance;
 
 /**
@@ -20,12 +26,12 @@ private static $instance;
  *
  */
 function __construct() {
-	$this->home  = &home::getInstance();
-	$this->url  = &general::getInstance();
-	$this->helper  = &general::getInstance();
-	$this->shop  = &shop::getInstance();
-	$this->erp  = &erp::getInstance();
-	$this->pdf  = &pdf::getInstance();
+	$this->home  = home::getInstance();
+	$this->url  = general::getInstance();
+	$this->helper  = general::getInstance();
+	$this->shop  = shop::getInstance();
+	$this->erp  = erp::getInstance();
+	$this->pdf  = pdf::getInstance();
 }
 
 public static function getInstance() {
@@ -101,6 +107,8 @@ $path = __SITE_PATH . '/template/' .backend. '/' . $name . '.php';
 		//throw new Exception('Template not found in '. $path);
 		//return false;
 	}
+	$template_path = $GLOBALS['backend_path'];
+	$page = $name;
 	
 	// Load variables
 	foreach ($this->data as $key => $value)
@@ -112,13 +120,11 @@ $path = __SITE_PATH . '/template/' .backend. '/' . $name . '.php';
 }
 function dashboardtmp($name) {
 	
-$path = __SITE_PATH . '/template/' .dashboard. '/' . $name . '.php';
+	$basePath = __SITE_PATH . '/template/' . dashboard . '/' . $name;
+	$path = file_exists($basePath . '.php') ? $basePath . '.php' : $basePath . '.html';
 	if (file_exists($path) == false)
-		
 	{
-		$path = __SITE_PATH . '/template/' .dashboard. '/404.php';
-		//throw new Exception('Template not found in '. $path);
-		//return false;
+		throw new RuntimeException('Dashboard template not found: ' . $name);
 	}
 	
 	// Load variables

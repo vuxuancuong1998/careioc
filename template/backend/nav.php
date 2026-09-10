@@ -161,7 +161,7 @@
                         <span class="nav-main-link-name">Báo cáo chung</span>
                         </a>
                      </li>
-					 <?php if($_SESSION['staff']['group'] == 1)
+					 <?php if(($_SESSION['staff']['group'] ?? null) == 1)
 					 {
 						 ?>
 					 <li class="nav-main-heading">Hệ thống</li>

@@ -8,7 +8,7 @@
 session_start();
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 //=============== Custom configuration ==================//
-define('DB_NAME', 'careioc'); //database name
+define('DB_NAME', 'care_ioc'); //database name
 define('DB_USER', 'root'); //database user
 define('DB_PASSWORD', ''); //database password
 define('DB_HOST', 'localhost'); //sql server

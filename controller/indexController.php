@@ -10,7 +10,7 @@ Class indexController Extends baseController
 		// echo "SSSSSSSSSSSS";
 		$this->view->data["pagetitle"] = "Tổng quan";
 		
-		$this->view->show("index");
+		// $this->view->show("index");
 		/*
 		global $db;
 		$db->query("SELECT *, p.id as placeid FROM bds_places as p
