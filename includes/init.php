@@ -31,6 +31,7 @@
  
  /*** include the template class ***/
  include __SITE_PATH . '/application/' . 'database.class.php';
+ include __SITE_PATH . '/application/' . 'auth.class.php';
 
 
  /*** a new registry object ***/

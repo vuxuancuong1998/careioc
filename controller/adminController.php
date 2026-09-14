@@ -3,19 +3,29 @@ Class adminController extends baseController
 {
     public function index()
     {
-		// if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
+		if (!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")) {
+			header("Location: " . XC_URL . "/admin/login");
+			exit;
+		}
 		
 		$this->view->admintmp("index");
     }
 	public function login()
 	{
-		
-		$this->view->show("backend/login");
+		if (isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "") {
+			header("Location: " . XC_URL . "/admin");
+			exit;
+		}
+		$this->view->admintmp("auth/login");
 	}
 	
-	public function logout(){
-		session_unset();
-		header('Location:' .XC_URL. '/admin/login');
+	public function logout()
+	{
+		if (isset($_SESSION['user'])) unset($_SESSION['user']);
+		if (isset($_SESSION['staff'])) unset($_SESSION['staff']);
+		session_destroy();
+		header('Location: ' . XC_URL . '/admin/login');
+		exit;
 	}
 	public function users($para)
 	{

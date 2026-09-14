@@ -2789,60 +2789,419 @@ Class apiController extends baseController
 		}
 		
 	}
+
 	public function login()
 	{
+		header('Content-Type: application/json; charset=utf-8');
 		global $db;
 		$result = array();
-		
-		$email = $db->escapestring($_POST["email"]);
-		$password = $db->escapestring($_POST["password"]);
-		
-		$password = md5($password);
-		$db->query("SELECT * FROM hicrm_users WHERE user_email = '".$email."' AND user_password = '".$password."' OR user_username ='".$email."' AND user_status = 1 ");
-        if($db->num_row())
-        {
-            $row = $db->fetch_object(true);
-            $_SESSION['user']['id'] = $row->id; 
-            $_SESSION['user']['email'] = $row->user_email;
-			$_SESSION['user']['fullname'] = $row->user_fullname;
-			$_SESSION['user']['group'] = $row->user_group;
-            $_SESSION['LoggedIn'] = 1;
-			$result["status"] = 200;
-			$result["name"] = $_SESSION['user']['fullname'];
-			$result['return_url'] = XC_URL."/admin";
-        }
-		else
-		{
-			$result["status"] = "500";
-			//echo "error"
-			$result['message'] = 'Thông tin tài khoản hoặc mật khẩu không chính xác';
+
+		$username = isset($_POST["username"]) ? trim($_POST["username"]) : '';
+		$password = isset($_POST["password"]) ? trim($_POST["password"]) : '';
+
+		if (empty($username) || empty($password)) {
+			$result["status"] = 400;
+			$result["message"] = "Vui lòng nhập đầy đủ Số CCCD và Mật khẩu!";
+			echo json_encode($result, JSON_UNESCAPED_UNICODE);
+			return;
 		}
-		echo json_encode($result);
+
+		$safe_user = $db->escapestring($username);
+		
+		// Tìm theo số CCCD (citizen_id) hoặc username
+		$db->query("SELECT * FROM ioc_users WHERE (citizen_id = '".$safe_user."' OR username = '".$safe_user."') LIMIT 1");
+		if ($db->num_row() > 0) {
+			$user = $db->fetch_object(true);
+
+			if (isset($user->is_active) && (int)$user->is_active === 0) {
+				$result["status"] = 403;
+				$result["message"] = "Tài khoản cán bộ đã bị tạm khóa hoặc chưa kích hoạt!";
+				echo json_encode($result, JSON_UNESCAPED_UNICODE);
+				return;
+			}
+
+			// Kiểm tra mật khẩu (hỗ trợ hash MD5 hoặc password_hash Bcrypt)
+			$password_valid = false;
+			if (md5($password) === $user->password_hash) {
+				$password_valid = true;
+			} elseif (password_verify($password, $user->password_hash)) {
+				$password_valid = true;
+			}
+
+			if ($password_valid) {
+				// Lưu session
+				$_SESSION['user'] = array(
+					'id' => $user->id,
+					'username' => $user->username,
+					'citizen_id' => $user->citizen_id,
+					'display_name' => $user->display_name,
+					'fullname' => $user->display_name,
+					'position' => $user->position,
+					'department' => $user->department,
+					'email' => $user->email,
+					'phone' => $user->phone
+				);
+				$_SESSION['staff'] = $_SESSION['user'];
+
+				// Nạp vai trò & danh sách phân quyền chi tiết từ ioc_auth_roles
+				Auth::syncSession($user);
+
+				// Cập nhật thời gian đăng nhập cuối
+				$db->query("UPDATE ioc_users SET last_login_at = NOW() WHERE id = '".$user->id."'");
+
+				$result["status"] = 200;
+				$result["message"] = "Đăng nhập thành công! Đang chuyển hướng...";
+				$result["redirect"] = XC_URL . "/admin";
+			} else {
+				$result["status"] = 400;
+				$result["message"] = "Mật khẩu không chính xác. Vui lòng kiểm tra lại!";
+			}
+		} else {
+			$result["status"] = 400;
+			$result["message"] = "Số CCCD hoặc tài khoản không tồn tại trong hệ thống IOC!";
+		}
+
+		echo json_encode($result, JSON_UNESCAPED_UNICODE);
 	}
-	
-	
+
 	public function stafflogin()
 	{
-		$result = array();
-		$email = mysql_real_escape_string($_POST["username"]);
-        $password = md5(mysql_real_escape_string($_POST["password"]));
+		$this->login();
+	}
+
+	public function checkExists()
+	{
+		header('Content-Type: application/json; charset=utf-8');
 		global $db;
-		$db->query("SELECT * FROM hicrm_users WHERE user_email = '".$email."' AND user_password = '".$password."' AND user_group IN (1,2,3) ORDER BY id DESC LIMIT 1");
-		if($db->num_row())
-		{
-			$user = $db->fetch_object(true);
-			$_SESSION['staff']['id'] = $user->id;
-			$_SESSION['staff']['fullname'] = $user->user_fullname;
-			$_SESSION['staff']['group'] = $user->user_group;
-			$_SESSION['staff']['department'] = $user->user_dept;
-			$result["status"] = 200;
+		$type = isset($_POST['type']) ? trim($_POST['type']) : (isset($_GET['type']) ? trim($_GET['type']) : '');
+		$value = isset($_POST['value']) ? trim($_POST['value']) : (isset($_GET['value']) ? trim($_GET['value']) : '');
+
+		$validCols = array('citizen_id', 'username', 'email', 'phone');
+		if (!in_array($type, $validCols) || empty($value)) {
+			echo json_encode(array('exists' => false), JSON_UNESCAPED_UNICODE);
+			return;
 		}
-		else
-		{
-			$result["status"] = 404;
-			$result["message"] = "Không tìm thấy tài khoản";
+
+		$safeVal = $db->escapestring($value);
+		$db->query("SELECT id FROM ioc_users WHERE {$type} = '{$safeVal}' LIMIT 1");
+		$exists = ($db->num_row() > 0);
+		echo json_encode(array('exists' => $exists, 'type' => $type, 'value' => $value), JSON_UNESCAPED_UNICODE);
+	}
+
+	// ==================== RBAC & ROLES API ====================
+	public function getRoles()
+	{
+		header('Content-Type: application/json; charset=utf-8');
+		global $db;
+		$db->query("SELECT r.*, COUNT(ur.id) as user_count 
+					FROM ioc_auth_roles r 
+					LEFT JOIN ioc_auth_user_roles ur ON ur.role_id = r.id 
+					GROUP BY r.id 
+					ORDER BY r.is_system DESC, r.id ASC");
+		$roles = $db->fetch_object();
+		echo json_encode(['status' => 200, 'data' => $roles ?: []], JSON_UNESCAPED_UNICODE);
+	}
+
+	public function saveRole()
+	{
+		header('Content-Type: application/json; charset=utf-8');
+		global $db;
+		Auth::requirePermission('roles.edit');
+
+		$id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+		$role_name = isset($_POST['role_name']) ? trim($_POST['role_name']) : '';
+		$role_code = isset($_POST['role_code']) ? strtoupper(trim($_POST['role_code'])) : '';
+		$scope = isset($_POST['scope']) ? strtolower(trim($_POST['scope'])) : 'admin';
+		if (!in_array($scope, ['admin', 'backend', 'dashboard'])) {
+			$scope = 'admin';
 		}
-        echo json_encode($result);
+		$description = isset($_POST['description']) ? trim($_POST['description']) : '';
+		$menu_access = isset($_POST['menu_access']) ? $_POST['menu_access'] : null;
+		$permissions = isset($_POST['permissions']) ? $_POST['permissions'] : null;
+
+		if (empty($role_name) || empty($role_code)) {
+			echo json_encode(['status' => 400, 'message' => 'Vui lòng nhập đầy đủ Tên và Mã vai trò!'], JSON_UNESCAPED_UNICODE);
+			return;
+		}
+
+		$safe_name = $db->escapestring($role_name);
+		$safe_code = $db->escapestring($role_code);
+		$safe_scope = $db->escapestring($scope);
+		$safe_desc = $db->escapestring($description);
+
+		if ($id > 0) {
+			// Cập nhật thông tin nhóm quyền
+			$updateFields = "role_name = '{$safe_name}', role_code = '{$safe_code}', scope = '{$safe_scope}', description = '{$safe_desc}', updated_at = NOW()";
+			if ($menu_access !== null) {
+				$safe_menu = $db->escapestring(is_array($menu_access) ? json_encode($menu_access) : $menu_access);
+				$updateFields .= ", menu_access = '{$safe_menu}'";
+			}
+			if ($permissions !== null) {
+				$safe_perms = $db->escapestring(is_array($permissions) ? json_encode($permissions) : $permissions);
+				$updateFields .= ", permissions = '{$safe_perms}'";
+			}
+
+			$db->query("UPDATE ioc_auth_roles SET {$updateFields} WHERE id = {$id}");
+			echo json_encode(['status' => 200, 'message' => 'Cập nhật thông tin nhóm quyền thành công!'], JSON_UNESCAPED_UNICODE);
+		} else {
+			// Thêm mới nhóm quyền
+			$db->query("SELECT id FROM ioc_auth_roles WHERE role_code = '{$safe_code}' LIMIT 1");
+			if ($db->num_row() > 0) {
+				echo json_encode(['status' => 400, 'message' => 'Mã vai trò đã tồn tại trong hệ thống!'], JSON_UNESCAPED_UNICODE);
+				return;
+			}
+			$safe_menu = $db->escapestring(is_array($menu_access) ? json_encode($menu_access) : ($menu_access ?: '[]'));
+			$safe_perms = $db->escapestring(is_array($permissions) ? json_encode($permissions) : ($permissions ?: '[]'));
+
+			$db->query("INSERT INTO ioc_auth_roles (role_name, role_code, scope, description, menu_access, permissions, is_system, is_active)
+						VALUES ('{$safe_name}', '{$safe_code}', '{$safe_scope}', '{$safe_desc}', '{$safe_menu}', '{$safe_perms}', 0, 1)");
+			$newId = $db->insert_id();
+			echo json_encode(['status' => 200, 'id' => $newId, 'message' => 'Thêm nhóm quyền mới thành công!'], JSON_UNESCAPED_UNICODE);
+		}
+	}
+
+	public function saveRolePermissions()
+	{
+		header('Content-Type: application/json; charset=utf-8');
+		global $db;
+		Auth::requirePermission('roles.edit');
+
+		$id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+		if ($id <= 0) {
+			echo json_encode(['status' => 400, 'message' => 'ID nhóm quyền không hợp lệ!'], JSON_UNESCAPED_UNICODE);
+			return;
+		}
+
+		$menu_access = isset($_POST['menu_access']) ? $_POST['menu_access'] : [];
+		$permissions = isset($_POST['permissions']) ? $_POST['permissions'] : [];
+
+		$safe_menu = $db->escapestring(is_array($menu_access) ? json_encode($menu_access) : $menu_access);
+		$safe_perms = $db->escapestring(is_array($permissions) ? json_encode($permissions) : $permissions);
+
+		$db->query("UPDATE ioc_auth_roles 
+					SET menu_access = '{$safe_menu}', permissions = '{$safe_perms}', updated_at = NOW() 
+					WHERE id = {$id}");
+
+		echo json_encode(['status' => 200, 'message' => 'Cập nhật cấu hình phân quyền cho nhóm thành công!'], JSON_UNESCAPED_UNICODE);
+	}
+
+	public function deleteRole()
+	{
+		header('Content-Type: application/json; charset=utf-8');
+		global $db;
+		Auth::requirePermission('roles.delete');
+
+		$id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+		if ($id <= 0) {
+			echo json_encode(['status' => 400, 'message' => 'ID vai trò không hợp lệ!'], JSON_UNESCAPED_UNICODE);
+			return;
+		}
+
+		$db->query("SELECT is_system FROM ioc_auth_roles WHERE id = {$id} LIMIT 1");
+		if ($db->num_row() > 0) {
+			$role = $db->fetch_object(true);
+			if ($role->is_system == 1) {
+				echo json_encode(['status' => 400, 'message' => 'Không thể xóa vai trò mặc định của hệ thống!'], JSON_UNESCAPED_UNICODE);
+				return;
+			}
+			$db->query("DELETE FROM ioc_auth_user_roles WHERE role_id = {$id}");
+			$db->query("DELETE FROM ioc_auth_roles WHERE id = {$id}");
+			echo json_encode(['status' => 200, 'message' => 'Đã xóa vai trò thành công!'], JSON_UNESCAPED_UNICODE);
+		} else {
+			echo json_encode(['status' => 404, 'message' => 'Không tìm thấy vai trò!'], JSON_UNESCAPED_UNICODE);
+		}
+	}
+
+	public function assignUserRole()
+	{
+		header('Content-Type: application/json; charset=utf-8');
+		global $db;
+		Auth::requirePermission('users.edit');
+
+		$user_id = isset($_POST['user_id']) ? trim($_POST['user_id']) : '';
+		$role_id = isset($_POST['role_id']) ? (int)$_POST['role_id'] : 0;
+
+		if (empty($user_id) || $role_id <= 0) {
+			echo json_encode(['status' => 400, 'message' => 'Dữ liệu gán vai trò không hợp lệ!'], JSON_UNESCAPED_UNICODE);
+			return;
+		}
+
+		$safe_uid = $db->escapestring($user_id);
+		$currentUserName = $_SESSION['user']['display_name'] ?? 'ADMIN';
+
+		// Xóa phân quyền cũ của user để đảm bảo 1 user có đúng 1 vai trò duy nhất
+		$db->query("DELETE FROM ioc_auth_user_roles WHERE user_id = '{$safe_uid}'");
+
+		$db->query("INSERT INTO ioc_auth_user_roles (user_id, role_id, assigned_by, created_at) 
+					VALUES ('{$safe_uid}', {$role_id}, '{$currentUserName}', NOW())");
+
+		echo json_encode(['status' => 200, 'message' => 'Đã gán vai trò cho cán bộ thành công!'], JSON_UNESCAPED_UNICODE);
+	}
+
+	public function getRoleUsersApi()
+	{
+		header('Content-Type: application/json; charset=utf-8');
+		global $db;
+		$role_id = isset($_GET['role_id']) ? (int)$_GET['role_id'] : 0;
+
+		$db->query("SELECT u.id, u.username, u.citizen_id, u.display_name, u.position, u.department,
+					       ur.role_id, (CASE WHEN ur.role_id = {$role_id} THEN 1 ELSE 0 END) as is_assigned,
+					       r.role_name as current_role_name
+					FROM ioc_users u
+					LEFT JOIN ioc_auth_user_roles ur ON ur.user_id = u.id
+					LEFT JOIN ioc_auth_roles r ON ur.role_id = r.id
+					WHERE u.is_active = 1
+					ORDER BY is_assigned DESC, u.display_name ASC");
+		$users = $db->fetch_object() ?: [];
+
+		echo json_encode(['status' => 200, 'data' => $users], JSON_UNESCAPED_UNICODE);
+	}
+
+	public function assignRoleUsersApi()
+	{
+		header('Content-Type: application/json; charset=utf-8');
+		global $db;
+		Auth::requirePermission('roles.edit');
+
+		$role_id = isset($_POST['role_id']) ? (int)$_POST['role_id'] : 0;
+		$user_ids = isset($_POST['user_ids']) ? (array)$_POST['user_ids'] : [];
+
+		if ($role_id <= 0) {
+			echo json_encode(['status' => 400, 'message' => 'Mã nhóm quyền không hợp lệ!'], JSON_UNESCAPED_UNICODE);
+			return;
+		}
+
+		$currentUserName = $_SESSION['user']['display_name'] ?? 'ADMIN';
+
+		// Xóa các user hiện tại thuộc role_id này
+		$db->query("DELETE FROM ioc_auth_user_roles WHERE role_id = {$role_id}");
+
+		// Thêm lại các user được chọn
+		foreach ($user_ids as $uid) {
+			$safe_uid = $db->escapestring(trim($uid));
+			if (!empty($safe_uid)) {
+				$db->query("DELETE FROM ioc_auth_user_roles WHERE user_id = '{$safe_uid}'");
+				$db->query("INSERT INTO ioc_auth_user_roles (user_id, role_id, assigned_by, created_at) 
+							VALUES ('{$safe_uid}', {$role_id}, '{$currentUserName}', NOW())");
+			}
+		}
+
+		echo json_encode(['status' => 200, 'message' => 'Đã cập nhật danh sách cán bộ cho nhóm quyền thành công!'], JSON_UNESCAPED_UNICODE);
+	}
+
+	public function saveUserApi()
+	{
+		header('Content-Type: application/json; charset=utf-8');
+		global $db;
+		Auth::requirePermission('users.edit');
+
+		$id = isset($_POST['id']) ? trim($_POST['id']) : '';
+		$name = isset($_POST['display_name']) ? trim($_POST['display_name']) : '';
+		$citizen_id = isset($_POST['citizen_id']) ? trim($_POST['citizen_id']) : '';
+		$username = isset($_POST['username']) ? trim($_POST['username']) : '';
+		$password = isset($_POST['password']) ? trim($_POST['password']) : '';
+		$role_id = isset($_POST['role_id']) ? (int)$_POST['role_id'] : 0;
+		$department = isset($_POST['department']) ? trim($_POST['department']) : '';
+		$position = isset($_POST['position']) ? trim($_POST['position']) : '';
+		$email = isset($_POST['email']) ? trim($_POST['email']) : '';
+		$phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
+		$gender = isset($_POST['gender']) ? trim($_POST['gender']) : 'Nam';
+		$birthday = !empty($_POST['birthday']) ? trim($_POST['birthday']) : null;
+		$address = isset($_POST['address']) ? trim($_POST['address']) : '';
+		$is_active = isset($_POST['is_active']) ? (int)$_POST['is_active'] : 1;
+
+		if (empty($name) || empty($citizen_id) || empty($username)) {
+			echo json_encode(['status' => 400, 'message' => 'Họ tên, CCCD và Tên đăng nhập không được để trống!'], JSON_UNESCAPED_UNICODE);
+			return;
+		}
+
+		$safe_name = $db->escapestring($name);
+		$safe_cccd = $db->escapestring($citizen_id);
+		$safe_user = $db->escapestring($username);
+		$safe_dept = $db->escapestring($department);
+		$safe_pos = $db->escapestring($position);
+		$safe_email = $db->escapestring($email);
+		$safe_phone = $db->escapestring($phone);
+		$safe_gender = $db->escapestring($gender);
+		$safe_bday = $birthday ? "'".$db->escapestring($birthday)."'" : "NULL";
+		$safe_addr = $db->escapestring($address);
+
+		if (!empty($id)) {
+			// Cập nhật thông tin cán bộ
+			$safe_id = $db->escapestring($id);
+			$passSql = !empty($password) ? ", password_hash = '" . md5($password) . "'" : "";
+			$db->query("UPDATE ioc_users SET 
+							display_name = '{$safe_name}',
+							citizen_id = '{$safe_cccd}',
+							username = '{$safe_user}',
+							department = '{$safe_dept}',
+							position = '{$safe_pos}',
+							email = '{$safe_email}',
+							phone = '{$safe_phone}',
+							gender = '{$safe_gender}',
+							birthday = {$safe_bday},
+							address = '{$safe_addr}',
+							is_active = {$is_active}
+							{$passSql}
+						WHERE id = '{$safe_id}'");
+			$userId = $id;
+		} else {
+			// Tạo mới cán bộ (sinh UUID chuẩn 36 ký tự)
+			$userId = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+				mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+				mt_rand(0, 0xffff),
+				mt_rand(0, 0x0fff) | 0x4000,
+				mt_rand(0, 0x3fff) | 0x8000,
+				mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+			);
+			$passHash = md5(!empty($password) ? $password : '123456');
+			$db->query("INSERT INTO ioc_users (id, username, password_hash, display_name, citizen_id, department, position, email, phone, gender, birthday, address, is_active, created_at)
+						VALUES ('{$userId}', '{$safe_user}', '{$passHash}', '{$safe_name}', '{$safe_cccd}', '{$safe_dept}', '{$safe_pos}', '{$safe_email}', '{$safe_phone}', '{$safe_gender}', {$safe_bday}, '{$safe_addr}', {$is_active}, NOW())");
+		}
+
+		// Gán vai trò nếu có
+		if ($role_id > 0) {
+			$safe_uid = $db->escapestring($userId);
+			$currentUserName = $_SESSION['user']['display_name'] ?? 'ADMIN';
+			$db->query("DELETE FROM ioc_auth_user_roles WHERE user_id = '{$safe_uid}'");
+			$db->query("INSERT INTO ioc_auth_user_roles (user_id, role_id, assigned_by, created_at) 
+						VALUES ('{$safe_uid}', {$role_id}, '{$currentUserName}', NOW())");
+		}
+
+		echo json_encode(['status' => 200, 'message' => 'Đã lưu thông tin người dùng và phân vai trò thành công!', 'user_id' => $userId], JSON_UNESCAPED_UNICODE);
+	}
+
+	public function getMenuCatalogApi()
+	{
+		header('Content-Type: application/json; charset=utf-8');
+		$scope = isset($_GET['scope']) ? trim($_GET['scope']) : 'admin';
+		if ($scope === 'all') {
+			$catalogs = Auth::getAllCatalogs();
+			$actions = Auth::getAllActions('all');
+			echo json_encode(['status' => 200, 'scope' => 'all', 'catalogs' => $catalogs, 'actions' => $actions], JSON_UNESCAPED_UNICODE);
+		} else {
+			$catalog = Auth::getMenuCatalog($scope);
+			$actions = Auth::getAllActions($scope);
+			echo json_encode(['status' => 200, 'scope' => $scope, 'catalog' => $catalog, 'actions' => $actions], JSON_UNESCAPED_UNICODE);
+		}
+	}
+
+	public function getMenuVersions()
+	{
+		header('Content-Type: application/json; charset=utf-8');
+		global $db;
+		$scope = isset($_GET['scope']) ? trim($_GET['scope']) : '';
+		$where = '';
+		if (!empty($scope)) {
+			$safeScope = $db->escapestring($scope);
+			$where = "WHERE scope = '{$safeScope}'";
+		}
+		$db->query("SELECT id, scope, version_tag, content_hash, created_by, change_note, is_active, created_at 
+					FROM ioc_auth_menu_versions 
+					{$where}
+					ORDER BY id DESC LIMIT 30");
+		$versions = $db->fetch_object();
+		echo json_encode(['status' => 200, 'data' => $versions ?: []], JSON_UNESCAPED_UNICODE);
 	}
 	public function login1()
 	{

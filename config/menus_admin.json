@@ -1,0 +1,127 @@
+[
+  {
+    "group_id": "clinical_group",
+    "group_name": "ĐIỀU HÀNH & KHÁM CHỮA",
+    "order": 1,
+    "menus": [
+      {
+        "id": "dashboard",
+        "name": "Tổng Quan IOC",
+        "route": "dashboard",
+        "icon": "ph ph-squares-four",
+        "actions": {
+          "view": "Xem chỉ số dashboard tổng quan"
+        }
+      },
+      {
+        "id": "outpatient",
+        "name": "Khám Bệnh & Tiếp Đón",
+        "route": "outpatient",
+        "icon": "ph ph-stethoscope",
+        "actions": {
+          "view": "Xem danh sách tiếp đón & khám bệnh",
+          "create": "Tiếp đón bệnh nhân mới",
+          "edit": "Cập nhật bệnh án & kê đơn",
+          "delete": "Hủy lượt khám bệnh",
+          "export": "Xuất báo cáo danh sách khám ngoại trú"
+        }
+      },
+      {
+        "id": "inpatient",
+        "name": "Nội Trú & Giường Bệnh",
+        "route": "inpatient",
+        "icon": "ph ph-bed",
+        "actions": {
+          "view": "Xem danh sách buồng bệnh & bệnh nhân",
+          "create": "Tiếp nhận bệnh nhân vào buồng",
+          "edit": "Chuyển buồng / cập nhật hồ sơ điều trị",
+          "delete": "Xóa hồ sơ buồng bệnh",
+          "discharge": "Ký giấy xuất viện"
+        }
+      }
+    ]
+  },
+  {
+    "group_id": "admin_group",
+    "group_name": "QUẢN TRỊ HỆ THỐNG",
+    "order": 2,
+    "menus": [
+      {
+        "id": "users",
+        "name": "Người Dùng & Nhân Sự",
+        "route": "users",
+        "icon": "ph ph-users",
+        "actions": {
+          "view": "Xem danh sách cán bộ y tế",
+          "create": "Thêm mới tài khoản cán bộ",
+          "edit": "Chỉnh sửa thông tin cán bộ",
+          "delete": "Khóa hoặc xóa tài khoản cán bộ",
+          "export": "Xuất danh sách cán bộ ra Excel"
+        }
+      },
+      {
+        "id": "roles",
+        "name": "Phân Quyền Vai Trò",
+        "route": "roles",
+        "icon": "ph ph-shield-check",
+        "actions": {
+          "view": "Xem danh sách vai trò",
+          "create": "Tạo vai trò mới",
+          "edit": "Cấu hình quyền hạn vai trò",
+          "delete": "Xóa vai trò"
+        }
+      },
+      {
+        "id": "category-departments",
+        "name": "Quản Lý Khoa Phòng",
+        "route": "category-departments",
+        "icon": "ph ph-buildings",
+        "actions": {
+          "view": "Xem danh sách khoa phòng",
+          "create": "Thêm mới khoa phòng",
+          "edit": "Chỉnh sửa khoa phòng",
+          "delete": "Xóa khoa phòng"
+        }
+      },
+      {
+        "id": "category-beds",
+        "name": "Quản Lý Giường Bệnh",
+        "route": "category-beds",
+        "icon": "ph ph-bed",
+        "actions": {
+          "view": "Xem danh mục giường bệnh",
+          "create": "Thêm mới giường bệnh",
+          "edit": "Cập nhật tình trạng giường",
+          "delete": "Xóa giường bệnh"
+        }
+      }
+    ]
+  },
+  {
+    "group_id": "infra_group",
+    "group_name": "GIÁM SÁT & HẠ TẦNG",
+    "order": 3,
+    "menus": [
+      {
+        "id": "it-infra",
+        "name": "Hạ Tầng CNTT & Server",
+        "route": "it-infra",
+        "icon": "ph ph-hard-drives",
+        "actions": {
+          "view": "Xem trạng thái máy chủ & mạng",
+          "edit": "Cấu hình thông số giám sát"
+        }
+      },
+      {
+        "id": "security",
+        "name": "An Toàn Thông Tin (ATTT)",
+        "route": "security",
+        "icon": "ph ph-shield-check",
+        "actions": {
+          "view": "Xem nhật ký truy cập & cảnh báo ATTT",
+          "export": "Xuất nhật ký kiểm toán"
+        }
+      }
+    ]
+  }
+]

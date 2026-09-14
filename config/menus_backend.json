@@ -1,0 +1,203 @@
+[
+  {
+    "group_id": "general_group",
+    "group_name": "BÀN LÀM VIỆC CHUNG",
+    "order": 1,
+    "menus": [
+      {
+        "id": "backend-dashboard",
+        "name": "Tổng Quan Vận Hành",
+        "route": "admin/",
+        "icon": "fa fa-location-arrow",
+        "actions": {
+          "view": "Xem số liệu tổng quan hệ thống"
+        }
+      }
+    ]
+  },
+  {
+    "group_id": "account_group",
+    "group_name": "QUẢN LÝ TÀI KHOẢN & NHÂN SỰ",
+    "order": 2,
+    "menus": [
+      {
+        "id": "backend-customer",
+        "name": "Khách Hàng",
+        "route": "admin/customers",
+        "icon": "fa fa-user-friends",
+        "actions": {
+          "view": "Xem danh sách khách hàng",
+          "create": "Thêm mới khách hàng",
+          "edit": "Cập nhật thông tin khách hàng",
+          "delete": "Xóa tài khoản khách hàng",
+          "export": "Xuất danh sách khách hàng ra Excel"
+        }
+      },
+      {
+        "id": "backend-agency",
+        "name": "Đại Lý & Đối Tác",
+        "route": "admin/agency",
+        "icon": "fa fa-handshake",
+        "actions": {
+          "view": "Xem danh sách đại lý",
+          "create": "Thêm mới đại lý",
+          "edit": "Cập nhật chính sách đại lý",
+          "delete": "Xóa đại lý"
+        }
+      },
+      {
+        "id": "backend-user",
+        "name": "Nhân Viên & Cán Bộ",
+        "route": "admin/users",
+        "icon": "fa fa-id-badge",
+        "actions": {
+          "view": "Xem danh sách nhân viên",
+          "create": "Thêm mới nhân viên",
+          "edit": "Chỉnh sửa hồ sơ nhân viên",
+          "delete": "Khóa hoặc xóa nhân viên"
+        }
+      },
+      {
+        "id": "backend-departments",
+        "name": "Phòng Ban & Phân Quyền",
+        "route": "admin/departments",
+        "icon": "fa fa-boxes",
+        "actions": {
+          "view": "Xem danh sách phòng ban",
+          "create": "Thêm mới phòng ban",
+          "edit": "Cấu hình quyền phòng ban",
+          "delete": "Xóa phòng ban"
+        }
+      }
+    ]
+  },
+  {
+    "group_id": "order_group",
+    "group_name": "QUẢN LÝ ĐƠN HÀNG & KHO VẬN",
+    "order": 3,
+    "menus": [
+      {
+        "id": "backend-orders",
+        "name": "Danh Sách Đơn Hàng",
+        "route": "admin/orders",
+        "icon": "fa fa-shopping-cart",
+        "actions": {
+          "view": "Xem danh sách đơn hàng",
+          "create": "Tạo đơn hàng mới",
+          "edit": "Chỉnh sửa trạng thái đơn hàng",
+          "delete": "Hủy đơn hàng",
+          "export": "Xuất danh sách đơn hàng"
+        }
+      },
+      {
+        "id": "backend-scan",
+        "name": "Nhập Kho TQ (Quét mã)",
+        "route": "order/scan",
+        "icon": "fa fa-barcode",
+        "actions": {
+          "view": "Xem màn hình quét mã nhập kho",
+          "create": "Quét và ghi nhận mã kiện",
+          "edit": "Cập nhật thông tin kiện quét"
+        }
+      },
+      {
+        "id": "backend-packages",
+        "name": "Quản Lý Kiện Hàng",
+        "route": "order/packages",
+        "icon": "fa fa-cube",
+        "actions": {
+          "view": "Xem danh sách kiện hàng",
+          "create": "Thêm kiện hàng",
+          "edit": "Đóng gói / gộp kiện",
+          "delete": "Xóa kiện hàng"
+        }
+      }
+    ]
+  },
+  {
+    "group_id": "finance_group",
+    "group_name": "TÀI CHÍNH & GIAO DỊCH",
+    "order": 4,
+    "menus": [
+      {
+        "id": "backend-transactions",
+        "name": "Lịch Sử Giao Dịch",
+        "route": "admin/transactions",
+        "icon": "fa fa-exchange-alt",
+        "actions": {
+          "view": "Xem biến động số dư và giao dịch",
+          "export": "Xuất sao kê giao dịch"
+        }
+      },
+      {
+        "id": "backend-deposites",
+        "name": "Yêu Cầu Nạp Tiền",
+        "route": "admin/deposites",
+        "icon": "fa fa-money-bill-wave",
+        "actions": {
+          "view": "Xem danh sách yêu cầu nạp tiền",
+          "approve": "Duyệt cộng tiền tài khoản",
+          "reject": "Từ chối yêu cầu nạp tiền"
+        }
+      },
+      {
+        "id": "backend-withdrawal",
+        "name": "Yêu Cầu Rút Tiền",
+        "route": "admin/withdrawal",
+        "icon": "fa fa-wallet",
+        "actions": {
+          "view": "Xem danh sách yêu cầu rút tiền",
+          "approve": "Duyệt chi trả tiền",
+          "reject": "Từ chối yêu cầu rút tiền"
+        }
+      },
+      {
+        "id": "backend-servicefee",
+        "name": "Biểu Phí Dịch Vụ & Vận Chuyển",
+        "route": "admin/servicefee",
+        "icon": "fa fa-tags",
+        "actions": {
+          "view": "Xem bảng biểu phí hiện hành",
+          "edit": "Điều chỉnh mức phí dịch vụ & vận chuyển"
+        }
+      }
+    ]
+  },
+  {
+    "group_id": "report_system_group",
+    "group_name": "BÁO CÁO & THIẾT LẬP HỆ THỐNG",
+    "order": 5,
+    "menus": [
+      {
+        "id": "backend-report",
+        "name": "Báo Cáo Chung & Thống Kê",
+        "route": "report",
+        "icon": "fa fa-chart-pie",
+        "actions": {
+          "view": "Xem biểu đồ phân tích và thống kê",
+          "export": "Xuất báo cáo tổng hợp"
+        }
+      },
+      {
+        "id": "backend-config",
+        "name": "Cấu Hình Hệ Thống",
+        "route": "admin/config",
+        "icon": "fa fa-wrench",
+        "actions": {
+          "view": "Xem thông số cấu hình chung",
+          "edit": "Lưu thay đổi cấu hình hệ thống"
+        }
+      },
+      {
+        "id": "backend-system-frontend",
+        "name": "Thiết Lập Giao Diện Frontend",
+        "route": "admin/config/system",
+        "icon": "fa fa-desktop",
+        "actions": {
+          "view": "Xem cấu hình giao diện người dùng",
+          "edit": "Thay đổi banner, logo, hotline frontend"
+        }
+      }
+    ]
+  }
+]

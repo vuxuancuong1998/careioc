@@ -747,7 +747,14 @@ CREATE TABLE `ioc_users` (
   `auth_provider` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'LOCAL' COMMENT 'LOCAL/LDAP/OIDC/SSO.',
   `external_subject` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ID/subject bên hệ thống xác thực ngoài.',
   `display_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Tên hiển thị.',
+  `citizen_id` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Số CCCD/Định danh cá nhân.',
+  `position` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Chức vụ công tác.',
+  `department` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Khoa phòng / Phòng ban.',
   `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Email.',
+  `phone` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Số điện thoại liên hệ.',
+  `gender` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Giới tính.',
+  `birthday` date DEFAULT NULL COMMENT 'Ngày sinh.',
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Địa chỉ thường trú.',
   `status_item_id` char(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Trạng thái tài khoản; USER_STATUS. FK -> core.ioc_catalog_items.id.',
   `last_login_at` datetime(6) DEFAULT NULL COMMENT 'Lần đăng nhập gần nhất.',
   `is_active` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Cho phép đăng nhập.',
@@ -1457,6 +1464,50 @@ ALTER TABLE `ioc_user_roles`
   ADD CONSTRAINT `fk_ioc_user_roles_organization_id_ioc_organizations` FOREIGN KEY (`organization_id`) REFERENCES `ioc_organizations` (`id`),
   ADD CONSTRAINT `fk_ioc_user_roles_role_id_ioc_roles` FOREIGN KEY (`role_id`) REFERENCES `ioc_roles` (`id`),
   ADD CONSTRAINT `fk_ioc_user_roles_user_id_ioc_users` FOREIGN KEY (`user_id`) REFERENCES `ioc_users` (`id`);
+
+-- --------------------------------------------------------
+-- Cấu trúc các bảng Phân Quyền Động mới (Auth & Dynamic RBAC)
+-- --------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `ioc_auth_menu_versions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `version_tag` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Mã phiên bản, vd: v1.0',
+  `config_content` longtext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Nội dung JSON đầy đủ',
+  `content_hash` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Mã hash kiểm tra thay đổi',
+  `created_by` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT 'SYSTEM' COMMENT 'Người chỉnh sửa',
+  `change_note` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ghi chú lý do thay đổi',
+  `is_active` tinyint(1) DEFAULT 1 COMMENT '1: Bản đang dùng, 0: Bản cũ',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Nhật ký phiên bản cấu hình JSON menu & quyền';
+
+CREATE TABLE IF NOT EXISTS `ioc_auth_roles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `role_code` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Mã vai trò',
+  `role_name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Tên hiển thị vai trò',
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Mô tả vai trò',
+  `menu_access` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Mảng JSON menu được nhìn thấy',
+  `permissions` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Mảng JSON quyền chi tiết (thêm/sửa/cấm xóa)',
+  `is_system` tinyint(1) DEFAULT 0 COMMENT '1: Vai trò hệ thống',
+  `is_active` tinyint(1) DEFAULT 1 COMMENT '1: Kích hoạt, 0: Tạm khóa',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_role_code` (`role_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Danh mục vai trò phân quyền';
+
+CREATE TABLE IF NOT EXISTS `ioc_auth_user_roles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Tham chiếu ioc_users.id',
+  `role_id` int(11) NOT NULL COMMENT 'Tham chiếu ioc_auth_roles.id',
+  `assigned_by` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Người gán vai trò',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_user_role` (`user_id`,`role_id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_role_id` (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Gán vai trò cho cán bộ y tế';
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,0 +1,70 @@
+[
+  {
+    "group_id": "ioc_monitoring_group",
+    "group_name": "TRUNG TÂM ĐIỀU HÀNH THÔNG MINH (MÀN HÌNH LỚN)",
+    "order": 1,
+    "menus": [
+      {
+        "id": "dash-overview",
+        "name": "Tổng Quan Điều Hành",
+        "route": "dashboard/#overview",
+        "icon": "ph ph-chart-line-up",
+        "actions": {
+          "view": "Xem chỉ số KPIs & biểu đồ xu hướng điều hành",
+          "filter_date": "Lọc số liệu theo ngày / khoảng thời gian",
+          "export": "Xuất báo cáo trực ban điều hành"
+        }
+      },
+      {
+        "id": "dash-dailykcb",
+        "name": "Số Liệu KCB Hằng Ngày",
+        "route": "dashboard/#dailykcb",
+        "icon": "ph ph-table",
+        "actions": {
+          "view": "Xem bảng phân tích tiếp đón, khám bệnh & nội trú",
+          "filter_date": "Tra cứu số liệu theo ngày báo cáo",
+          "export": "Xuất bảng thống kê KCB hằng ngày"
+        }
+      },
+      {
+        "id": "dash-infra",
+        "name": "Hạ Tầng CNTT & Thiết Bị Y Tế",
+        "route": "dashboard/#infra",
+        "icon": "ph ph-hard-drives",
+        "actions": {
+          "view": "Giám sát trạng thái máy chủ HIS, PACS, LIS, mạng nội bộ"
+        }
+      },
+      {
+        "id": "dash-alerts",
+        "name": "Cảnh Báo & An Toàn Thông Tin",
+        "route": "dashboard/#alerts",
+        "icon": "ph ph-warning-octagon",
+        "actions": {
+          "view": "Xem sự kiện cảnh báo y tế và an ninh mạng",
+          "resolve_alert": "Xác nhận và xử lý cảnh báo hệ thống"
+        }
+      }
+    ]
+  },
+  {
+    "group_id": "ioc_data_entry_group",
+    "group_name": "CỔNG NHẬP LIỆU & QUẢN TRỊ DỮ LIỆU IOC",
+    "order": 2,
+    "menus": [
+      {
+        "id": "dash-admin-data",
+        "name": "Quản Trị & Nhập Liệu IOC",
+        "route": "dashboard/admin-data.html",
+        "icon": "ph ph-database",
+        "actions": {
+          "view": "Xem danh sách hồ sơ chỉ số IOC",
+          "create": "Nhập liệu báo cáo ngày mới",
+          "edit": "Hiệu chỉnh số liệu chỉ số khám chữa bệnh",
+          "delete": "Xóa số liệu báo cáo",
+          "sync_api": "Kích hoạt đồng bộ tự động từ cổng HIS"
+        }
+      }
+    ]
+  }
+]

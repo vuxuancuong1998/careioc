@@ -68,7 +68,7 @@ Class crmController extends baseController
 	}
 	public function login()
 	{
-		$this->view->admintmp("login");
+		$this->view->admintmp("auth/login");
 	}
 	public function send_mail($email,$subject,$msg) {
 		 $api_key="key-901ede91ccd250f9b78b6923f98996f4";/* Api Key got from https://mailgun.com/cp/my_account */

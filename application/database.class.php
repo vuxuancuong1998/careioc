@@ -13,15 +13,16 @@ class Database{
 		if (!self::$instance)
 		{	
 			$db_con = new Database();
-			$db_con->connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+			$port = defined('DB_PORT') ? (int)DB_PORT : (defined('DB_POST') ? (int)DB_POST : 3306);
+			$db_con->connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, $port);
 			self::$instance = $db_con;
 		}
 		return self::$instance;
 	}
     //Mở kết nối CSDL 
-    function connect($address, $account, $pwd, $name) {
-        $this->connection = mysqli_connect($address, $account, $pwd,$name);
-        $this->connection->set_charset("utf8");
+    function connect($address, $account, $pwd, $name, $port = 3306) {
+        $this->connection = mysqli_connect($address, $account, $pwd, $name, $port);
+        $this->connection->set_charset("utf8mb4");
         if (!$this->connection){
             die("Database connection failed: " . mysqli_error()); 
         } 
@@ -131,5 +132,9 @@ class Database{
 	public function escapestring($string){
 		$result = mysqli_real_escape_string($this->connection, $string);
 		return $result;
+	}
+
+	public function insert_id(){
+		return mysqli_insert_id($this->connection);
 	}
 } 
