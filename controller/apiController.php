@@ -1,4 +1,6 @@
 <?php
+// Nap client dong bo he thong ngoai truoc khi khai bao API controller.
+require_once __DIR__ . '/libs/ExternalSystemApiClient.php';
 /**
  * Project: thuvien.
  * File: tourController.php.
@@ -29,6 +31,71 @@ Class apiController extends baseController
 		$result["uid"] = 1;
 		$result["token"] = "21231231238821";
 		echo json_encode($result);
+	}
+	// Dong bo du lieu tu HIS, LIS, RIS hoac EMR thong qua AJAX POST.
+	public function syncExternalData()
+	{
+		// Tra ve JSON nhat quan cho frontend va ngan output HTML ngoai y muon.
+		header('Content-Type: application/json; charset=utf-8');
+		// Chi chap nhan POST de endpoint lay du lieu khong bi kich hoat boi link GET.
+		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+			echo json_encode(array('success' => false, 'message' => 'Chỉ hỗ trợ yêu cầu POST.', 'data' => array()));
+			return;
+		}
+		// Xac thuc CSRF cua man hinh backend truoc khi goi dich vu ngoai.
+		if (empty($_SESSION['ioc_external_sync_csrf']) || !hash_equals($_SESSION['ioc_external_sync_csrf'], isset($_POST['csrf']) ? $_POST['csrf'] : '')) {
+			http_response_code(419);
+			echo json_encode(array('success' => false, 'message' => 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.', 'data' => array()));
+			return;
+		}
+		// Lay ten he thong tu input va dua ve chu thuong de doi chieu whitelist trong client.
+		$system = isset($_POST['system']) ? strtolower(trim((string) $_POST['system'])) : '';
+		// Lay khoang ngay nguoi dung chon de truyen vao URL LIS.
+		$fromDate = isset($_POST['from_date']) ? trim((string) $_POST['from_date']) : '';
+		// Lay ngay ket thuc nguoi dung chon de truyen vao URL LIS.
+		$toDate = isset($_POST['to_date']) ? trim((string) $_POST['to_date']) : '';
+		// Yeu cau khoang ngay hop le khi dong bo LIS.
+		if ($system === 'lis' && (!$this->isValidIntegrationDate($fromDate) || !$this->isValidIntegrationDate($toDate) || $fromDate > $toDate)) {
+			echo json_encode(array('success' => false, 'message' => 'Vui lòng chọn khoảng từ ngày đến ngày hợp lệ.', 'data' => array()));
+			return;
+		}
+		// Khoi tao client chi sau khi da validate request.
+		$client = new ExternalSystemApiClient();
+		// Client tu dang nhap neu token het han, sau do goi cac endpoint da cau hinh.
+		$result = $client->sync($system, array('from_date' => $fromDate, 'to_date' => $toDate));
+		// Gui ket qua khong chua username/password/token ve trinh duyet.
+		echo json_encode($result, JSON_UNESCAPED_UNICODE);
+	}
+	// Kiem tra dinh dang ngay truoc khi chen vao URL cua dich vu LIS.
+	private function isValidIntegrationDate($date)
+	{
+		// Chi chap nhan dinh dang ISO ngay va ngay ton tai trong lich.
+		return preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) && checkdate((int) substr($date, 5, 2), (int) substr($date, 8, 2), (int) substr($date, 0, 4));
+	}
+	// Kiem tra phien dang nhap LIS/HIS/RIS/EMR ma khong thuc hien dong bo.
+	public function externalSystemStatus()
+	{
+		// Dam bao client nhan duoc JSON trong moi truong hop.
+		header('Content-Type: application/json; charset=utf-8');
+		// Endpoint trang thai chi nhan POST de su dung cung co che CSRF.
+		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+			echo json_encode(array('success' => false, 'message' => 'Chỉ hỗ trợ yêu cầu POST.', 'data' => array()));
+			return;
+		}
+		// Xac thuc request cung phien da render man hinh LIS.
+		if (empty($_SESSION['ioc_external_sync_csrf']) || !hash_equals($_SESSION['ioc_external_sync_csrf'], isset($_POST['csrf']) ? $_POST['csrf'] : '')) {
+			http_response_code(419);
+			echo json_encode(array('success' => false, 'message' => 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.', 'data' => array()));
+			return;
+		}
+		// Lay he thong can kiem tra va giu whitelist o client class.
+		$system = isset($_POST['system']) ? strtolower(trim((string) $_POST['system'])) : '';
+		// Tu dang nhap khi frontend yeu cau va phien LIS chua ton tai/da het han.
+		$loginIfNeeded = !empty($_POST['login_if_needed']);
+		// Chi doc trang thai hoac dang nhap an toan, tuy theo thao tac tren giao dien.
+		$result = $loginIfNeeded ? (new ExternalSystemApiClient())->ensureLogin($system) : (new ExternalSystemApiClient())->getStatus($system);
+		// Tra response nhat quan cho jQuery.
+		echo json_encode($result, JSON_UNESCAPED_UNICODE);
 	}
 	//======================== user =================================//
 	public function adduser(){
@@ -4632,6 +4699,23 @@ Class apiController extends baseController
 	}
 	
 	//AGENCY API
+	public function saveOutpatient()
+	{
+		global $db;
+		header('Content-Type: application/json; charset=utf-8');
+		$result = array('success' => false, 'message' => 'Không thể lưu số liệu.');
+		if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_SESSION['outpatient_csrf']) || !hash_equals($_SESSION['outpatient_csrf'], isset($_POST['csrf']) ? $_POST['csrf'] : '')) { $result['message'] = 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.'; echo json_encode($result); return; }
+		$date = isset($_POST['report_date']) ? trim($_POST['report_date']) : ''; $departmentId = isset($_POST['department_id']) ? (int)$_POST['department_id'] : 0; $payerId = isset($_POST['payer_type_id']) ? (int)$_POST['payer_type_id'] : 0;
+		if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || !checkdate((int)substr($date,5,2),(int)substr($date,8,2),(int)substr($date,0,4)) || !$departmentId || !$payerId) { $result['message'] = 'Vui lòng nhập ngày, khoa/phòng và đối tượng thanh toán hợp lệ.'; echo json_encode($result); return; }
+		$db->query("SELECT (SELECT COUNT(*) FROM ioc_departments WHERE id=$departmentId AND department_status=1) department_ok, (SELECT COUNT(*) FROM ioc_payer_types WHERE id=$payerId AND payer_type_status=1) payer_ok"); $refs=$db->fetch_object(true); if (!$refs || !$refs->department_ok || !$refs->payer_ok) { $result['message']='Khoa/phòng hoặc đối tượng thanh toán không hợp lệ.'; echo json_encode($result); return; }
+		$id=isset($_POST['id'])?(int)$_POST['id']:0;
+		$dateSql=$db->escapestring($date . ' 00:00:00');
+		$db->query("SELECT id FROM ioc_outpatient_daily WHERE report_date='$dateSql' AND department_id=$departmentId AND payer_type_id=$payerId" . ($id ? " AND id<>$id" : '') . ' LIMIT 1');
+		if ($db->num_row()) { $result['message']='Đã có số liệu cho ngày, khoa/phòng và đối tượng thanh toán này. Vui lòng chọn bản ghi đó để sửa.'; echo json_encode($result); return; }
+		$set="report_date='".$db->escapestring($date." 00:00:00")."', department_id=$departmentId, payer_type_id=$payerId"; foreach(array('visit_count','revisit_count','waiting_count','examining_count','completed_count','referral_count') as $column) { $value=isset($_POST[$column])?filter_var($_POST[$column],FILTER_VALIDATE_INT):0; if($value===false||$value<0){$result['message']='Các chỉ tiêu số lượng phải là số nguyên không âm.';echo json_encode($result);return;} $set.=", $column=".(int)$value; }
+		$wait=isset($_POST['avg_wait_minutes'])&&$_POST['avg_wait_minutes']!==''?filter_var($_POST['avg_wait_minutes'],FILTER_VALIDATE_FLOAT):null; if($wait!==null&&($wait===false||$wait<0)){$result['message']='Thời gian chờ trung bình phải là số không âm.';echo json_encode($result);return;} $set.=', avg_wait_minutes='.($wait===null?'NULL':number_format($wait,2,'.',''));
+		$db->query($id ? "UPDATE ioc_outpatient_daily SET $set WHERE id=$id" : "INSERT INTO ioc_outpatient_daily SET $set"); $result=array('success'=>true,'message'=>$id?'Cập nhật số liệu thành công.':'Thêm số liệu thành công.','data'=>array('id'=>$id)); echo json_encode($result);
+	}
 	public function ApproveAgency()
 	{
 		global $db;
@@ -4697,14 +4781,6 @@ Class apiController extends baseController
 	//AGENCY API
 	
 }
-
-
-
-
-
-
-
-
 
 
 

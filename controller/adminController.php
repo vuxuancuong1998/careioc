@@ -1,12 +1,164 @@
 <?php
 Class adminController extends baseController
 {
-    public function index()
-    {
+	public function index()
+	{
 		// if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
 		
 		$this->view->admintmp("index");
-    }
+	}
+
+	/**
+	 * Quản lý số liệu khám chữa bệnh ngoại trú theo ngày.
+	 */
+	public function outpatient()
+	{
+		global $db;
+		if (empty($_SESSION['outpatient_csrf'])) {
+			$_SESSION['outpatient_csrf'] = bin2hex(random_bytes(24));
+		}
+
+		$flash = array('type' => '', 'message' => '');
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			if (!hash_equals($_SESSION['outpatient_csrf'], isset($_POST['csrf']) ? $_POST['csrf'] : '')) {
+				$flash = array('type' => 'error', 'message' => 'Phiên làm việc đã hết hạn. Vui lòng thử lại.');
+			} else {
+				$action = isset($_POST['action']) ? $_POST['action'] : '';
+				if ($action === 'save') {
+					$result = $this->saveOutpatientRecord($_POST);
+					$flash = array('type' => $result['ok'] ? 'success' : 'error', 'message' => $result['message']);
+				} elseif ($action === 'delete') {
+					$id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
+					if ($id > 0) {
+						$db->query("DELETE FROM ioc_outpatient_daily WHERE id = " . $id);
+						$flash = array('type' => 'success', 'message' => 'Đã xóa bản ghi ngoại trú.');
+					} else {
+						$flash = array('type' => 'error', 'message' => 'Không xác định được bản ghi cần xóa.');
+					}
+				} elseif ($action === 'import') {
+					$result = $this->importOutpatientFile(isset($_FILES['import_file']) ? $_FILES['import_file'] : null);
+					$flash = array('type' => $result['ok'] ? 'success' : 'error', 'message' => $result['message']);
+				}
+			}
+		}
+
+		$where = array('1=1');
+		if (!empty($_GET['from_date']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['from_date'])) {
+			$where[] = "o.report_date >= '" . $db->escapestring($_GET['from_date']) . " 00:00:00'";
+		}
+		if (!empty($_GET['to_date']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['to_date'])) {
+			$where[] = "o.report_date <= '" . $db->escapestring($_GET['to_date']) . " 23:59:59'";
+		}
+		if (!empty($_GET['department_id'])) {
+			$where[] = 'o.department_id = ' . (int) $_GET['department_id'];
+		}
+		if (!empty($_GET['payer_type_id'])) {
+			$where[] = 'o.payer_type_id = ' . (int) $_GET['payer_type_id'];
+		}
+
+		$db->query("SELECT o.*, d.department_code, d.department_name, p.payer_type_name
+			FROM ioc_outpatient_daily o
+			INNER JOIN ioc_departments d ON d.id = o.department_id
+			INNER JOIN ioc_payer_types p ON p.id = o.payer_type_id
+			WHERE " . implode(' AND ', $where) . " ORDER BY o.report_date DESC, d.department_name, p.payer_type_sort_order");
+		$records = $db->fetch_object();
+		$db->query("SELECT id, department_code, department_name FROM ioc_departments WHERE department_status = 1 ORDER BY department_name");
+		$departments = $db->fetch_object();
+		$db->query("SELECT id, payer_type_code, payer_type_name FROM ioc_payer_types WHERE payer_type_status = 1 ORDER BY payer_type_sort_order, payer_type_name");
+		$payerTypes = $db->fetch_object();
+
+		$this->view->data['records'] = is_array($records) ? $records : array();
+		$this->view->data['departments'] = is_array($departments) ? $departments : array();
+		$this->view->data['payerTypes'] = is_array($payerTypes) ? $payerTypes : array();
+		$this->view->data['flash'] = $flash;
+		$this->view->data['csrf'] = $_SESSION['outpatient_csrf'];
+		$this->view->admintmp('outpatient');
+	}
+
+	private function saveOutpatientRecord($input)
+	{
+		global $db;
+		$date = isset($input['report_date']) ? trim($input['report_date']) : '';
+		$departmentId = isset($input['department_id']) ? (int) $input['department_id'] : 0;
+		$payerTypeId = isset($input['payer_type_id']) ? (int) $input['payer_type_id'] : 0;
+		if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || !checkdate((int) substr($date, 5, 2), (int) substr($date, 8, 2), (int) substr($date, 0, 4)) || !$departmentId || !$payerTypeId) {
+			return array('ok' => false, 'message' => 'Vui lòng chọn ngày, khoa/phòng và đối tượng thanh toán hợp lệ.');
+		}
+		$db->query("SELECT (SELECT COUNT(*) FROM ioc_departments WHERE id = $departmentId AND department_status = 1) AS department_ok, (SELECT COUNT(*) FROM ioc_payer_types WHERE id = $payerTypeId AND payer_type_status = 1) AS payer_ok");
+		$references = $db->fetch_object(true);
+		if (!$references || !$references->department_ok || !$references->payer_ok) {
+			return array('ok' => false, 'message' => 'Khoa/phòng hoặc đối tượng thanh toán không còn hợp lệ.');
+		}
+		$columns = array('visit_count', 'revisit_count', 'waiting_count', 'examining_count', 'completed_count', 'referral_count');
+		$values = array();
+		foreach ($columns as $column) {
+			$value = isset($input[$column]) ? filter_var($input[$column], FILTER_VALIDATE_INT) : 0;
+			if ($value === false || $value < 0) return array('ok' => false, 'message' => 'Các chỉ tiêu số lượng phải là số nguyên không âm.');
+			$values[$column] = (int) $value;
+		}
+		$wait = isset($input['avg_wait_minutes']) && $input['avg_wait_minutes'] !== '' ? filter_var($input['avg_wait_minutes'], FILTER_VALIDATE_FLOAT) : null;
+		if ($wait !== null && ($wait === false || $wait < 0)) return array('ok' => false, 'message' => 'Thời gian chờ trung bình phải là số không âm.');
+		$id = isset($input['id']) ? (int) $input['id'] : 0;
+		$set = "report_date = '" . $db->escapestring($date . ' 00:00:00') . "', department_id = $departmentId, payer_type_id = $payerTypeId";
+		foreach ($values as $column => $value) $set .= ", $column = $value";
+		$set .= ', avg_wait_minutes = ' . ($wait === null ? 'NULL' : number_format((float) $wait, 2, '.', ''));
+		if ($id > 0) {
+			$db->query("UPDATE ioc_outpatient_daily SET $set WHERE id = $id");
+			return array('ok' => true, 'message' => 'Đã cập nhật số liệu ngoại trú.');
+		}
+		$db->query("INSERT INTO ioc_outpatient_daily SET $set");
+		return array('ok' => true, 'message' => 'Đã ghi nhận số liệu ngoại trú.');
+	}
+
+	private function importOutpatientFile($file)
+	{
+		if (!$file || $file['error'] !== UPLOAD_ERR_OK || $file['size'] <= 0) return array('ok' => false, 'message' => 'Vui lòng chọn tệp Excel (.xlsx) hoặc CSV hợp lệ.');
+		if ($file['size'] > 5 * 1024 * 1024) return array('ok' => false, 'message' => 'Tệp import không được lớn hơn 5 MB.');
+		$extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+		if (!in_array($extension, array('csv', 'xlsx'), true)) return array('ok' => false, 'message' => 'Chỉ hỗ trợ tệp .xlsx hoặc .csv.');
+		$rows = $extension === 'csv' ? $this->readOutpatientCsv($file['tmp_name']) : $this->readOutpatientXlsx($file['tmp_name']);
+		if (!$rows || count($rows) < 2) return array('ok' => false, 'message' => 'Tệp chưa có dữ liệu để import.');
+		$headers = array_map(array($this, 'normalizeImportHeader'), array_shift($rows));
+		$required = array('report_date', 'department_id', 'payer_type_id');
+		foreach ($required as $field) if (!in_array($field, $headers, true)) return array('ok' => false, 'message' => 'Thiếu cột bắt buộc: ' . $field . '.');
+		$success = 0; $errors = array();
+		foreach ($rows as $line => $row) {
+			if (!array_filter($row, function ($value) { return trim((string) $value) !== ''; })) continue;
+			$input = array_combine($headers, array_pad($row, count($headers), ''));
+			$input['report_date'] = $this->normalizeImportDate(isset($input['report_date']) ? $input['report_date'] : '');
+			$input['department_id'] = $this->resolveImportReference('ioc_departments', 'department_name', 'department_code', $input['department_id']);
+			$input['payer_type_id'] = $this->resolveImportReference('ioc_payer_types', 'payer_type_name', 'payer_type_code', $input['payer_type_id']);
+			$result = $this->saveOutpatientRecord($input);
+			if ($result['ok']) $success++; else $errors[] = 'dòng ' . ($line + 2) . ': ' . $result['message'];
+		}
+		$message = "Đã import $success bản ghi.";
+		if ($errors) $message .= ' Bỏ qua ' . count($errors) . ' dòng (' . implode('; ', array_slice($errors, 0, 3)) . ').';
+		return array('ok' => $success > 0, 'message' => $message);
+	}
+
+	private function readOutpatientCsv($path) {
+		$handle = fopen($path, 'r'); if (!$handle) return array();
+		$rows = array(); while (($row = fgetcsv($handle, 0, ',')) !== false) $rows[] = array_map(function ($v) { return preg_replace('/^\xEF\xBB\xBF/', '', trim($v)); }, $row); fclose($handle); return $rows;
+	}
+
+	private function readOutpatientXlsx($path) {
+		if (!class_exists('ZipArchive')) return array(); $zip = new ZipArchive(); if ($zip->open($path) !== true) return array();
+		$shared = array(); $xml = $zip->getFromName('xl/sharedStrings.xml');
+		if ($xml) { $doc = simplexml_load_string($xml); foreach ($doc->si as $item) $shared[] = (string) $item->t ?: implode('', $item->r->t); }
+		$sheet = $zip->getFromName('xl/worksheets/sheet1.xml'); $zip->close(); if (!$sheet) return array();
+		$doc = simplexml_load_string($sheet); $doc->registerXPathNamespace('x', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'); $rows = array();
+		foreach ($doc->xpath('//x:sheetData/x:row') as $row) { $values = array(); $index = 0; foreach ($row->c as $cell) { $ref = preg_replace('/\d+/', '', (string) $cell['r']); $cellIndex = 0; foreach (str_split($ref) as $letter) $cellIndex = $cellIndex * 26 + (ord($letter) - 64); while ($index < $cellIndex - 1) { $values[] = ''; $index++; } $raw = (string) $cell->v; $values[] = (string) $cell['t'] === 's' && isset($shared[(int) $raw]) ? $shared[(int) $raw] : $raw; $index++; } $rows[] = $values; }
+		return $rows;
+	}
+
+	private function normalizeImportHeader($header) {
+		$header = strtolower(trim((string) $header));
+		$map = array('ngay' => 'report_date', 'ngay_bao_cao' => 'report_date', 'report_date' => 'report_date', 'khoa_phong' => 'department_id', 'department' => 'department_id', 'department_id' => 'department_id', 'doi_tuong_thanh_toan' => 'payer_type_id', 'payer_type' => 'payer_type_id', 'payer_type_id' => 'payer_type_id', 'luot_kham' => 'visit_count', 'visit_count' => 'visit_count', 'tai_kham' => 'revisit_count', 'revisit_count' => 'revisit_count', 'dang_cho' => 'waiting_count', 'waiting_count' => 'waiting_count', 'dang_kham' => 'examining_count', 'examining_count' => 'examining_count', 'hoan_thanh' => 'completed_count', 'completed_count' => 'completed_count', 'thoi_gian_cho_tb' => 'avg_wait_minutes', 'avg_wait_minutes' => 'avg_wait_minutes', 'chuyen_tuyen' => 'referral_count', 'referral_count' => 'referral_count');
+		$ascii = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $header); $ascii = preg_replace('/[^a-z0-9]+/', '_', $ascii); return isset($map[trim($ascii, '_')]) ? $map[trim($ascii, '_')] : trim($ascii, '_');
+	}
+
+	private function normalizeImportDate($value) { if (is_numeric($value) && $value > 25569) return gmdate('Y-m-d', ((int) $value - 25569) * 86400); $time = strtotime(str_replace('/', '-', trim((string) $value))); return $time ? date('Y-m-d', $time) : ''; }
+	private function resolveImportReference($table, $nameColumn, $codeColumn, $value) { global $db; if (is_numeric($value)) return (int) $value; $value = $db->escapestring(trim((string) $value)); $db->query("SELECT id FROM $table WHERE $nameColumn = '$value' OR $codeColumn = '$value' LIMIT 1"); $row = $db->fetch_object(true); return $row ? (int) $row->id : 0; }
 	public function login()
 	{
 		
