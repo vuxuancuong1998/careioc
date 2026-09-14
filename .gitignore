@@ -1,0 +1,63 @@
+# ==========================================
+# Git Ignore for CARE IOC (PHP / XAMPP)
+# ==========================================
+
+# --- Environment & Sensitive Credentials ---
+.env
+.env.*
+config.local.php
+*.private.key
+
+# --- IDE & Editor Settings ---
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.project
+.settings/
+
+# --- Operating System Artifacts ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# --- Logs, Cache & Sessions ---
+*.log
+error_log
+logs/
+cache/
+sessions/
+tmp/
+temp/
+
+# --- Composer & Node dependencies ---
+vendor/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Temporary & Backup Files ---
+*.bak
+*.backup
+*.tmp
+*.swp
+*.swo
+*~
+*.old
+
+# --- Database Dumps / Backups ---
+*.sql.gz
+*.sql.bak
+dump_*.sql
+backup_*.sql
+
+# --- Internal Scratch & Debug Test Scripts ---
+tests/
+test.php
+scratch/
