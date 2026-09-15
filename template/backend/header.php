@@ -59,6 +59,7 @@
           </div>
           <ul class="submenu">
             <li><a href="<?php echo XC_URL; ?>/backend/outpatient"><i class="fa-solid fa-caret-right"></i> Số liệu khám ngoại trú</a></li>
+            <li><a href="<?php echo XC_URL; ?>/backend/inpatient"><i class="fa-solid fa-caret-right"></i> Điều trị nội trú</a></li>
             <li><a onclick="triggerPageLoad('Tiếp nhận bệnh nhân')"><i class="fa-solid fa-caret-right"></i> Tiếp nhận BHYT / Viện phí</a></li>
             <li><a onclick="triggerPageLoad('Hồ sơ bệnh án điện tử (EMR)')"><i class="fa-solid fa-caret-right"></i> Bệnh án điện tử (EMR)</a></li>
             <li><a onclick="triggerPageLoad('Điều phối phòng khám')"><i class="fa-solid fa-caret-right"></i> Lưu lượng buồng khám</a></li>

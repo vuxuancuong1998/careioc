@@ -12,9 +12,12 @@ Hệ thống phục vụ **Điều hành thông minh cho Bệnh viện Đa khoa 
 ## Luồng frontend và backend
 
 - Điều hướng trang, lấy dữ liệu hiển thị ban đầu và xử lý logic trang đặt tại `backendController`.
+- Mỗi action hiển thị trang tại `backendController` gọi `$this->view->backendtmp('tên-file-view')`, trong đó view tương ứng nằm tại thư mục `template/backend`.
 - Tác vụ thay đổi dữ liệu từ frontend sử dụng AJAX bằng jQuery gửi đến `apiController`; API phản hồi JSON nhất quán, tối thiểu gồm `success`, `message` và `data` khi cần.
+- Frontend chịu trách nhiệm hiển thị, bắt sự kiện và khai báo jQuery AJAX; `apiController` chịu trách nhiệm xác thực, query database và xử lý nghiệp vụ rồi trả kết quả JSON cho frontend.
 - API phải xác thực yêu cầu, kiểm tra CSRF/quyền truy cập theo cơ chế hiện có, validate lại toàn bộ dữ liệu ở máy chủ và chỉ trả về dữ liệu cần thiết.
-- Frontend cập nhật bảng/danh sách sau phản hồi AJAX, đồng thời hiển thị thông báo trạng thái phù hợp.
+- Frontend cập nhật bảng/danh sách sau phản hồi AJAX, đồng thời dùng SweetAlert (`Swal.fire`) để hiển thị thông báo thành công/thất bại; không dùng `alert()` cho thông báo nghiệp vụ.
+- Ưu tiên code sạch, trực tiếp và dễ đọc; chỉ tách hàm khi có trách nhiệm rõ ràng, tránh gọi hoặc tạo quá nhiều hàm làm rối luồng xử lý.
 
 ## Dữ liệu và tích hợp
 
