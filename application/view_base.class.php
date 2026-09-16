@@ -98,18 +98,16 @@ $path = __SITE_PATH . '/template/' .admin. '/' . $name . '.php';
 	include ($path);               
 }
 function backendtmp($name) {
-	
-$path = __SITE_PATH . '/template/' .backend. '/' . $name . '.php';
+	// echo __SITE_PATH;
+	$path = __SITE_PATH . '/template/' .backend. '/' . $name . '.php';
+	// echo 'link:'. $path;
 	if (file_exists($path) == false)
-		
 	{
 		$path = __SITE_PATH . '/template/' .backend. '/404.php';
 		//throw new Exception('Template not found in '. $path);
 		//return false;
 	}
-	$template_path = $GLOBALS['backend_path'];
-	$page = $name;
-	
+
 	// Load variables
 	foreach ($this->data as $key => $value)
 	{

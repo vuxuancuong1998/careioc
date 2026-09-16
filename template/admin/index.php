@@ -81,7 +81,7 @@
         <span class="sidebar-text truncate">Tổng Quan IOC</span>
       </a>
 
-      <a href="javascript:void(0)" onclick="switchTab('outpatient', this)" class="nav-item flex items-center gap-3 px-3 py-2 rounded-xl font-medium text-sm transition-all duration-200 text-slate-600 hover:bg-blue-50/60 hover:text-brand-700">
+      <a href="<?php echo XC_URL; ?>/admin/outpatient" class="nav-item flex items-center gap-3 px-3 py-2 rounded-xl font-medium text-sm transition-all duration-200 text-slate-600 hover:bg-blue-50/60 hover:text-brand-700">
         <i class="ph ph-stethoscope text-xl text-slate-400 shrink-0"></i>
         <span class="sidebar-text truncate">Khám Bệnh & Tiếp Đón</span>
       </a>
