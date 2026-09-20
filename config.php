@@ -36,6 +36,7 @@ define('admin', 'admin'); //Replace xpanel by your admin theme's name
 
 /*** define site path ***/
 define('XC_URL','http://localhost/careioc');
+define('APP_URL', XC_URL);
 $siteurl = XC_URL;
 /*** template path ***/
 $dashboard_path = XC_URL.'/template/'.dashboard; //Warning: Don't change here

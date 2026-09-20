@@ -2,935 +2,1114 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>IOC Mini - Y tế Đăk Tô | Dashboard mẫu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HỆ THỐNG BÁO CÁO Y TẾ – PHẦN MỀM QUẢN LÝ ĐIỀU HÀNH BVĐK KV ĐĂK TÔ</title>
+<!-- Google Fonts & FontAwesome -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<!-- ApexCharts -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 <style>
-:root{
-  --bg:#07111f; --panel:#0d1b2b; --panel2:#102338; --line:#1d3550;
-  --text:#eaf2ff; --muted:#8fa9c4; --ok:#2ecc71; --warn:#f1c40f;
-  --bad:#ff5c5c; --info:#39a0ff; --accent:#20c6b7; --purple:#9b7cff;
-}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;overflow-x:hidden;max-width:100%}
-body{background:linear-gradient(180deg,#06101d,#091827 55%,#07111f);color:var(--text);font-family:Segoe UI,Arial,sans-serif}
-.wrap{max-width:1920px;margin:auto;padding:18px 22px 28px;width:100%}
-.header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:14px}
-.brand{display:flex;align-items:center;gap:14px}
-.logo{width:54px;height:54px;border-radius:14px;background:linear-gradient(135deg,#20c6b7,#39a0ff);display:grid;place-items:center;font-weight:800;font-size:18px;box-shadow:0 0 28px #20c6b744}
-.title h1{font-size:24px;margin:0 0 3px}.title p{margin:0;color:var(--muted);font-size:13px}
-.live{display:flex;align-items:center;gap:8px;color:#cfe7ff;font-size:13px}.dot{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 12px var(--ok)}
-.tabs{display:flex;gap:8px;margin-bottom:14px}
-.tab{border:1px solid var(--line);background:#0b1726;color:#bdd2e8;padding:9px 14px;border-radius:10px;cursor:pointer}
-.tab.active{background:linear-gradient(180deg,#173350,#10263f);color:white;border-color:#315b7e}
-.page{display:none}.page.active{display:block}
-.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
-.card{background:linear-gradient(180deg,rgba(16,35,56,.96),rgba(12,27,44,.96));border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 10px 30px #00000022}
-.kpi{grid-column:span 2;min-height:120px;position:relative;overflow:hidden}
-.kpi .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-.kpi .value{font-size:30px;font-weight:750;margin:12px 0 6px}
-.kpi .sub{font-size:12px;color:#b8cce0}.trend{position:absolute;right:12px;bottom:12px;font-size:12px;padding:4px 7px;border-radius:7px;background:#0a1725}
-.green{color:var(--ok)}.yellow{color:var(--warn)}.red{color:var(--bad)}.blue{color:var(--info)}
-.section-title{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
-.section-title small{font-weight:400;color:var(--muted);font-size:11px}
-.c7{grid-column:span 7}.c5{grid-column:span 5}.c4{grid-column:span 4}.c8{grid-column:span 8}.c12{grid-column:span 12}
-.chart{height:220px;position:relative}
-svg{width:100%;height:100%}.axis{stroke:#24415e;stroke-width:1}.gridline{stroke:#18314a;stroke-width:1}.area{fill:#20c6b71f}.line{fill:none;stroke:#20c6b7;stroke-width:3}.line2{fill:none;stroke:#39a0ff;stroke-width:2.5}.bar{fill:#39a0ff}.bar2{fill:#9b7cff}
-.legend{display:flex;gap:16px;font-size:11px;color:var(--muted);margin-top:4px}.lg i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px}
-.bed{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.gauge{height:170px;display:grid;place-items:center;position:relative}
-.ring{width:140px;height:140px;border-radius:50%;background:conic-gradient(var(--accent) 0 78%,#173149 78% 100%);display:grid;place-items:center}
-.ring:after{content:"";width:100px;height:100px;background:#0d1b2b;border-radius:50%;position:absolute}
-.gnum{position:absolute;z-index:2;text-align:center}.gnum b{font-size:28px}.gnum span{display:block;color:var(--muted);font-size:11px}
-.status-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.status{display:flex;align-items:center;justify-content:space-between;background:#0b1827;border:1px solid #19354f;border-radius:10px;padding:10px 11px}
-.status .name{font-size:12px}.pill{font-size:10px;border-radius:999px;padding:4px 7px;background:#143047}
-.pill.ok{color:#9df3bd}.pill.warn{color:#ffe27a}.pill.bad{color:#ff9b9b}
-.alerts{display:flex;flex-direction:column;gap:8px}
-.alert{display:grid;grid-template-columns:90px 1fr 110px;gap:10px;align-items:center;padding:9px 10px;border-radius:10px;background:#0b1827;border-left:3px solid var(--warn)}
-.alert.bad{border-left-color:var(--bad)}.alert.info{border-left-color:var(--info)}
-.alert .time{font-size:11px;color:var(--muted)}.alert .msg{font-size:12px}.alert .tag{font-size:10px;text-align:right}
-.table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{padding:9px;border-bottom:1px solid #193149;text-align:left}.table th{color:#8fa9c4;font-weight:600}
-.progress{height:7px;background:#173149;border-radius:9px;overflow:hidden}.progress > span{display:block;height:100%;background:linear-gradient(90deg,#20c6b7,#39a0ff)}
-.infra-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.device{background:#0b1827;border:1px solid #19354f;border-radius:12px;padding:12px}
-.device .top{display:flex;justify-content:space-between;align-items:center}.device b{font-size:13px}.device .meta{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.7}
-.spark{height:36px;margin-top:8px}
-.badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:4px 7px;border-radius:999px;background:#10273c}
-.badge:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok)}
-.badge.warn:before{background:var(--warn)}.badge.bad:before{background:var(--bad)}
-
-/* ===== MÀN HÌNH SỐ LIỆU KHÁM CHỮA BỆNH HẰNG NGÀY ===== */
-.kcb-head{text-align:center;margin:2px 0 14px}
-.kcb-head h2{margin:0;color:#ff7777;font-size:30px;letter-spacing:.5px}
-.kcb-head .date{font-size:20px;font-weight:700;margin-top:4px;color:#f7fbff}
-.kcb-head .updated{font-size:11px;color:var(--muted);margin-top:5px}
-.kcb-kpi{grid-column:span 2;min-height:126px;text-align:center;display:flex;flex-direction:column;justify-content:center}
-.kcb-kpi .label{font-size:12px;color:#a9bfd6;text-transform:uppercase}
-.kcb-kpi .value{font-size:38px;font-weight:800;margin:8px 0 2px;color:#ffffff}
-.kcb-kpi .note{font-size:11px;color:var(--muted)}
-.kcb-table-wrap{overflow:auto;border-radius:12px;border:1px solid #28445f}
-.kcb-table{width:100%;border-collapse:collapse;min-width:1280px;font-size:14px}
-.kcb-table th,.kcb-table td{border:1px solid #28445f;padding:11px 9px;text-align:center;vertical-align:middle}
-.kcb-table th{background:#7f3e46;color:#fff;font-weight:700}
-.kcb-table th.group{background:#914850}
-.kcb-table td:first-child,.kcb-table td:nth-child(2){text-align:left}
-.kcb-table tbody tr:nth-child(odd){background:#0b1827}
-.kcb-table tbody tr:nth-child(even){background:#0d1d2e}
-.kcb-table .total-row{background:#132a40!important;font-weight:800}
-.kcb-table .strong{font-size:18px;font-weight:800;color:#ff7777}
-.kcb-table .sum{font-size:18px;font-weight:800;color:#fff}
-.kcb-table .service-note{text-align:left;line-height:1.65;white-space:nowrap}
-.kcb-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.kcb-mini{background:#0b1827;border:1px solid #1f3b57;border-radius:12px;padding:14px}
-.kcb-mini h3{font-size:12px;color:#9fb7cf;text-transform:uppercase;margin:0 0 10px}
-.kcb-mini .big{font-size:30px;font-weight:800}
-.kcb-mini .rows{font-size:12px;line-height:1.9;color:#d8e6f4}
-.kcb-mini .rows b{font-size:15px;color:#fff;float:right}
-.source-chip{display:inline-block;padding:5px 9px;border-radius:999px;background:#102a40;border:1px solid #24506d;color:#acd4ef;font-size:10px}
-@media(max-width:1100px){
-  .kcb-kpi{grid-column:span 4}
-  .kcb-mini-grid{grid-template-columns:1fr 1fr}
+:root {
+  --bg: #071322;
+  --bg-gradient: radial-gradient(circle at 50% 0%, #0d2744 0%, #071322 80%);
+  --panel: rgba(13, 29, 50, 0.94);
+  --panel-card: rgba(16, 36, 62, 0.96);
+  --panel-border: rgba(38, 76, 115, 0.45);
+  --panel-hover: rgba(48, 96, 145, 0.65);
+  --accent: #00f2fe;
+  --teal: #20c6b7;
+  --blue: #39a0ff;
+  --purple: #9b7cff;
+  --ok: #2ecc71;
+  --warn: #f1c40f;
+  --bad: #ff5c5c;
+  --text: #eaf3ff;
+  --muted: #85a4c4;
+  --sub: #b2cbe4;
+  --gold: #ffc107;
 }
 
-.footer{margin-top:10px;color:#6f8aa6;font-size:10px;text-align:right}
-
-/* BỘ LỌC CHỌN NGÀY & POPUP LƯỚI LỊCH TẤT CẢ MÀN HÌNH */
-.filter-bar{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(90deg,#0b1929,#0d2035);border:1px solid #1c3857;border-radius:12px;padding:9px 16px;margin-bottom:14px;gap:12px;flex-wrap:wrap;box-shadow:0 4px 18px rgba(0,0,0,0.25);position:relative}
-.filter-group{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.filter-label{font-size:12.5px;color:var(--text);font-weight:700;display:flex;align-items:center;gap:6px}
-.cal-picker-wrap{position:relative;display:inline-flex;align-items:center}
-.cal-icon-btn{background:#0e243a;border:1px solid #234c75;color:#20c6b7;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .2s;white-space:nowrap}
-.cal-icon-btn:hover,.cal-icon-btn.active{background:linear-gradient(135deg,#20c6b7,#39a0ff);color:#040914;border-color:transparent;box-shadow:0 0 14px rgba(32,198,183,0.4)}
-.filter-date-input{background:#06101d;border:1px solid #234c75;border-radius:8px;color:#fff;padding:6px 10px;font-size:13px;font-family:inherit;outline:none;cursor:pointer;transition:border-color .2s}
-.filter-date-input:focus{border-color:var(--accent);box-shadow:0 0 10px rgba(32,198,183,0.3)}
-.btn-filter{background:#0e243a;border:1px solid #234c75;color:#bcd3eb;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
-.btn-filter:hover,.btn-filter.active{background:linear-gradient(135deg,#20c6b7,#39a0ff);color:#040914;border-color:transparent;box-shadow:0 0 14px rgba(32,198,183,0.4);font-weight:700}
-.date-view-badge{font-size:12.5px;padding:6px 12px;border-radius:8px;background:#102b44;border:1px solid #23527a;color:#a3e9c1;font-weight:600;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
-
-/* POPUP LƯỚI LỊCH (CALENDAR GRID POPUP) */
-.calendar-grid-popup{position:absolute;top:calc(100% + 8px);left:0;z-index:9999;background:#091a2c;border:1px solid #20456b;border-radius:14px;padding:14px;width:300px;box-shadow:0 18px 45px rgba(0,0,0,0.85),0 0 25px rgba(32,198,183,0.2);display:none;animation:calPopIn .2s cubic-bezier(0.16,1,0.3,1)}
-.calendar-grid-popup.show{display:block}
-@keyframes calPopIn{from{opacity:0;transform:translateY(-6px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #1a3857}
-.cal-head-title{font-size:13.5px;font-weight:800;color:#f0f6fc;letter-spacing:.3px}
-.cal-nav-btn{background:#0e243a;border:1px solid #20456b;color:#a5c7eb;border-radius:6px;width:28px;height:28px;cursor:pointer;display:grid;place-items:center;font-size:14px;font-weight:700;transition:all .15s}
-.cal-nav-btn:hover{background:#20c6b7;color:#040914;border-color:#20c6b7}
-.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:11px;font-weight:700;color:#7e9bb9;margin-bottom:6px}
-.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-day-cell{aspect-ratio:1;border-radius:8px;display:grid;place-items:center;font-size:12px;font-weight:600;color:#d5e5f5;cursor:pointer;background:#06121f;border:1px solid transparent;transition:all .15s}
-.cal-day-cell:hover{background:#153757;border-color:#20c6b7;color:#fff}
-.cal-day-cell.other-month{color:#32506e;background:transparent}
-.cal-day-cell.today{border:1px solid #20c6b7;color:#20c6b7}
-.cal-day-cell.selected{background:linear-gradient(135deg,#20c6b7,#39a0ff);color:#040914;font-weight:800;box-shadow:0 0 10px rgba(32,198,183,0.5)}
-.cal-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid #1a3857;font-size:11.5px}
-.cal-today-link{color:#20c6b7;font-weight:700;cursor:pointer;text-decoration:none}
-.cal-today-link:hover{text-decoration:underline}
-
-/* ===== TỐI ƯU HOÁ GIAO DIỆN MOBILE & TABLET TOÀN DIỆN ===== */
-@media (max-width: 992px) {
-  .wrap{padding:12px 14px 24px}
-  .kpi{grid-column:span 4}
-  .c7,.c5,.c4,.c8,.c12,.c6{grid-column:span 12}
-  .infra-grid{grid-template-columns:1fr 1fr}
-  .kcb-kpi{grid-column:span 4}
-  .kcb-mini-grid{grid-template-columns:1fr 1fr}
-  .bed{grid-template-columns:1fr 1fr}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%; min-height: 100vh;
+  background: var(--bg); background-image: var(--bg-gradient); background-attachment: fixed;
+  color: var(--text); font-family: 'Plus Jakarta Sans', Segoe UI, system-ui, sans-serif;
+  overflow-x: hidden; -webkit-font-smoothing: antialiased;
 }
 
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #071322; }
+::-webkit-scrollbar-thumb { background: #1a3c60; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--teal); }
+
+.wrap { max-width: 1980px; margin: 0 auto; padding: 14px 20px 30px; }
+
+/* HEADER */
+.header {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding-bottom: 12px; border-bottom: 1px solid rgba(38, 76, 115, 0.4); margin-bottom: 12px;
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-logo {
+  width: 48px; height: 48px; border-radius: 13px;
+  background: linear-gradient(135deg, #00f2fe, #20c6b7 50%, #39a0ff);
+  display: grid; place-items: center; font-size: 19px; font-weight: 900; color: #040914;
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.45); border: 1.5px solid rgba(255, 255, 255, 0.35);
+}
+.brand-title h1 {
+  font-size: 19px; font-weight: 800; letter-spacing: 0.5px;
+  background: linear-gradient(90deg, #ffffff, #d3e8ff 70%, #00f2fe);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 2px;
+}
+.brand-title p { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 10px; }
+.brand-title p span.tag {
+  background: rgba(32, 198, 183, 0.15); border: 1px solid rgba(32, 198, 183, 0.4);
+  color: var(--teal); padding: 1px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;
+}
+
+.header-actions { display: flex; align-items: center; gap: 12px; }
+.live-clock {
+  background: rgba(14, 32, 53, 0.8); border: 1px solid var(--panel-border);
+  padding: 6px 14px; border-radius: 10px; font-size: 13px; font-weight: 700; color: #f0f6fc;
+  display: flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums;
+}
+.pulse-beacon {
+  width: 9px; height: 9px; border-radius: 50%; background: var(--ok);
+  box-shadow: 0 0 10px var(--ok); animation: pulseBeacon 1.8s infinite;
+}
+@keyframes pulseBeacon {
+  0% { transform: scale(0.9); box-shadow: 0 0 4px var(--ok); }
+  50% { transform: scale(1.3); box-shadow: 0 0 16px var(--ok); }
+  100% { transform: scale(0.9); box-shadow: 0 0 4px var(--ok); }
+}
+
+.btn-wallboard {
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(57, 160, 255, 0.25));
+  border: 1px solid rgba(0, 242, 254, 0.55); color: #00f2fe; padding: 7px 15px; border-radius: 10px;
+  font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+  transition: all 0.2s; box-shadow: 0 0 14px rgba(0, 242, 254, 0.2);
+}
+.btn-wallboard:hover, .btn-wallboard.active {
+  background: linear-gradient(135deg, #00f2fe, #39a0ff); color: #040914; border-color: transparent;
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.6); transform: translateY(-1px);
+}
+.wallboard-progress { width: 50px; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 4px; overflow: hidden; display: none; }
+.btn-wallboard.active .wallboard-progress { display: block; }
+.wallboard-progress-bar { width: 0%; height: 100%; background: #040914; transition: width 0.1s linear; }
+
+.btn-icon-head {
+  background: rgba(14, 32, 53, 0.85); border: 1px solid var(--panel-border); color: var(--sub);
+  width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; cursor: pointer;
+  transition: all 0.2s; text-decoration: none; font-size: 14px;
+}
+.btn-icon-head:hover { border-color: var(--accent); color: #fff; box-shadow: 0 0 12px rgba(0, 242, 254, 0.35); }
+.user-avatar-btn {
+  width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #20c6b7, #39a0ff);
+  color: #040914; font-weight: 800; font-size: 13px; display: grid; place-items: center; cursor: pointer;
+  border: 1.5px solid rgba(0, 242, 254, 0.5);
+}
+
+/* ================= BỘ LỌC CHUẨN MẪU (TOP FILTER BAR) ================= */
+.filter-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--panel); border: 1px solid var(--panel-border); border-radius: 14px;
+  padding: 10px 18px; margin-bottom: 12px; gap: 12px; flex-wrap: wrap; backdrop-filter: blur(12px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35); position: relative;
+}
+.filter-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.filter-label { font-size: 12.5px; font-weight: 700; color: var(--sub); display: flex; align-items: center; gap: 6px; }
+.filter-select, .filter-date-input {
+  background: #081627; border: 1px solid #1f456e; border-radius: 9px; color: #fff;
+  padding: 7px 12px; font-size: 12.5px; font-family: inherit; outline: none; cursor: pointer; transition: all 0.2s;
+}
+.filter-select:focus, .filter-date-input:focus { border-color: var(--accent); box-shadow: 0 0 12px rgba(0, 242, 254, 0.4); }
+.btn-preset {
+  background: #0b1d31; border: 1px solid #1d4067; color: #b8d2eb; padding: 6px 13px;
+  border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.btn-preset:hover, .btn-preset.active {
+  background: linear-gradient(135deg, #00f2fe, #39a0ff); color: #040914; border-color: transparent;
+  font-weight: 800; box-shadow: 0 0 14px rgba(0, 242, 254, 0.45);
+}
+
+/* Lưới lịch Popup */
+.cal-picker-wrap { position: relative; }
+.calendar-grid-popup {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 9999;
+  background: #091a2e; border: 1px solid #204c78; border-radius: 14px; padding: 14px; width: 300px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 25px rgba(0, 242, 254, 0.2); display: none;
+}
+.calendar-grid-popup.show { display: block; animation: calFadeIn 0.2s ease; }
+@keyframes calFadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #18385a; padding-bottom: 8px; }
+.cal-head-title { font-size: 13.5px; font-weight: 800; color: #fff; }
+.cal-nav-btn { background: #0c2035; border: 1px solid #1f4872; color: #bcd7f2; border-radius: 6px; width: 28px; height: 28px; cursor: pointer; }
+.cal-nav-btn:hover { background: var(--teal); color: #000; }
+.cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-day-cell { aspect-ratio: 1; border-radius: 7px; display: grid; place-items: center; font-size: 12px; font-weight: 600; cursor: pointer; background: #06121f; border: 1px solid transparent; transition: all 0.15s; }
+.cal-day-cell:hover { background: #133352; border-color: var(--teal); color: #fff; }
+.cal-day-cell.today { border-color: var(--accent); color: var(--accent); }
+.cal-day-cell.selected { background: linear-gradient(135deg, #00f2fe, #39a0ff); color: #040914; font-weight: 800; }
+.cal-day-cell.other-month { color: #2a4768; background: transparent; }
+
+.status-sync-badge {
+  background: rgba(14, 38, 62, 0.85); border: 1px solid #1d4670; padding: 5px 12px;
+  border-radius: 8px; font-size: 12px; color: #a4e5c3; font-weight: 600; display: inline-flex; align-items: center; gap: 7px;
+}
+
+/* ================= THANH TABS PHÂN HỆ KHẢO SÁT CHUẨN ================= */
+.main-module-tabs {
+  display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 4px;
+}
+.btn-tab-module {
+  background: rgba(12, 28, 48, 0.85); border: 1px solid var(--panel-border); color: #a3c2e2;
+  padding: 9px 16px; border-radius: 11px; font-size: 13px; font-weight: 700; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; white-space: nowrap;
+}
+.btn-tab-module:hover {
+  background: rgba(18, 43, 72, 0.95); color: #fff; border-color: rgba(0, 242, 254, 0.4); transform: translateY(-1px);
+}
+.btn-tab-module.active {
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.25), rgba(57, 160, 255, 0.2));
+  border: 1px solid var(--accent); color: #ffffff;
+  box-shadow: 0 0 16px rgba(0, 242, 254, 0.35);
+}
+.btn-tab-module.active i { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+
+/* GRID & CARDS */
+.grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
+.card {
+  background: var(--panel-card); border: 1px solid var(--panel-border); border-radius: 13px;
+  padding: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35); position: relative; overflow: hidden;
+}
+.c12 { grid-column: span 12; } .c8 { grid-column: span 8; } .c7 { grid-column: span 7; }
+.c6 { grid-column: span 6; } .c5 { grid-column: span 5; } .c4 { grid-column: span 4; }
+
+/* KPI CARDS Ở TRÊN */
+.kpi-card {
+  grid-column: span 2; min-height: 118px; padding: 13px 15px;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.kpi-card::before {
+  content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+  background: linear-gradient(90deg, var(--accent), transparent); opacity: 0.8;
+}
+.kpi-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  color: var(--muted); display: flex; align-items: center; justify-content: space-between;
+}
+.kpi-value {
+  font-size: 28px; font-weight: 800; color: #fff; letter-spacing: -0.5px;
+  margin: 4px 0 2px; font-variant-numeric: tabular-nums; display: flex; align-items: baseline; gap: 4px;
+}
+.kpi-unit { font-size: 12.5px; font-weight: 600; color: var(--sub); }
+.kpi-footer { display: flex; align-items: center; justify-content: space-between; font-size: 11px; }
+.kpi-sub { color: var(--sub); }
+.badge-trend { padding: 2px 7px; border-radius: 6px; font-size: 11px; font-weight: 700; background: rgba(14, 32, 53, 0.85); }
+.green { color: var(--ok); } .yellow { color: var(--warn); } .red { color: var(--bad); } .cyan { color: var(--accent); } .blue { color: var(--blue); }
+
+.section-title {
+  font-size: 13.5px; font-weight: 800; color: #fff; margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.section-title i { color: var(--accent); }
+.section-title small { font-size: 11px; font-weight: 500; color: var(--muted); }
+.chart-wrap { width: 100%; position: relative; min-height: 250px; }
+
+/* ================= VÙNG DƯỚI: BẢNG THÔNG TIN CHI TIẾT ================= */
+.table-section-card {
+  margin-top: 14px; background: var(--panel-card); border: 1px solid var(--panel-border);
+  border-radius: 14px; padding: 18px 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.table-header-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  margin-bottom: 14px; flex-wrap: wrap;
+}
+.table-title {
+  font-size: 15.5px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px;
+}
+.table-title span.badge-filter-notice {
+  font-size: 11px; font-weight: 600; background: rgba(0, 242, 254, 0.15);
+  border: 1px solid rgba(0, 242, 254, 0.35); color: var(--accent); padding: 3px 10px; border-radius: 8px;
+}
+.table-actions { display: flex; align-items: center; gap: 10px; }
+.table-search-input {
+  background: #081627; border: 1px solid #1f456e; border-radius: 8px; color: #fff;
+  padding: 6px 12px; font-size: 12px; outline: none; width: 230px;
+}
+.table-search-input:focus { border-color: var(--accent); }
+.btn-table-action {
+  background: #0d253f; border: 1px solid #1f4872; color: #bcd7f2; border-radius: 8px;
+  padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;
+}
+.btn-table-action:hover { background: var(--teal); color: #000; border-color: transparent; }
+
+.table-responsive {
+  width: 100%; overflow-x: auto; border-radius: 10px; border: 1px solid rgba(38, 76, 115, 0.4);
+}
+.ioc-table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 1100px; }
+.ioc-table th, .ioc-table td {
+  padding: 10px 12px; border-bottom: 1px solid rgba(38, 76, 115, 0.35); text-align: center; vertical-align: middle;
+}
+.ioc-table th {
+  background: #0d223a; color: #cfe4fc; font-weight: 700; font-size: 11.5px;
+  text-transform: uppercase; letter-spacing: 0.4px;
+}
+.ioc-table td:nth-child(2), .ioc-table td:nth-child(3) { text-align: left; }
+.ioc-table tbody tr:nth-child(even) { background: rgba(8, 20, 35, 0.5); }
+.ioc-table tbody tr:hover { background: rgba(25, 59, 98, 0.45); }
+.ioc-table tfoot tr {
+  background: #102d4d !important; font-weight: 800; font-size: 13px; border-top: 2px solid var(--accent);
+}
+.ioc-table tfoot td { color: #fff; }
+
+.status-pill {
+  font-size: 10.5px; padding: 3px 8px; border-radius: 999px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;
+}
+.status-pill.ok { background: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
+.status-pill.warn { background: rgba(241, 196, 15, 0.15); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); }
+.status-pill.bad { background: rgba(255, 92, 92, 0.15); color: #ff5c5c; border: 1px solid rgba(255, 92, 92, 0.3); }
+
+/* LOADER HUD */
+.ioc-loader-overlay {
+  position: fixed; inset: 0; z-index: 99999; background: rgba(4, 12, 22, 0.65);
+  backdrop-filter: blur(12px); display: flex; flex-direction: column; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+}
+.ioc-loader-overlay.active { opacity: 1; pointer-events: auto; }
+.ioc-hud-core { width: 110px; height: 110px; position: relative; display: grid; place-items: center; }
+.ioc-hud-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px dashed rgba(0, 242, 254, 0.4); animation: hudRotate 8s linear infinite; }
+.ioc-hud-scan { position: absolute; inset: 8px; border-radius: 50%; border: 3px solid transparent; border-top-color: var(--accent); border-right-color: var(--teal); box-shadow: 0 0 20px rgba(0, 242, 254, 0.6); animation: hudRotate 1.2s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite; }
+@keyframes hudRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.ioc-hud-label { font-size: 14px; font-weight: 900; letter-spacing: 2px; color: #fff; }
+.ioc-loader-title { margin-top: 16px; font-size: 13px; font-weight: 800; color: #f0f6fc; }
+
+@media (max-width: 1200px) {
+  .kpi-card { grid-column: span 4; }
+  .c7, .c5, .c8, .c4 { grid-column: span 12; }
+}
 @media (max-width: 768px) {
-  .header{flex-direction:column;align-items:flex-start;gap:12px}
-  .brand{width:100%;align-items:flex-start;gap:10px}
-  .logo{width:42px;height:42px;font-size:15px;border-radius:10px;flex-shrink:0}
-  .title h1{font-size:16px;line-height:1.35;margin-bottom:2px}
-  .title p{font-size:11.5px}
-  .live{width:100%;justify-content:space-between;flex-wrap:wrap;gap:8px}
-  
-  .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;gap:6px;flex-wrap:nowrap;width:100%}
-  .tab{white-space:nowrap;font-size:12px;padding:8px 12px;flex-shrink:0}
-  
-  .filter-bar{flex-direction:column;align-items:stretch;gap:10px;padding:10px 12px}
-  .filter-group{width:100%;justify-content:flex-start}
-  .calendar-grid-popup{width:calc(100vw - 40px);max-width:300px;left:0}
-  
-  .kpi{grid-column:span 6;min-height:105px;padding:11px}
-  .kpi .value{font-size:24px;margin:8px 0 3px}
-  .kpi .label{font-size:11px}
-  .kpi .sub{font-size:11px}
-  
-  .kcb-head h2{font-size:22px}
-  .kcb-head .date{font-size:16px}
-  .kcb-kpi{grid-column:span 6;min-height:105px;padding:10px}
-  .kcb-kpi .value{font-size:28px;margin:4px 0 2px}
-  
-  .infra-grid{grid-template-columns:1fr}
-  .kcb-mini-grid{grid-template-columns:1fr}
-  .status-list{grid-template-columns:1fr}
-  .bed{grid-template-columns:1fr}
-  
-  .chart{height:180px}
-  .alert{grid-template-columns:55px 1fr auto;gap:8px;padding:8px}
-  .alert .time{font-size:10px}
-  .alert .msg{font-size:11.5px}
-  .alert .tag{font-size:9.5px}
+  .wrap { padding: 10px 12px 24px; }
+  .header { flex-direction: column; align-items: flex-start; }
+  .kpi-card { grid-column: span 6; }
+  .c6 { grid-column: span 12; }
+  .filter-bar { flex-direction: column; align-items: stretch; }
 }
-
-@media (max-width: 480px) {
-  .wrap{padding:8px 10px 20px}
-  .title h1{font-size:14.5px}
-  .filter-date-input{width:100%;min-width:unset}
-  .kpi{grid-column:span 6;padding:9px;min-height:96px}
-  .kpi .value{font-size:20px}
-  .kpi .label{font-size:10px;letter-spacing:0}
-  .kpi .trend{font-size:9.5px;padding:2px 5px;right:6px;bottom:6px}
-  .kcb-kpi{grid-column:span 6}
-  .kcb-kpi .value{font-size:24px}
-  .kcb-kpi .label{font-size:10px}
-  .calendar-grid-popup{width:calc(100vw - 20px);left:-6px}
-}
-
-/* ===== TIẾN TRÌNH XỬ LÝ LOAD DỮ LIỆU ĐẶC TRƯNG IOC (IOC HUD CIRCULAR LOADER) ===== */
-.ioc-loader-overlay{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.48);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease}
-.ioc-loader-overlay.active{opacity:1;pointer-events:auto}
-.ioc-loader-hud{position:relative;width:140px;height:140px;display:grid;place-items:center}
-.ioc-pulse-wave{position:absolute;width:100%;height:100%;border-radius:50%;border:1px solid rgba(0,242,254,0.4);animation:iocWave 2s cubic-bezier(0.2,0.8,0.4,1) infinite}
-.ioc-ring-outer{position:absolute;inset:0;border-radius:50%;border:2px dashed rgba(32,198,183,0.4);animation:iocRotateCW 8s linear infinite}
-.ioc-ring-scanner{position:absolute;inset:6px;border-radius:50%;border:3px solid transparent;border-top-color:#00f2fe;border-right-color:#39a0ff;box-shadow:0 0 22px rgba(0,242,254,0.5);animation:iocRotateCW 1.4s cubic-bezier(0.5,0.1,0.5,0.9) infinite}
-.ioc-ring-reverse{position:absolute;inset:18px;border-radius:50%;border:2px dotted rgba(57,160,255,0.65);animation:iocRotateCCW 2.5s linear infinite}
-.ioc-core-pulse{width:60px;height:60px;border-radius:50%;background:rgba(6,16,28,0.75);backdrop-filter:blur(6px);border:1.5px solid rgba(0,242,254,0.7);display:grid;place-items:center;box-shadow:0 0 25px rgba(32,198,183,0.5),inset 0 0 15px rgba(0,242,254,0.3);animation:iocCoreBeat 1.5s ease-in-out infinite alternate}
-.ioc-core-logo{font-size:14px;font-weight:900;letter-spacing:1.5px;background:linear-gradient(135deg,#00f2fe,#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.ioc-loader-title{margin-top:22px;font-size:13.5px;font-weight:800;letter-spacing:1.2px;color:#f0f8ff;text-transform:uppercase;display:flex;align-items:center;gap:8px;text-shadow:0 0 14px rgba(0,242,254,0.6)}
-.ioc-loader-desc{margin-top:6px;font-size:11.5px;color:#8ab4db;font-weight:500;text-align:center}
-.ioc-loader-bar{width:180px;height:3px;background:rgba(255,255,255,0.12);border-radius:999px;margin-top:14px;overflow:hidden;position:relative}
-.ioc-loader-bar::after{content:"";position:absolute;left:-50%;height:100%;width:50%;background:linear-gradient(90deg,transparent,#00f2fe,#39a0ff,transparent);animation:iocProgress 1.4s ease-in-out infinite}
-
-@keyframes iocRotateCW{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes iocRotateCCW{from{transform:rotate(360deg)}to{transform:rotate(0deg)}}
-@keyframes iocCoreBeat{0%{transform:scale(0.92);box-shadow:0 0 15px rgba(32,198,183,0.3)}100%{transform:scale(1.06);box-shadow:0 0 30px rgba(0,242,254,0.7)}}
-@keyframes iocWave{0%{transform:scale(0.6);opacity:0.8}100%{transform:scale(1.35);opacity:0}}
-@keyframes iocProgress{0%{left:-50%;width:30%}50%{width:60%}100%{left:100%;width:30%}}
-
-/* USER AVATAR & DROPDOWN MENU */
-.user-menu-wrap{position:relative;display:inline-flex;align-items:center}
-.user-avatar-btn{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#20c6b7,#39a0ff);color:#040914;font-weight:800;font-size:13px;display:grid;place-items:center;cursor:pointer;border:1.5px solid rgba(0,242,254,0.4);box-shadow:0 0 12px rgba(0,242,254,0.25);transition:all .2s ease}
-.user-avatar-btn:hover{transform:scale(1.08);box-shadow:0 0 18px rgba(0,242,254,0.6);border-color:#00f2fe}
-.user-dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;z-index:9999;width:250px;background:#091a2e;border:1px solid #1f456e;border-radius:14px;padding:10px;box-shadow:0 16px 40px rgba(0,0,0,0.85),0 0 25px rgba(0,242,254,0.15);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:none;animation:userDropIn .2s cubic-bezier(0.16,1,0.3,1)}
-.user-dropdown-menu.show{display:block}
-@keyframes userDropIn{from{opacity:0;transform:translateY(-8px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
-.user-menu-header{display:flex;align-items:center;gap:10px;padding:8px 8px 12px;border-bottom:1px solid #1a3857;margin-bottom:6px}
-.user-menu-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#00f2fe,#39a0ff);color:#040914;font-weight:800;font-size:15px;display:grid;place-items:center;box-shadow:0 0 12px rgba(0,242,254,0.4);flex-shrink:0}
-.user-menu-info .user-name{font-size:13px;font-weight:700;color:#f0f6fc}
-.user-menu-info .user-role{font-size:11px;color:#8fa9c4;margin-top:1px}
-.user-menu-list{list-style:none;padding:0;margin:0}
-.user-menu-link{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;color:#d5e5f5;font-size:12.5px;font-weight:500;text-decoration:none;cursor:pointer;transition:all .15s;background:transparent;border:none;width:100%;text-align:left;box-sizing:border-box}
-.user-menu-link:hover{background:#132b45;color:#20c6b7}
-.user-menu-link.logout{color:#ff7777;margin-top:4px;border-top:1px solid #1a3857;padding-top:9px;border-radius:0 0 8px 8px}
-.user-menu-link.logout:hover{background:rgba(239,68,68,0.15);color:#ff5c5c}
 </style>
 </head>
 <body>
 
-<!-- TIẾN TRÌNH XỬ LÝ LOAD DỮ LIỆU ĐẶC TRƯNG IOC -->
 <div class="ioc-loader-overlay" id="ioc-loader-overlay">
-  <div class="ioc-loader-hud">
-    <div class="ioc-pulse-wave"></div>
-    <div class="ioc-ring-outer"></div>
-    <div class="ioc-ring-scanner"></div>
-    <div class="ioc-ring-reverse"></div>
-    <div class="ioc-core-pulse">
-      <span class="ioc-core-logo">IOC</span>
-    </div>
+  <div class="ioc-hud-core">
+    <div class="ioc-hud-ring"></div>
+    <div class="ioc-hud-scan"></div>
+    <div class="ioc-hud-label">IOC</div>
   </div>
-  <div class="ioc-loader-title">
-    <span class="dot"></span>
-    <span id="ioc-loader-msg">ĐANG ĐỒNG BỘ DỮ LIỆU ĐIỀU HÀNH...</span>
-  </div>
-  <div class="ioc-loader-desc" id="ioc-loader-sub">Trung tâm Điều hành Y tế Thông minh BVĐK KV Đăk Tô</div>
-  <div class="ioc-loader-bar"></div>
+  <div class="ioc-loader-title" id="ioc-loader-msg">ĐANG ĐỒNG BỘ DỮ LIỆU ĐIỀU HÀNH...</div>
 </div>
 
 <div class="wrap">
-  <div class="header">
+  <!-- HEADER -->
+  <header class="header">
     <div class="brand">
-      <div class="logo">IOC</div>
-      <div class="title"><h1>TRUNG TÂM ĐIỀU HÀNH THÔNG MINH – BỆNH VIỆN ĐA KHOA KHU VỰC ĐĂK TÔ</h1><p>Giám sát hoạt động bệnh viện & hạ tầng công nghệ thông tin</p></div>
-    </div>
-    <div class="live" style="display:flex;align-items:center;gap:12px">
-      <div style="display:flex;align-items:center;gap:8px;color:#cfe7ff;font-size:13px"><span class="dot"></span><span>Đang cập nhật thời gian thực</span></div>
-      
-      <a href="admin-data.html" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#20c6b7,#39a0ff);color:#040914;text-decoration:none;font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;box-shadow:0 0 16px rgba(32,198,183,0.3);transition:all 0.2s">
-        <span>⚙️ Quản trị & Nhập liệu</span>
-      </a>
-
-      <!-- USER AVATAR & DROPDOWN HEADER -->
-      <div class="user-menu-wrap">
-        <div class="user-avatar-btn" onclick="toggleUserDropdown('user-dropdown-index')" title="Nhấp vào avatar để xem menu & Đăng xuất">
-          AD
-        </div>
-
-        <!-- USER DROPDOWN MENU -->
-        <div class="user-dropdown-menu" id="user-dropdown-index">
-          <div class="user-menu-header">
-            <div class="user-menu-avatar">AD</div>
-            <div class="user-menu-info">
-              <div class="user-name">Trực ban Điều hành</div>
-              <div class="user-role">Quản trị viên Hệ thống IOC</div>
-            </div>
-          </div>
-          <ul class="user-menu-list">
-            <li><a class="user-menu-link" href="admin-data.html"><i class="fa-solid fa-pen-to-square"></i> Cổng Quản trị & Nhập liệu</a></li>
-            <li><button class="user-menu-link logout" onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> <b>Đăng xuất</b></button></li>
-          </ul>
-        </div>
+      <div class="brand-logo">IOC</div>
+      <div class="brand-title">
+        <h1>PHẦN MỀM QUẢN LÝ ĐIỀU HÀNH – HỆ THỐNG BÁO CÁO Y TẾ</h1>
+        <p>
+          <span>Trung tâm Giám sát Điều hành Thông minh BVĐK KV Đăk Tô</span>
+          <span class="tag"><i class="fa-solid fa-hospital"></i> CƠ SỞ Y TẾ ĐĂK TÔ</span>
+        </p>
       </div>
     </div>
-  </div>
 
-  <!-- BỘ LỌC CHỌN NGÀY DÙNG CHUNG TẤT CẢ MÀN HÌNH -->
+    <div class="header-actions">
+      <div class="live-clock">
+        <span class="pulse-beacon"></span>
+        <span id="header-realtime-clock">--:--:--</span>
+      </div>
+
+      <button class="btn-wallboard" id="btn-toggle-wallboard" onclick="toggleWallboardMode()" title="Bật/Tắt chế độ tự động xoay vòng màn hình 24/7 (Phím W)">
+        <i class="fa-solid fa-tv"></i>
+        <span id="lbl-wallboard-btn">WALLBOARD: TẮT</span>
+        <div class="wallboard-progress"><div class="wallboard-progress-bar" id="wallboard-pbar"></div></div>
+      </button>
+
+      <button class="btn-icon-head" onclick="toggleFullscreen()" title="Toàn màn hình (F)"><i class="fa-solid fa-expand"></i></button>
+      <a href="admin-data.html" class="btn-icon-head" title="Cổng Nhập liệu & Quản trị IOC"><i class="fa-solid fa-gear"></i></a>
+      <div class="user-avatar-btn" title="Trực ban Điều hành">ĐT</div>
+    </div>
+  </header>
+
+  <!-- THANH BỘ LỌC CHUẨN (TOP FILTER BAR) -->
   <div class="filter-bar">
     <div class="filter-group">
-      <div class="cal-picker-wrap">
-        <button class="cal-icon-btn" id="btn-toggle-cal-grid" onclick="toggleCalendarGrid('cal-popup-index', 'global-date-input')" title="Nhấp để hiển thị Lưới Lịch chọn ngày">
-          <span style="font-size:15px">📅</span>
-          <span>Chọn ngày</span>
-        </button>
+      <div class="filter-label"><i class="fa-solid fa-hospital-user"></i> Khoa:</div>
+      <select id="filter-dept-select" class="filter-select" onchange="onGlobalFilterChange()" style="min-width: 190px;">
+        <option value="all">Tất cả khoa / phòng</option>
+        <option value="1">Hồi sức cấp cứu (HSCC)</option>
+        <option value="2">Khoa Nội trú (NT)</option>
+      </select>
 
-        <!-- LƯỚI LỊCH POPUP -->
+      <div class="filter-label"><i class="fa-regular fa-calendar-days"></i> Năm:</div>
+      <select id="filter-year-select" class="filter-select" onchange="onYearMonthChange()">
+        <option value="2026" selected>2026</option>
+        <option value="2025">2025</option>
+      </select>
+
+      <div class="filter-label"><i class="fa-regular fa-calendar"></i> Tháng:</div>
+      <select id="filter-month-select" class="filter-select" onchange="onYearMonthChange()">
+        <option value="01">01</option><option value="02">02</option><option value="03">03</option>
+        <option value="04">04</option><option value="05">05</option><option value="06">06</option>
+        <option value="07">07</option><option value="08">08</option><option value="09" selected>09</option>
+        <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+      </select>
+
+      <div class="cal-picker-wrap">
+        <button class="btn-preset active" id="btn-cal-grid" onclick="toggleCalendarGrid('cal-popup-index', 'global-date-input')">
+          <i class="fa-solid fa-calendar-day"></i> Ngày
+        </button>
         <div class="calendar-grid-popup" id="cal-popup-index">
           <div class="cal-head">
             <button class="cal-nav-btn" onclick="calNavigateMonth(-1, 'cal-popup-index', 'global-date-input')">‹</button>
-            <span class="cal-head-title" id="cal-month-title-index">Tháng 08/2026</span>
+            <span class="cal-head-title" id="cal-month-title-index">Tháng 09/2026</span>
             <button class="cal-nav-btn" onclick="calNavigateMonth(1, 'cal-popup-index', 'global-date-input')">›</button>
           </div>
           <div class="cal-weekdays">
             <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span style="color:#ff7777">CN</span>
           </div>
-          <div class="cal-days" id="cal-days-grid-index">
-            <!-- Rendered by JS -->
-          </div>
-          <div class="cal-foot">
-            <span class="cal-today-link" onclick="selectCalendarDate(new Date(), 'cal-popup-index', 'global-date-input')">Hôm nay</span>
-            <button class="btn-filter" style="padding:2px 8px;font-size:11px" onclick="document.getElementById('cal-popup-index').classList.remove('show')">Đóng</button>
-          </div>
+          <div class="cal-days" id="cal-days-grid-index"></div>
         </div>
       </div>
+      <input type="date" id="global-date-input" class="filter-date-input" onchange="onGlobalFilterChange()"/>
 
-      <input type="date" id="global-date-input" class="filter-date-input" onchange="onGlobalDateChange(this.value)">
-      <button class="btn-filter active" id="btn-filter-today" onclick="filterByPreset('today')">Hôm nay</button>
-      <button class="btn-filter" id="btn-filter-yesterday" onclick="filterByPreset('yesterday')">Hôm qua</button>
+      <button class="btn-preset active" id="btn-filter-today" onclick="setFilterPreset('today')">Hôm nay</button>
+      <button class="btn-preset" id="btn-filter-yesterday" onclick="setFilterPreset('yesterday')">Hôm qua</button>
     </div>
+
     <div class="filter-group">
-      <span class="date-view-badge"><span class="dot"></span>Số liệu ngày: <b id="lbl-viewing-date">--/--/----</b></span>
-      <span class="source-chip" id="kcb-source" style="margin:0">Đang tải dữ liệu...</span>
+      <div class="filter-label"><i class="fa-solid fa-id-card"></i> Đối tượng:</div>
+      <select id="filter-payer-select" class="filter-select" onchange="onGlobalFilterChange()">
+        <option value="all">Tất cả đối tượng</option>
+        <option value="1">Bảo hiểm y tế (BHYT)</option>
+        <option value="2">Viện phí / Tự chi trả</option>
+      </select>
+
+      <span class="status-sync-badge">
+        <span class="pulse-beacon"></span>
+        <span id="lbl-sync-status">Đang kết nối CSDL...</span>
+      </span>
     </div>
   </div>
 
-  <div class="tabs">
-    <button class="tab active" onclick="showPage('overview',this)">Tổng quan điều hành</button>
-    <button class="tab" onclick="showPage('dailykcb',this)">Số liệu KCB hằng ngày</button>
-    <button class="tab" onclick="showPage('infra',this)">Hạ tầng CNTT</button>
-    <button class="tab" onclick="showPage('alerts',this)">Cảnh báo & ATTT</button>
+  <!-- THANH TABS CÁC PHÂN HỆ KHẢO SÁT CHUẨN ĐĂK TÔ (MỤC V & MỤC X) -->
+  <nav class="main-module-tabs" id="main-module-tabs">
+    <button class="btn-tab-module active" onclick="switchDomainTab('kcb', this)"><i class="fa-solid fa-stethoscope"></i> 1. Khám chữa bệnh & Giường</button>
+    <button class="btn-tab-module" onclick="switchDomainTab('lis', this)"><i class="fa-solid fa-flask-vial"></i> 2. Xét nghiệm (LIS)</button>
+    <button class="btn-tab-module" onclick="switchDomainTab('ris', this)"><i class="fa-solid fa-x-ray"></i> 3. Chẩn đoán hình ảnh (RIS/PACS)</button>
+    <button class="btn-tab-module" onclick="switchDomainTab('pharmacy', this)"><i class="fa-solid fa-pills"></i> 4. Dược - Vật tư y tế</button>
+    <button class="btn-tab-module" onclick="switchDomainTab('finance', this)"><i class="fa-solid fa-sack-dollar"></i> 5. Tài chính - Viện phí</button>
+    <button class="btn-tab-module" onclick="switchDomainTab('emr', this)"><i class="fa-solid fa-file-signature"></i> 6. Chuyển đổi số & EMR</button>
+    <button class="btn-tab-module" onclick="switchDomainTab('infra', this)"><i class="fa-solid fa-server"></i> 7. Hạ tầng CNTT & Cảnh báo</button>
+  </nav>
+
+  <!-- ========================================================================= -->
+  <!-- VÙNG TRÊN: HỆ THỐNG KPI & BIỂU ĐỒ TRỰC QUAN HÓA THEO TAB                    -->
+  <!-- ========================================================================= -->
+
+  <!-- HÀNG KPI CARDS ĐỘNG THEO TAB -->
+  <div class="grid" style="margin-bottom: 14px;" id="kpi-cards-container">
+    <!-- Render động theo Tab -->
   </div>
 
-  <section id="overview" class="page active">
-    <div class="grid">
-      <div class="card kpi"><div class="label">Tổng số lượt khám bệnh tháng</div><div class="value" id="kpi-overview-kham-thang">3.486</div><div class="sub">Lượt khám ngày</div><div class="trend green" id="kpi-overview-kham-ngay">120</div></div>
-      <div class="card kpi"><div class="label">Ra viện</div><div class="value" id="kpi-overview-ra-vien">37</div><div class="sub">Trong ngày</div><div class="trend yellow">Cần theo dõi</div></div>
-      <div class="card kpi"><div class="label">Đang điều trị</div><div class="value" id="kpi-overview-dang-dieu-tri">82</div><div class="sub" id="kpi-overview-giuong-kh">150 giường kế hoạch</div><div class="trend blue" id="kpi-overview-rate">82%</div></div>
-      <div class="card kpi"><div class="label">Công suất giường</div><div class="value" id="kpi-overview-cong-suat">78%</div><div class="sub">Theo giường thực kê</div><div class="trend green">Ổn định</div></div>
-      <div class="card kpi"><div class="label">Hồ sơ EMR</div><div class="value" id="kpi-overview-emr">91.6%</div><div class="sub">Trong ngày</div><div class="trend green">▲ 55.1%</div></div>
-      <div class="card kpi"><div class="label">Hệ thống CNTT</div><div class="value" id="kpi-overview-cntt">97.8%</div><div class="sub">Availability 24h</div><div class="trend green">Bình thường</div></div>
-
-      <div class="card c7">
-        <div class="section-title">Xu hướng hoạt động khám chữa bệnh <small>Theo chu kỳ lọc ngày</small></div>
-        <div class="chart">
-          <svg viewBox="0 0 760 220" preserveAspectRatio="none">
-            <line x1="40" y1="20" x2="40" y2="190" class="axis"/><line x1="40" y1="190" x2="740" y2="190" class="axis"/>
-            <g class="gridline"><line x1="40" y1="55" x2="740" y2="55"/><line x1="40" y1="95" x2="740" y2="95"/><line x1="40" y1="135" x2="740" y2="135"/></g>
-            <path d="M40 170 L140 125 L240 145 L340 88 L440 108 L540 62 L640 80 L740 52 L740 190 L40 190 Z" class="area"/>
-            <polyline points="40,170 140,125 240,145 340,88 440,108 540,62 640,80 740,52" class="line"/>
-            <polyline points="40,181 140,169 240,174 340,154 440,160 540,145 640,150 740,137" class="line2"/>
-          </svg>
-        </div>
-        <div class="legend"><span class="lg"><i style="background:#20c6b7"></i>Lượt khám</span><span class="lg"><i style="background:#39a0ff"></i>Nhập viện</span></div>
+  <!-- LƯỚI BIỂU ĐỒ ĐA DẠNG APEXCHARTS Ở TRÊN -->
+  <div class="grid" id="charts-grid-container">
+    <div class="card c7">
+      <div class="section-title">
+        <span id="lbl-chart-title-1"><i class="fa-solid fa-chart-column"></i> Theo dõi Hoạt động Khám & Nhập viện theo ngày</span>
+        <small id="lbl-chart-scope-1">Phạm vi: Toàn viện</small>
       </div>
-
-      <div class="card c5">
-        <div class="section-title">Công suất giường & điều trị nội trú <small>Toàn viện</small></div>
-        <div class="bed">
-          <div class="gauge"><div class="ring" id="overview-gauge-ring"></div><div class="gnum"><b id="overview-gauge-val">78%</b><span>Công suất</span></div></div>
-          <div style="padding-top:10px">
-            <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Giường đang sử dụng</div><div class="progress"><span id="overview-bed-bar" style="width:78%"></span></div>
-            <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px"><span id="overview-bed-using">Đang dùng: 82</span><span id="overview-bed-empty">Trống: 23</span></div>
-            <div style="margin-top:18px;font-size:12px;color:var(--muted)">Ngày điều trị TB</div><div style="font-size:24px;font-weight:700;margin-top:5px"><span id="overview-avg-days">6.4</span> <span style="font-size:11px;color:var(--muted)">ngày</span></div>
-            <div style="font-size:11px;color:#ffe27a;margin-top:6px">Khoa PHCN: 92% – gần ngưỡng cảnh báo</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card c4">
-        <div class="section-title">Chuyển đổi số & chất lượng</div>
-        <table class="table">
-          <tr><th>Chỉ số</th><th>Hiện tại</th></tr>
-          <tr><td>Hồ sơ bệnh án điện tử</td><td class="green" id="cds-table-emr">94.2%</td></tr>
-          <tr><td>Ký số biểu mẫu</td><td class="green" id="cds-table-sign">91.6%</td></tr>
-          <tr><td>Liên thông dữ liệu</td><td class="green" id="cds-table-sync">98.7%</td></tr>
-          <tr><td>Thanh toán không tiền mặt</td><td class="blue" id="cds-table-cashless">63.4%</td></tr>
-          <tr><td>Hài lòng người bệnh</td><td class="green" id="cds-table-satisfaction">96.1%</td></tr>
-        </table>
-      </div>
-
-      <div class="card c4">
-        <div class="section-title">Trạng thái hệ thống nghiệp vụ</div>
-        <div class="status-list">
-          <div class="status"><span class="name">Chỉ số tiếp nhận CCCD</span><span class="pill ok" id="nv-pill-cccd">134</span></div>
-          <div class="status"><span class="name">Liên thông Khám sức khoẻ Lái xe</span><span class="pill ok" id="nv-pill-laixe">25</span></div>
-          <div class="status"><span class="name">Tỷ lệ cấp chế độ BHXH (TT25/2025)</span><span class="pill ok" id="nv-pill-bhxh">60%</span></div>
-          <div class="status"><span class="name">Liên thông sức khoẻ bà mẹ trẻ em (eMHC)</span><span class="pill ok" id="nv-pill-emhc">13</span></div>
-        </div>
-      </div>
-
-      <div class="card c4">
-        <div class="section-title">Cảnh báo cần xử lý <small>Ưu tiên cao</small></div>
-        <div class="alerts">
-          <div class="alert bad"><div class="time">14:12</div><div class="msg">Ổ đĩa máy chủ PACS đạt 88%</div><div class="tag red">Nghiêm trọng</div></div>
-          <div class="alert"><div class="time">13:48</div><div class="msg">Thời gian chờ khám > 35 phút tại PK01</div><div class="tag yellow">Cảnh báo</div></div>
-          <div class="alert info"><div class="time">13:25</div><div class="msg">Đường truyền Internet 2 tăng độ trễ</div><div class="tag blue">Theo dõi</div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="dailykcb" class="page">
-    <div class="kcb-head">
-      <h2>SỐ LIỆU KHÁM CHỮA BỆNH</h2>
-      <div class="date">Ngày <span id="kcb-current-date">--/--/----</span></div>
-      <div class="updated">Cập nhật lúc <span id="kcb-updated-time">--:--</span> • <span class="source-chip" id="kcb-source-daily">Dữ liệu theo ngày chọn</span></div>
+      <div class="chart-wrap" id="chart-primary-trend"></div>
     </div>
 
-    <div class="grid" style="margin-bottom:12px">
-      <div class="card kcb-kpi"><div class="label">Tổng BN điều trị</div><div class="value" id="kpi-tong-dieu-tri">114</div><div class="note">Cơ sở I + Cơ sở II</div></div>
-      <div class="card kcb-kpi"><div class="label">Khám</div><div class="value" id="kpi-kham">17</div><div class="note">Lượt trong ngày</div></div>
-      <div class="card kcb-kpi"><div class="label">BN ngoại trú</div><div class="value" id="kpi-ngoai-tru">61</div><div class="note">Đang điều trị</div></div>
-      <div class="card kcb-kpi"><div class="label">BN nội trú</div><div class="value" id="kpi-noi-tru">36</div><div class="note">Đang điều trị</div></div>
-      <div class="card kcb-kpi"><div class="label">Nội trú ban ngày</div><div class="value" id="kpi-noi-tru-ban-ngay">17</div><div class="note">YHCT/PHCN</div></div>
-      <div class="card kcb-kpi"><div class="label">Thủ thuật</div><div class="value" id="kpi-thu-thuat">343</div><div class="note">Tổng trong ngày</div></div>
+    <div class="card c5">
+      <div class="section-title">
+        <span id="lbl-chart-title-2"><i class="fa-solid fa-chart-pie"></i> Cơ cấu Đối tượng & Luồng Điều trị</span>
+        <small id="lbl-chart-scope-2">BHYT vs Viện phí</small>
+      </div>
+      <div class="chart-wrap" id="chart-secondary-donut"></div>
     </div>
 
-    <div class="card c12" style="margin-bottom:12px">
-      <div class="section-title">Bảng chi tiết hoạt động khám chữa bệnh <small>Thiết kế tối ưu cho màn hình 65 inch</small></div>
-      <div class="kcb-table-wrap">
-        <table class="kcb-table">
-          <thead>
-            <tr>
-              <th rowspan="3" style="width:45px">TT</th>
-              <th rowspan="3" style="width:125px">Cơ sở</th>
-              <th rowspan="3" style="width:75px">ĐVT</th>
-              <th rowspan="3" style="width:95px">Tổng BN<br>điều trị</th>
-              <th colspan="7" class="group">Số liệu</th>
-              <th rowspan="3" style="width:185px">Ghi chú</th>
-            </tr>
-            <tr>
-              <th colspan="3">Khoa Khám bệnh</th>
-              <th colspan="2">Khoa Nội TH - Nhi - An dưỡng</th>
-              <th rowspan="2">Khoa XN -<br>CĐHA - TDCN</th>
-              <th rowspan="2">Thủ thuật</th>
-            </tr>
-            <tr>
-              <th>Khám</th>
-              <th>Kê đơn<br>thuốc thang</th>
-              <th>BN ngoại trú</th>
-              <th>BN nội trú</th>
-              <th>Nội trú<br>ban ngày</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td><td><b>Cơ sở I</b></td><td>Lượt</td>
-              <td class="strong" id="cs1-tong">90</td>
-              <td id="cs1-kham">11</td><td id="cs1-kedon">1</td><td id="cs1-ngoai">51</td>
-              <td id="cs1-noi">25</td><td id="cs1-banngay">14</td><td id="cs1-cls">5</td><td id="cs1-thuthuat">273</td>
-              <td class="service-note">+ DV YHCT: <b id="cs1-yhct">67</b><br>+ DV PHCN: <b id="cs1-phcn">204</b><br>+ Cấy chỉ KK: <b id="cs1-caychi">00</b></td>
-            </tr>
-            <tr>
-              <td>2</td><td><b>Cơ sở II</b></td><td>Lượt</td>
-              <td class="strong" id="cs2-tong">24</td>
-              <td id="cs2-kham">6</td><td id="cs2-kedon">4</td><td id="cs2-ngoai">10</td>
-              <td id="cs2-noi">11</td><td id="cs2-banngay">3</td><td id="cs2-cls">0</td><td id="cs2-thuthuat">70</td>
-              <td class="service-note">+ DV YHCT: <b id="cs2-yhct">33</b><br>+ DV PHCN: <b id="cs2-phcn">37</b><br>+ Cấy chỉ KK: <b id="cs2-caychi">02</b></td>
-            </tr>
-            <tr class="total-row">
-              <td colspan="3" style="text-align:center">TỔNG</td>
-              <td class="strong" id="sum-tong">114</td>
-              <td class="sum" id="sum-kham">17</td><td class="sum" id="sum-kedon">5</td><td class="sum" id="sum-ngoai">61</td>
-              <td class="sum" id="sum-noi">36</td><td class="sum" id="sum-banngay">17</td><td class="sum" id="sum-cls">5</td><td class="sum" id="sum-thuthuat">343</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
+    <div class="card c4">
+      <div class="section-title">
+        <span id="lbl-chart-title-3"><i class="fa-solid fa-hospital"></i> Phân bổ theo từng Khoa/Phòng</span>
+        <small>Bấm vào cột để lọc chi tiết</small>
+      </div>
+      <div class="chart-wrap" id="chart-tertiary-bar"></div>
+    </div>
+
+    <div class="card c4">
+      <div class="section-title">
+        <span id="lbl-chart-title-4"><i class="fa-solid fa-bed-pulse"></i> Công suất & Chỉ số Hiệu năng</span>
+        <small>Ngưỡng báo động: > 90%</small>
+      </div>
+      <div class="chart-wrap" id="chart-quaternary-gauge"></div>
+    </div>
+
+    <div class="card c4">
+      <div class="section-title">
+        <span id="lbl-chart-title-5"><i class="fa-solid fa-award"></i> Tiêu chuẩn Chất lượng & Tỷ trọng</span>
+        <small>Bộ Tiêu chí BVĐK KV Đăk Tô</small>
+      </div>
+      <div class="chart-wrap" id="chart-quinary-radar"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- VÙNG DƯỚI: BẢNG THÔNG TIN CHI TIẾT (KHI LỌC BẢNG SẼ TỰ ĐỘNG THAY ĐỔI)    -->
+  <!-- ========================================================================= -->
+  <div class="table-section-card">
+    <div class="table-header-bar">
+      <div class="table-title">
+        <i class="fa-solid fa-table-list" style="color:var(--accent)"></i>
+        <span id="lbl-table-main-title">BẢNG THỐNG KÊ CHI TIẾT HOẠT ĐỘNG KHÁM CHỮA BỆNH</span>
+        <span class="badge-filter-notice" id="lbl-table-filter-scope">Đang lọc: Toàn viện • 17/09/2026</span>
+      </div>
+
+      <div class="table-actions">
+        <input type="text" id="table-search-input" class="table-search-input" placeholder="🔍 Tìm nhanh tên khoa / mã dịch vụ..." onkeyup="filterTableRows()"/>
+        <button class="btn-table-action" onclick="fetchIocData(false)"><i class="fa-solid fa-rotate"></i> Làm mới</button>
+        <button class="btn-table-action" onclick="exportTableToCsv()"><i class="fa-solid fa-file-excel"></i> Xuất Excel</button>
       </div>
     </div>
 
-    <div class="kcb-mini-grid">
-      <div class="kcb-mini">
-        <h3>Dịch vụ Y học cổ truyền</h3>
-        <div class="big" id="mini-yhct">100</div>
-        <div class="rows">Cơ sở I <b id="mini-yhct1">67</b><br>Cơ sở II <b id="mini-yhct2">33</b></div>
-      </div>
-      <div class="kcb-mini">
-        <h3>Dịch vụ Phục hồi chức năng</h3>
-        <div class="big" id="mini-phcn">241</div>
-        <div class="rows">Cơ sở I <b id="mini-phcn1">204</b><br>Cơ sở II <b id="mini-phcn2">37</b></div>
-      </div>
-      <div class="kcb-mini">
-        <h3>Điều trị Phong - Da liễu</h3>
-        <div class="big" id="mini-phong-quanly">43</div>
-        <div class="rows">BN đang quản lý <b id="mini-phong-quanly2">43</b><br>BN nội trú <b id="mini-phong-noitru">14</b></div>
-      </div>
-      <div class="kcb-mini">
-        <h3>Kiểm soát nhiễm khuẩn</h3>
-        <div class="big"><span id="mini-racthai">293</span> <span style="font-size:14px;color:var(--muted)">Kg</span></div>
-        <div class="rows">Rác thải y tế trong ngày<br>Cấy chỉ: <b id="mini-caychi">02</b></div>
-      </div>
+    <div class="table-responsive">
+      <table class="ioc-table" id="ioc-data-table">
+        <thead id="ioc-table-thead">
+          <!-- Cột thay đổi động theo từng Tab -->
+        </thead>
+        <tbody id="ioc-table-tbody">
+          <!-- Dữ liệu hàng thay đổi động theo Bộ lọc -->
+        </tbody>
+        <tfoot id="ioc-table-tfoot">
+          <!-- Dòng tổng cộng render động -->
+        </tfoot>
+      </table>
     </div>
-  </section>
-
-  <section id="infra" class="page">
-    <div class="grid">
-      <div class="card kpi"><div class="label">Thiết bị đang giám sát</div><div class="value" id="kpi-infra-monitored">128</div><div class="sub">Server, switch, firewall, AP, PC</div></div>
-      <div class="card kpi"><div class="label">Online</div><div class="value green" id="kpi-infra-online">124</div><div class="sub">96.9% thiết bị</div></div>
-      <div class="card kpi"><div class="label">Cảnh báo</div><div class="value yellow" id="kpi-infra-warning">3</div><div class="sub">2 hiệu năng, 1 đường truyền</div></div>
-      <div class="card kpi"><div class="label">Mất kết nối</div><div class="value red" id="kpi-infra-offline">1</div><div class="sub">Máy trạm Khoa PHCN</div></div>
-      <div class="card kpi"><div class="label">MTTR tháng</div><div class="value" id="kpi-infra-mttr">18'</div><div class="sub">Thời gian xử lý TB</div></div>
-      <div class="card kpi"><div class="label">Uptime tháng</div><div class="value green" id="kpi-infra-uptime">99.72%</div><div class="sub">Dịch vụ trọng yếu</div></div>
-
-      <div class="card c12">
-        <div class="section-title">Giám sát tập trung hạ tầng CNTT <small>Trạng thái theo thời gian thực</small></div>
-        <div class="infra-grid">
-          <div class="device"><div class="top"><b>Server HIS</b><span class="badge">Online</span></div><div class="meta" id="dev-meta-his">CPU 34% · RAM 61%<br>Disk 58% · Uptime 47d</div><svg class="spark" viewBox="0 0 120 36"><polyline points="0,28 15,20 30,22 45,15 60,19 75,12 90,17 105,10 120,13" class="line"/></svg></div>
-          <div class="device"><div class="top"><b>Server PACS</b><span class="badge warn">Warning</span></div><div class="meta" id="dev-meta-pacs">CPU 41% · RAM 72%<br>Disk 88% · Uptime 47d</div><svg class="spark" viewBox="0 0 120 36"><polyline points="0,26 15,25 30,22 45,20 60,18 75,17 90,14 105,12 120,9" class="line2"/></svg></div>
-          <div class="device"><div class="top"><b>Firewall</b><span class="badge">Online</span></div><div class="meta" id="dev-meta-fw">Sessions 1,428<br>WAN1 62Mbps · WAN2 31Mbps</div><svg class="spark" viewBox="0 0 120 36"><polyline points="0,24 15,16 30,19 45,10 60,13 75,18 90,12 105,15 120,11" class="line"/></svg></div>
-          <div class="device"><div class="top"><b>Core Switch</b><span class="badge">Online</span></div><div class="meta">24/24 ports up<br>Traffic 412Mbps · PoE 0%</div><svg class="spark" viewBox="0 0 120 36"><polyline points="0,25 15,22 30,23 45,20 60,18 75,19 90,17 105,16 120,15" class="line2"/></svg></div>
-          <div class="device"><div class="top"><b>Database HIS</b><span class="badge">Online</span></div><div class="meta">Connections 84<br>Avg query 31ms · Backup OK</div><svg class="spark" viewBox="0 0 120 36"><polyline points="0,22 15,17 30,21 45,14 60,16 75,12 90,18 105,13 120,16" class="line"/></svg></div>
-          <div class="device"><div class="top"><b>Internet 1</b><span class="badge">Online</span></div><div class="meta">Latency 12ms<br>Loss 0.0% · Utilization 48%</div><svg class="spark" viewBox="0 0 120 36"><polyline points="0,20 15,19 30,18 45,20 60,17 75,18 90,16 105,17 120,16" class="line2"/></svg></div>
-          <div class="device"><div class="top"><b>Internet 2</b><span class="badge warn">Latency</span></div><div class="meta">Latency 68ms<br>Loss 1.7% · Utilization 29%</div><svg class="spark" viewBox="0 0 120 36"><polyline points="0,28 15,25 30,19 45,12 60,17 75,9 90,14 105,8 120,12" class="line2"/></svg></div>
-          <div class="device"><div class="top"><b>Backup NAS</b><span class="badge">Online</span></div><div class="meta">Last job 02:10 - Success<br>Used 71% · Restore test OK</div><svg class="spark" viewBox="0 0 120 36"><polyline points="0,26 15,24 30,23 45,21 60,20 75,18 90,16 105,15 120,14" class="line"/></svg></div>
-        </div>
-      </div>
-
-      <div class="card c8">
-        <div class="section-title">Băng thông mạng & đường truyền Internet <small>24 giờ</small></div>
-        <div class="chart">
-          <svg viewBox="0 0 760 220" preserveAspectRatio="none">
-            <line x1="40" y1="20" x2="40" y2="190" class="axis"/><line x1="40" y1="190" x2="740" y2="190" class="axis"/>
-            <g class="gridline"><line x1="40" y1="55" x2="740" y2="55"/><line x1="40" y1="95" x2="740" y2="95"/><line x1="40" y1="135" x2="740" y2="135"/></g>
-            <polyline points="40,160 95,145 150,150 205,120 260,135 315,95 370,110 425,72 480,86 535,62 590,77 645,56 700,70 740,60" class="line"/>
-            <polyline points="40,178 95,170 150,172 205,165 260,160 315,148 370,151 425,138 480,144 535,130 590,136 645,126 700,133 740,128" class="line2"/>
-          </svg>
-        </div>
-        <div class="legend"><span class="lg"><i style="background:#20c6b7"></i>WAN1</span><span class="lg"><i style="background:#39a0ff"></i>WAN2</span></div>
-      </div>
-      <div class="card c4">
-        <div class="section-title">Phân bố sự cố tháng</div>
-        <table class="table">
-          <tr><th>Nhóm</th><th>Số sự cố</th><th>MTTR</th></tr>
-          <tr><td>Mạng</td><td>7</td><td>16'</td></tr>
-          <tr><td>Máy chủ</td><td>3</td><td>24'</td></tr>
-          <tr><td>Ứng dụng</td><td>5</td><td>19'</td></tr>
-          <tr><td>Máy trạm</td><td>11</td><td>12'</td></tr>
-          <tr><td>ATTT</td><td>2</td><td>31'</td></tr>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <section id="alerts" class="page">
-    <div class="grid">
-      <div class="card kpi"><div class="label">Cảnh báo 24h</div><div class="value" id="kpi-alerts-24h">18</div><div class="sub">Tất cả mức độ</div></div>
-      <div class="card kpi"><div class="label">Nghiêm trọng</div><div class="value red" id="kpi-alerts-critical">2</div><div class="sub">Cần xử lý ngay</div></div>
-      <div class="card kpi"><div class="label">Đã xác nhận</div><div class="value blue" id="kpi-alerts-ack">13</div><div class="sub">72% tổng cảnh báo</div></div>
-      <div class="card kpi"><div class="label">Đã khắc phục</div><div class="value green" id="kpi-alerts-resolved">11</div><div class="sub">Trong 24 giờ</div></div>
-      <div class="card kpi"><div class="label">Đăng nhập thất bại</div><div class="value" id="kpi-alerts-failed-login">23</div><div class="sub">Từ 7 nguồn</div></div>
-      <div class="card kpi"><div class="label">Backup lỗi</div><div class="value green">0</div><div class="sub">7 ngày gần nhất</div></div>
-
-      <div class="card c8">
-        <div class="section-title">Nhật ký cảnh báo & xử lý sự cố <small>Ưu tiên theo mức độ</small></div>
-        <table class="table">
-          <tr><th>Thời gian</th><th>Mức độ</th><th>Sự kiện</th><th>Đối tượng</th><th>Trạng thái</th></tr>
-          <tr><td>14:12</td><td class="red">Nghiêm trọng</td><td>Dung lượng ổ đĩa > 85%</td><td>Server PACS</td><td class="yellow">Đang xử lý</td></tr>
-          <tr><td>13:48</td><td class="yellow">Cảnh báo</td><td>Thời gian chờ khám > ngưỡng</td><td>Phòng khám 01</td><td class="blue">Đã xác nhận</td></tr>
-          <tr><td>13:25</td><td class="yellow">Cảnh báo</td><td>Độ trễ Internet tăng cao</td><td>WAN2</td><td class="blue">Theo dõi</td></tr>
-          <tr><td>12:54</td><td class="red">Nghiêm trọng</td><td>Máy trạm mất kết nối</td><td>Khoa PHCN - PC07</td><td class="green">Đã khắc phục</td></tr>
-          <tr><td>11:42</td><td class="blue">Thông tin</td><td>5 lần đăng nhập thất bại</td><td>EMR Admin</td><td class="green">Đóng</td></tr>
-        </table>
-      </div>
-
-      <div class="card c4">
-        <div class="section-title">Kênh gửi cảnh báo</div>
-        <div class="status-list">
-          <div class="status"><span class="name">Email</span><span class="pill ok">Hoạt động</span></div>
-          <div class="status"><span class="name">Zalo OA</span><span class="pill ok">Hoạt động</span></div>
-        </div>
-      </div>
-
-      <div class="card c6" style="grid-column:span 6">
-        <div class="section-title">An toàn thông tin</div>
-        <table class="table">
-          <tr><td>Sự kiện đăng nhập bất thường</td><td class="yellow">3</td></tr>
-          <tr><td>Dò quét tài khoản</td><td class="yellow">1</td></tr>
-          <tr><td>Mã độc phát hiện</td><td class="green">0</td></tr>
-          <tr><td>Thay đổi cấu hình trái phép</td><td class="green">0</td></tr>
-          <tr><td>Sự kiện Firewall/IPS</td><td class="blue" id="alerts-fw-events">37</td></tr>
-        </table>
-      </div>
-      <div class="card c6" style="grid-column:span 6">
-        <div class="section-title">Sao lưu & khả năng phục hồi</div>
-        <table class="table">
-          <tr><td>Backup HIS</td><td class="green">Thành công 02:05</td></tr>
-          <tr><td>Backup LIS</td><td class="green">Thành công 02:08</td></tr>
-          <tr><td>Backup PACS</td><td class="green">Thành công 02:10</td></tr>
-          <tr><td>Kiểm tra restore gần nhất</td><td class="green">Đạt</td></tr>
-          <tr><td>Dung lượng kho backup</td><td class="yellow">71%</td></tr>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <div class="footer">Dashboard IOC Mini • Đã bổ sung bộ lọc ngày trên toàn hệ thống • Sẵn sàng kết nối API HIS</div>
+  </div>
 </div>
+
+<!-- JAVASCRIPT ĐIỀU HÀNH & KẾT NỐI REALTIME -->
 <script>
-let CURRENT_SELECTED_DATE = "";
+let CURRENT_DOMAIN = 'kcb'; // kcb, lis, ris, pharmacy, finance, emr, infra
+let CURRENT_DATE_ISO = '';
+let CURRENT_DATA = null;
+let WALLBOARD_ACTIVE = false;
+let WALLBOARD_TIMER = null;
+const DOMAIN_TABS = ['kcb', 'lis', 'ris', 'pharmacy', 'finance', 'emr', 'infra'];
 
-function showPage(id,btn){
- document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
- document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
- document.getElementById(id).classList.add('active'); btn.classList.add('active');
+const CHARTS = {};
+
+// Đồng hồ
+function updateClock() {
+  const d = new Date();
+  const h = String(d.getHours()).padStart(2, '0');
+  const m = String(d.getMinutes()).padStart(2, '0');
+  const s = String(d.getSeconds()).padStart(2, '0');
+  const el = document.getElementById('header-realtime-clock');
+  if (el) el.textContent = `${h}:${m}:${s}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Chế độ Wallboard Màn hình lớn (Phím W)
+function toggleWallboardMode() {
+  WALLBOARD_ACTIVE = !WALLBOARD_ACTIVE;
+  const btn = document.getElementById('btn-toggle-wallboard');
+  const lbl = document.getElementById('lbl-wallboard-btn');
+  const pbar = document.getElementById('wallboard-pbar');
+
+  if (WALLBOARD_ACTIVE) {
+    btn.classList.add('active');
+    lbl.textContent = 'WALLBOARD: BẬT';
+    let elapsed = 0;
+    let idx = DOMAIN_TABS.indexOf(CURRENT_DOMAIN);
+
+    WALLBOARD_TIMER = setInterval(() => {
+      elapsed += 1;
+      const pct = (elapsed / 20) * 100;
+      if (pbar) pbar.style.width = `${pct}%`;
+
+      if (elapsed >= 20) {
+        elapsed = 0;
+        idx = (idx + 1) % DOMAIN_TABS.length;
+        const tabBtns = document.querySelectorAll('.btn-tab-module');
+        if (tabBtns[idx]) tabBtns[idx].click();
+      }
+    }, 1000);
+  } else {
+    btn.classList.remove('active');
+    lbl.textContent = 'WALLBOARD: TẮT';
+    if (pbar) pbar.style.width = '0%';
+    clearInterval(WALLBOARD_TIMER);
+  }
 }
 
-/*
-  KẾT NỐI API / CỔNG QUẢN TRỊ:
-  Mặc định trỏ đến api-kcb.php, hỗ trợ fallback LocalStorage.
-*/
-const KCB_API_URL = "api-kcb.php";
-
-function fmtDate(d){
-  return String(d.getDate()).padStart(2,'0') + '/' +
-         String(d.getMonth()+1).padStart(2,'0') + '/' + d.getFullYear();
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    if (document.exitFullscreen) document.exitFullscreen();
+  }
 }
-function fmtDateIso(d){
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'w' || e.key === 'W') toggleWallboardMode();
+  if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+  if (e.key >= '1' && e.key <= '7') {
+    const idx = parseInt(e.key) - 1;
+    const tabBtns = document.querySelectorAll('.btn-tab-module');
+    if (tabBtns[idx]) tabBtns[idx].click();
+  }
+});
+
+// Bộ lọc ngày tháng
+function fmtDateIso(d) {
   return d.getFullYear() + '-' +
-         String(d.getMonth()+1).padStart(2,'0') + '-' +
-         String(d.getDate()).padStart(2,'0');
-}
-function fmtTime(d){
-  return String(d.getHours()).padStart(2,'0') + ':' +
-         String(d.getMinutes()).padStart(2,'0');
-}
-function setText(id,val){
-  const el=document.getElementById(id);
-  if(el && val !== undefined && val !== null) el.textContent=val;
+         String(d.getMonth() + 1).padStart(2, '0') + '-' +
+         String(d.getDate()).padStart(2, '0');
 }
 
-// Bộ lọc ngày nhanh (Hôm nay / Hôm qua)
-function filterByPreset(type){
-  document.querySelectorAll('.btn-filter').forEach(b=>b.classList.remove('active'));
+function setFilterPreset(type) {
+  document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
   const now = new Date();
-  if(type === 'yesterday'){
+  if (type === 'yesterday') {
     now.setDate(now.getDate() - 1);
     document.getElementById('btn-filter-yesterday')?.classList.add('active');
   } else {
     document.getElementById('btn-filter-today')?.classList.add('active');
   }
   const iso = fmtDateIso(now);
-  const datePicker = document.getElementById('global-date-input');
-  if(datePicker) datePicker.value = iso;
-  onGlobalDateChange(iso);
+  const dateInput = document.getElementById('global-date-input');
+  if (dateInput) dateInput.value = iso;
+
+  const yearSelect = document.getElementById('filter-year-select');
+  const monthSelect = document.getElementById('filter-month-select');
+  if (yearSelect) yearSelect.value = now.getFullYear();
+  if (monthSelect) monthSelect.value = String(now.getMonth() + 1).padStart(2, '0');
+
+  onGlobalFilterChange();
 }
 
-function onGlobalDateChange(isoVal){
-  if(!isoVal) return;
-  const parts = isoVal.split('-');
-  CURRENT_SELECTED_DATE = parts[2] + '/' + parts[1] + '/' + parts[0];
-  setText('lbl-viewing-date', CURRENT_SELECTED_DATE);
-  setText('kcb-current-date', CURRENT_SELECTED_DATE);
-  loadKcbFromHis(CURRENT_SELECTED_DATE);
+function onYearMonthChange() {
+  const y = document.getElementById('filter-year-select')?.value || '2026';
+  const m = document.getElementById('filter-month-select')?.value || '09';
+  const curDate = document.getElementById('global-date-input')?.value;
+  let day = '16';
+  if (curDate) day = curDate.split('-')[2] || '16';
+  const newIso = `${y}-${m}-${day}`;
+  const dateInput = document.getElementById('global-date-input');
+  if (dateInput) dateInput.value = newIso;
+  onGlobalFilterChange();
 }
 
-function renderKcb(data){
-  if (!data) return;
-  const a=data.coso1||{}, b=data.coso2||{};
-  const sum=(k)=>Number(a[k]||0)+Number(b[k]||0);
-
-  const displayDate = data.date || CURRENT_SELECTED_DATE || fmtDate(new Date());
-  setText('kcb-current-date', displayDate);
-  setText('lbl-viewing-date', displayDate);
-  if(data.updated_at) setText('kcb-updated-time', data.updated_at);
-
-  const keys=['tong','kham','kedon','ngoai','noi','banngay','cls','thuthuat','yhct','phcn','caychi'];
-  keys.forEach(k=>setText('cs1-'+k,a[k]));
-  keys.forEach(k=>setText('cs2-'+k,b[k]));
-
-  ['tong','kham','kedon','ngoai','noi','banngay','cls','thuthuat'].forEach(k=>setText('sum-'+k,sum(k)));
-
-  // KCB KPIs
-  setText('kpi-tong-dieu-tri',sum('tong'));
-  setText('kpi-kham',sum('kham'));
-  setText('kpi-ngoai-tru',sum('ngoai'));
-  setText('kpi-noi-tru',sum('noi'));
-  setText('kpi-noi-tru-ban-ngay',sum('banngay'));
-  setText('kpi-thu-thuat',sum('thuthuat'));
-
-  setText('mini-yhct',sum('yhct')); setText('mini-yhct1',a.yhct); setText('mini-yhct2',b.yhct);
-  setText('mini-phcn',sum('phcn')); setText('mini-phcn1',a.phcn); setText('mini-phcn2',b.phcn);
-  setText('mini-caychi',String(sum('caychi')).padStart(2,'0'));
-
-  if(data.phong_dalieu){
-    setText('mini-phong-quanly',data.phong_dalieu.dang_quan_ly);
-    setText('mini-phong-quanly2',data.phong_dalieu.dang_quan_ly);
-    setText('mini-phong-noitru',data.phong_dalieu.noi_tru);
-  }
-  if(data.rac_thai_y_te_kg !== undefined) setText('mini-racthai',data.rac_thai_y_te_kg);
-
-  // Cập nhật phân hệ Tổng quan điều hành nếu có trong payload
-  if(data.overview){
-    const o = data.overview;
-    if(o.kham_thang) setText('kpi-overview-kham-thang', Number(o.kham_thang).toLocaleString('vi-VN'));
-    if(o.kham_ngay) setText('kpi-overview-kham-ngay', o.kham_ngay);
-    if(o.ra_vien) setText('kpi-overview-ra-vien', o.ra_vien);
-    if(o.dang_dieu_tri) setText('kpi-overview-dang-dieu-tri', o.dang_dieu_tri);
-    if(o.cong_suat_giuong){
-      setText('kpi-overview-cong-suat', o.cong_suat_giuong + '%');
-      setText('overview-gauge-val', o.cong_suat_giuong + '%');
-      const bar = document.getElementById('overview-bed-bar');
-      if(bar) bar.style.width = o.cong_suat_giuong + '%';
-    }
-    if(o.emr_rate) setText('kpi-overview-emr', o.emr_rate + '%');
-    if(o.it_availability) setText('kpi-overview-cntt', o.it_availability + '%');
-    if(o.emr_digital) setText('cds-table-emr', o.emr_digital + '%');
-    if(o.digital_sign) setText('cds-table-sign', o.digital_sign + '%');
-    if(o.data_link) setText('cds-table-sync', o.data_link + '%');
-    if(o.cashless) setText('cds-table-cashless', o.cashless + '%');
-    if(o.satisfaction) setText('cds-table-satisfaction', o.satisfaction + '%');
-    if(o.cccd_count) setText('nv-pill-cccd', o.cccd_count);
-    if(o.driving_license_count) setText('nv-pill-laixe', o.driving_license_count);
-    if(o.bhxh_tt25_rate) setText('nv-pill-bhxh', o.bhxh_tt25_rate + '%');
-    if(o.emhc_count) setText('nv-pill-emhc', o.emhc_count);
-    if(o.ngay_dt_tb) setText('overview-avg-days', o.ngay_dt_tb);
-  }
-
-  // Cập nhật phân hệ Hạ tầng
-  if(data.infra){
-    const inf = data.infra;
-    if(inf.monitored) setText('kpi-infra-monitored', inf.monitored);
-    if(inf.online) setText('kpi-infra-online', inf.online);
-    if(inf.warning) setText('kpi-infra-warning', inf.warning);
-    if(inf.offline) setText('kpi-infra-offline', inf.offline);
-    if(inf.mttr) setText('kpi-infra-mttr', inf.mttr);
-    if(inf.uptime) setText('kpi-infra-uptime', inf.uptime);
-  }
-
-  // Cập nhật phân hệ Cảnh báo
-  if(data.alerts_security){
-    const sec = data.alerts_security;
-    if(sec.alerts_24h) setText('kpi-alerts-24h', sec.alerts_24h);
-    if(sec.critical) setText('kpi-alerts-critical', sec.critical);
-    if(sec.acknowledged) setText('kpi-alerts-ack', sec.acknowledged);
-    if(sec.resolved) setText('kpi-alerts-resolved', sec.resolved);
-    if(sec.failed_logins) setText('kpi-alerts-failed-login', sec.failed_logins);
-    if(sec.firewall_events) setText('alerts-fw-events', sec.firewall_events);
-  }
-}
-
-function showIocLoader(msg = "ĐANG ĐỒNG BỘ DỮ LIỆU ĐIỀU HÀNH...") {
-  const overlay = document.getElementById('ioc-loader-overlay');
-  const msgEl = document.getElementById('ioc-loader-msg');
-  if (msgEl) msgEl.textContent = msg;
-  if (overlay) overlay.classList.add('active');
-}
-
-function hideIocLoader() {
-  const overlay = document.getElementById('ioc-loader-overlay');
-  if (overlay) overlay.classList.remove('active');
-}
-
-async function loadKcbFromHis(specificDate, isSilent = false){
-  const now = new Date();
-  if(!CURRENT_SELECTED_DATE) {
-    CURRENT_SELECTED_DATE = fmtDate(now);
-    setText('lbl-viewing-date', CURRENT_SELECTED_DATE);
-    setText('kcb-current-date', CURRENT_SELECTED_DATE);
-    const datePicker = document.getElementById('global-date-input');
-    if(datePicker && !datePicker.value) datePicker.value = fmtDateIso(now);
-  }
-
-  const queryDate = specificDate || CURRENT_SELECTED_DATE;
-  const url = KCB_API_URL ? `${KCB_API_URL}?date=${encodeURIComponent(queryDate)}` : "";
-
-  if(!isSilent) {
-    showIocLoader(`ĐANG TẢI SỐ LIỆU NGÀY ${queryDate}...`);
-  }
-
-  const startTime = Date.now();
-
-  if(url){
-    try{
-      const r=await fetch(url, {cache:'no-store'});
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      const res=await r.json();
-      const data = res.data ? res.data : res;
-      renderKcb(data);
-      setText('kcb-source','Đã đồng bộ ngày ' + queryDate);
-      setText('kcb-source-daily','Đã đồng bộ từ API');
-    }catch(e){
-      // Fallback sang LocalStorage nếu không có PHP server
-      const local = localStorage.getItem('ioc_dakto_data');
-      if (local) {
-        try {
-          const data = JSON.parse(local);
-          renderKcb(data);
-          setText('kcb-source','Dữ liệu lưu trình duyệt (LocalStorage)');
-          setText('kcb-source-daily','Dữ liệu lưu trình duyệt (LocalStorage)');
-        } catch(err){}
-      } else {
-        setText('kcb-source','Dữ liệu minh họa • Sẵn sàng kết nối');
-      }
-      console.warn(e);
-    } finally {
-      if(!isSilent) {
-        const elapsed = Date.now() - startTime;
-        const delay = Math.max(0, 450 - elapsed);
-        setTimeout(hideIocLoader, delay);
-      }
-    }
-  }
-}
-
-// State Lưới Lịch & Lựa chọn
+// Lưới lịch popup
 let CAL_VIEW_DATE = new Date();
-
 function toggleCalendarGrid(popupId, inputId) {
   const popup = document.getElementById(popupId);
   if (!popup) return;
   const isShow = popup.classList.contains('show');
-  document.querySelectorAll('.calendar-grid-popup').forEach(p => p.classList.remove('show'));
   if (!isShow) {
-    const inputVal = document.getElementById(inputId)?.value;
-    if (inputVal) {
-      const parts = inputVal.split('-');
-      CAL_VIEW_DATE = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-    } else {
-      CAL_VIEW_DATE = new Date();
-    }
     renderCalendarGrid(popupId, inputId);
     popup.classList.add('show');
+  } else {
+    popup.classList.remove('show');
   }
 }
-
 function calNavigateMonth(step, popupId, inputId) {
   CAL_VIEW_DATE.setMonth(CAL_VIEW_DATE.getMonth() + step);
   renderCalendarGrid(popupId, inputId);
 }
-
 function renderCalendarGrid(popupId, inputId) {
   const titleEl = document.getElementById('cal-month-title-index');
   const gridEl = document.getElementById('cal-days-grid-index');
   if (!titleEl || !gridEl) return;
 
-  const year = CAL_VIEW_DATE.getFullYear();
-  const month = CAL_VIEW_DATE.getMonth();
-  
-  titleEl.textContent = `Tháng ${String(month + 1).padStart(2, '0')}/${year}`;
+  const y = CAL_VIEW_DATE.getFullYear();
+  const m = CAL_VIEW_DATE.getMonth();
+  titleEl.textContent = `Tháng ${String(m + 1).padStart(2, '0')}/${y}`;
 
-  const firstDayIndex = new Date(year, month, 1).getDay();
-  const startOffset = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
-  const lastDate = new Date(year, month + 1, 0).getDate();
-  const prevMonthLastDate = new Date(year, month, 0).getDate();
-
-  const selectedInputVal = document.getElementById(inputId)?.value;
+  const firstDay = new Date(y, m, 1).getDay();
+  const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+  const lastDate = new Date(y, m + 1, 0).getDate();
+  const prevLastDate = new Date(y, m, 0).getDate();
+  const curVal = document.getElementById(inputId)?.value;
   const todayStr = fmtDateIso(new Date());
 
   let html = '';
-
-  // Các ngày của tháng trước
   for (let i = startOffset; i > 0; i--) {
-    const d = prevMonthLastDate - i + 1;
-    html += `<div class="cal-day-cell other-month" onclick="selectCalendarDate(new Date(${year}, ${month - 1}, ${d}), '${popupId}', '${inputId}')">${d}</div>`;
+    const d = prevLastDate - i + 1;
+    html += `<div class="cal-day-cell other-month">${d}</div>`;
   }
-
-  // Các ngày trong tháng hiện tại
   for (let i = 1; i <= lastDate; i++) {
-    const curIso = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-    const isSelected = selectedInputVal === curIso;
-    const isToday = todayStr === curIso;
-
+    const iso = `${y}-${String(m + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
     let cls = 'cal-day-cell';
-    if (isSelected) cls += ' selected';
-    if (isToday) cls += ' today';
-
-    html += `<div class="${cls}" onclick="selectCalendarDate(new Date(${year}, ${month}, ${i}), '${popupId}', '${inputId}')">${i}</div>`;
+    if (iso === curVal) cls += ' selected';
+    if (iso === todayStr) cls += ' today';
+    html += `<div class="${cls}" onclick="selectCalDate('${iso}', '${popupId}', '${inputId}')">${i}</div>`;
   }
-
-  // Các ngày của tháng kế tiếp
-  const totalRendered = startOffset + lastDate;
-  const remaining = (7 - (totalRendered % 7)) % 7;
-  for (let i = 1; i <= remaining; i++) {
-    html += `<div class="cal-day-cell other-month" onclick="selectCalendarDate(new Date(${year}, ${month + 1}, ${i}), '${popupId}', '${inputId}')">${i}</div>`;
-  }
-
   gridEl.innerHTML = html;
 }
-
-function selectCalendarDate(dateObj, popupId, inputId) {
-  const iso = fmtDateIso(dateObj);
+function selectCalDate(iso, popupId, inputId) {
   const input = document.getElementById(inputId);
-  if (input) {
-    input.value = iso;
-    onGlobalDateChange(iso);
-  }
+  if (input) input.value = iso;
   document.getElementById(popupId)?.classList.remove('show');
+  onGlobalFilterChange();
 }
-
-// Dropdown Menu Người dùng & Đăng xuất
-function toggleUserDropdown(menuId) {
-  const menu = document.getElementById(menuId);
-  if (!menu) return;
-  const isShow = menu.classList.contains('show');
-  document.querySelectorAll('.user-dropdown-menu').forEach(m => m.classList.remove('show'));
-  if (!isShow) {
-    menu.classList.add('show');
-  }
-}
-
-// Xử lý Đăng xuất
-function handleLogout() {
-  showIocLoader('ĐANG ĐĂNG XUẤT HỆ THỐNG...');
-  setTimeout(() => {
-    window.location.href = 'login.html';
-  }, 600);
-}
-
-// Đóng lịch và menu user khi nhấp chuột ra ngoài
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.cal-picker-wrap') && !e.target.closest('.calendar-grid-popup')) {
-    document.querySelectorAll('.calendar-grid-popup').forEach(p => p.classList.remove('show'));
-  }
-  if (!e.target.closest('.user-menu-wrap') && !e.target.closest('.user-dropdown-menu')) {
-    document.querySelectorAll('.user-dropdown-menu').forEach(m => m.classList.remove('show'));
+  if (!e.target.closest('.cal-picker-wrap')) {
+    document.getElementById('cal-popup-index')?.classList.remove('show');
   }
 });
 
-// Khởi chạy ban đầu
-const initialIso = fmtDateIso(new Date());
-const globalDateInput = document.getElementById('global-date-input');
-if(globalDateInput) globalDateInput.value = initialIso;
-onGlobalDateChange(initialIso);
+// Chuyển Tab Phân hệ chính
+function switchDomainTab(tabKey, btnEl) {
+  CURRENT_DOMAIN = tabKey;
+  document.querySelectorAll('.btn-tab-module').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
 
-setInterval(() => {
-  // Chỉ tự động tải lại nếu đang xem ngày hôm nay
-  const todayFormatted = fmtDate(new Date());
-  if(CURRENT_SELECTED_DATE === todayFormatted) {
-    loadKcbFromHis(CURRENT_SELECTED_DATE, true);
+  if (CURRENT_DATA) {
+    renderCurrentDomain(CURRENT_DATA);
   }
-}, 20000);
+}
+
+// Gọi API khi thay đổi bất kỳ bộ lọc nào
+function onGlobalFilterChange() {
+  const dateInput = document.getElementById('global-date-input');
+  CURRENT_DATE_ISO = dateInput ? dateInput.value : fmtDateIso(new Date());
+  fetchIocData(false);
+}
+
+async function fetchIocData(isSilent = false) {
+  const loader = document.getElementById('ioc-loader-overlay');
+  const syncLabel = document.getElementById('lbl-sync-status');
+  const deptSelect = document.getElementById('filter-dept-select');
+  const payerSelect = document.getElementById('filter-payer-select');
+
+  const deptVal = deptSelect ? deptSelect.value : 'all';
+  const payerVal = payerSelect ? payerSelect.value : 'all';
+
+  if (!isSilent && loader) loader.classList.add('active');
+  if (syncLabel) syncLabel.textContent = 'Đang đồng bộ CSDL...';
+
+  const scopeEl = document.getElementById('lbl-table-filter-scope');
+  if (scopeEl) {
+    const deptText = deptSelect && deptSelect.options[deptSelect.selectedIndex] ? deptSelect.options[deptSelect.selectedIndex].text : 'Toàn viện';
+    const payerText = payerSelect && payerSelect.options[payerSelect.selectedIndex] ? payerSelect.options[payerSelect.selectedIndex].text : 'Tất cả';
+    scopeEl.textContent = `Đang lọc: ${deptText} • Ngày: ${CURRENT_DATE_ISO} • Đối tượng: ${payerText}`;
+  }
+
+  const apiUrl = `index.php?rt=dashboard/api_data&date=${encodeURIComponent(CURRENT_DATE_ISO)}&department_id=${deptVal}&payer_type_id=${payerVal}`;
+
+  try {
+    const resp = await fetch(apiUrl, { cache: 'no-store' });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const json = await resp.json();
+    CURRENT_DATA = json;
+    renderCurrentDomain(json);
+    if (syncLabel) syncLabel.textContent = `Đã đồng bộ (${json.timestamp ? json.timestamp.split(' ')[0] : 'Realtime'})`;
+  } catch (err) {
+    try {
+      const fbResp = await fetch(`api-kcb.php?date=${encodeURIComponent(CURRENT_DATE_ISO)}`);
+      const fbJson = await fbResp.json();
+      const finalData = fbJson.data || fbJson;
+      CURRENT_DATA = finalData;
+      renderCurrentDomain(finalData);
+      if (syncLabel) syncLabel.textContent = 'Đồng bộ từ Cổng Quản trị';
+    } catch (e2) {
+      if (syncLabel) syncLabel.textContent = 'Dữ liệu Demo sẵn sàng';
+    }
+  } finally {
+    if (!isSilent && loader) {
+      setTimeout(() => loader.classList.remove('active'), 200);
+    }
+  }
+}
+
+// RENDER NỘI DUNG THEO TAB ĐANG CHỌN (Ở TRÊN BIỂU ĐỒ, Ở DƯỚI BẢNG)
+function renderCurrentDomain(data) {
+  if (!data) return;
+
+  renderKpiCards(data, CURRENT_DOMAIN);
+  renderCharts(data, CURRENT_DOMAIN);
+  renderTable(data, CURRENT_DOMAIN);
+}
+
+// 1. RENDER KPI CARDS Ở TRÊN
+function renderKpiCards(data, domain) {
+  const container = document.getElementById('kpi-cards-container');
+  if (!container) return;
+
+  let kpiHtml = '';
+  const o = data.overview || {};
+
+  if (domain === 'kcb') {
+    kpiHtml = `
+      <div class="card kpi-card"><div class="kpi-label">Tổng lượt khám <i class="fa-solid fa-stethoscope cyan"></i></div><div class="kpi-value">${o.kham_ngay || 120}<span class="kpi-unit">ca</span></div><div class="kpi-footer"><span class="kpi-sub">Tháng: <b>${(o.kham_thang || 3486).toLocaleString('vi-VN')}</b></span><span class="badge-trend cyan">Ngoại trú</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Bảo hiểm y tế <i class="fa-solid fa-id-card-clip green"></i></div><div class="kpi-value">${Math.round((o.kham_ngay || 120) * 0.82)}<span class="kpi-unit">ca</span></div><div class="kpi-footer"><span class="kpi-sub">Tỷ trọng: <b>81.7%</b></span><span class="badge-trend green">BHYT</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Viện phí / Dịch vụ <i class="fa-solid fa-hand-holding-dollar yellow"></i></div><div class="kpi-value">${Math.round((o.kham_ngay || 120) * 0.18)}<span class="kpi-unit">ca</span></div><div class="kpi-footer"><span class="kpi-sub">Tỷ trọng: <b>18.3%</b></span><span class="badge-trend yellow">Viện phí</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Đang điều trị nội trú <i class="fa-solid fa-bed blue"></i></div><div class="kpi-value">${o.dang_dieu_tri || 82}<span class="kpi-unit">BN</span></div><div class="kpi-footer"><span class="kpi-sub">Ra viện: <b>${o.ra_vien || 37}</b></span><span class="badge-trend blue">Lưu viện</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Công suất giường <i class="fa-solid fa-gauge-high yellow"></i></div><div class="kpi-value">${o.cong_suat_giuong || 78}%</div><div class="kpi-footer"><span class="kpi-sub">Giường dùng: <b>${o.giuong_dang_dung || 78}/${o.giuong_thuc_ke || 100}</b></span><span class="badge-trend green">Ổn định</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Hồ sơ Bệnh án EMR <i class="fa-solid fa-file-signature cyan"></i></div><div class="kpi-value">${o.emr_rate || 94.2}%</div><div class="kpi-footer"><span class="kpi-sub">Ký số: <b>91.6%</b></span><span class="badge-trend green">Đạt chuẩn</span></div></div>
+    `;
+  } else if (domain === 'lis') {
+    const lis = data.cls?.lis || {};
+    kpiHtml = `
+      <div class="card kpi-card"><div class="kpi-label">Tổng ca Xét nghiệm <i class="fa-solid fa-flask-vial cyan"></i></div><div class="kpi-value">${lis.total || 350}<span class="kpi-unit">ca</span></div><div class="kpi-footer"><span class="kpi-sub">LIS Realtime</span><span class="badge-trend cyan">Xét nghiệm</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Huyết học (HH) <i class="fa-solid fa-droplet red"></i></div><div class="kpi-value">142<span class="kpi-unit">ca</span></div><div class="kpi-footer"><span class="kpi-sub">Máy Sysmex</span><span class="badge-trend green">Chính xác</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Sinh hóa (SH) <i class="fa-solid fa-vial blue"></i></div><div class="kpi-value">118<span class="kpi-unit">ca</span></div><div class="kpi-footer"><span class="kpi-sub">Máy Cobas</span><span class="badge-trend green">Ổn định</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Vi sinh & Khác <i class="fa-solid fa-bacterium yellow"></i></div><div class="kpi-value">90<span class="kpi-unit">ca</span></div><div class="kpi-footer"><span class="kpi-sub">Nước tiểu & Vi sinh</span><span class="badge-trend cyan">Đạt chuẩn</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Xét nghiệm BHYT <i class="fa-solid fa-id-card green"></i></div><div class="kpi-value">${lis.bhyt || 280}<span class="kpi-unit">ca</span></div><div class="kpi-footer"><span class="kpi-sub">Viện phí: <b>${lis.self_pay || 70}</b></span><span class="badge-trend green">80% BHYT</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Trả KQ Đúng hẹn <i class="fa-solid fa-clock-check green"></i></div><div class="kpi-value">98.5%</div><div class="kpi-footer"><span class="kpi-sub">Cam kết < 45'</span><span class="badge-trend green">Xuất sắc</span></div></div>
+    `;
+  } else if (domain === 'ris') {
+    const ris = data.cls?.ris || {};
+    kpiHtml = `
+      <div class="card kpi-card"><div class="kpi-label">Tổng ca Chẩn đoán HA <i class="fa-solid fa-x-ray yellow"></i></div><div class="kpi-value">${ris.total || 145}<span class="kpi-unit">ca</span></div><div class="kpi-footer"><span class="kpi-sub">RIS/PACS</span><span class="badge-trend yellow">Chẩn đoán</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Chụp X-quang KTS <i class="fa-solid fa-bone cyan"></i></div><div class="kpi-value">88<span class="kpi-unit">ca</span></div><div class="kpi-footer"><span class="kpi-sub">Ngực & Xương</span><span class="badge-trend cyan">DR System</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Siêu âm màu Doppler <i class="fa-solid fa-wave-square green"></i></div><div class="kpi-value">46<span class="kpi-unit">ca</span></div><div class="kpi-footer"><span class="kpi-sub">Bụng, Tim, Mạch</span><span class="badge-trend green">Chất lượng</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">CT-Scanner & Nội soi <i class="fa-solid fa-brain purple"></i></div><div class="kpi-value">11<span class="kpi-unit">ca</span></div><div class="kpi-footer"><span class="kpi-sub">Kỹ thuật cao</span><span class="badge-trend purple">PACS Lưu</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Tổng số phim chụp <i class="fa-solid fa-film cyan"></i></div><div class="kpi-value">${ris.total_films || 160}<span class="kpi-unit">tấm</span></div><div class="kpi-footer"><span class="kpi-sub">Tiêu hao phim</span><span class="badge-trend cyan">Kiểm soát</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Trả kết quả PACS <i class="fa-solid fa-circle-check green"></i></div><div class="kpi-value">99.1%</div><div class="kpi-footer"><span class="kpi-sub">Đọc số 100%</span><span class="badge-trend green">Đạt chuẩn</span></div></div>
+    `;
+  } else if (domain === 'pharmacy') {
+    const p = data.pharmacy || {};
+    kpiHtml = `
+      <div class="card kpi-card"><div class="kpi-label">Tổng tiền thuốc xuất dùng <i class="fa-solid fa-pills cyan"></i></div><div class="kpi-value" style="font-size:22px">${p.total_spend || '114.5M'}<span class="kpi-unit">đ</span></div><div class="kpi-footer"><span class="kpi-sub">Kho Dược viện</span><span class="badge-trend cyan">Tổng xuất</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Thuốc BHYT chi trả <i class="fa-solid fa-id-card green"></i></div><div class="kpi-value" style="font-size:22px">${p.bhyt_spend || '92.4M'}<span class="kpi-unit">đ</span></div><div class="kpi-footer"><span class="kpi-sub">Tỷ lệ: 80.7%</span><span class="badge-trend green">BHYT</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Thuốc Viện phí / Tự mua <i class="fa-solid fa-coins yellow"></i></div><div class="kpi-value" style="font-size:22px">${p.self_spend || '22.1M'}<span class="kpi-unit">đ</span></div><div class="kpi-footer"><span class="kpi-sub">Tỷ lệ: 19.3%</span><span class="badge-trend yellow">Dịch vụ</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Cảnh báo tồn kho thấp <i class="fa-solid fa-triangle-exclamation red"></i></div><div class="kpi-value">${p.low_stock_items || 4}<span class="kpi-unit">loại</span></div><div class="kpi-footer"><span class="kpi-sub">Cần nhập kho bổ sung</span><span class="badge-trend red">Báo động</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Thuốc Generic nội địa <i class="fa-solid fa-award green"></i></div><div class="kpi-value">${p.generic_rate || '82.5%'}</div><div class="kpi-footer"><span class="kpi-sub">Chỉ tiêu Bộ Y tế: >75%</span><span class="badge-trend green">Đạt chỉ tiêu</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">VTYT Tiêu hao xuất kho <i class="fa-solid fa-box-open blue"></i></div><div class="kpi-value">1.840<span class="kpi-unit">mục</span></div><div class="kpi-footer"><span class="kpi-sub">Bơm kim, găng, gạc</span><span class="badge-trend blue">Đủ cơ số</span></div></div>
+    `;
+  } else if (domain === 'finance') {
+    const f = data.finance || {};
+    kpiHtml = `
+      <div class="card kpi-card"><div class="kpi-label">Tổng Doanh thu Viện phí <i class="fa-solid fa-sack-dollar cyan"></i></div><div class="kpi-value" style="font-size:22px">${f.total_revenue || '112.5M'}<span class="kpi-unit">đ</span></div><div class="kpi-footer"><span class="kpi-sub">Kỳ báo cáo</span><span class="badge-trend cyan">Doanh thu</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">BHYT Thanh toán <i class="fa-solid fa-file-invoice-dollar green"></i></div><div class="kpi-value" style="font-size:22px">${f.bhyt_revenue || '89.1M'}<span class="kpi-unit">đ</span></div><div class="kpi-footer"><span class="kpi-sub">Tỷ lệ: 79.2%</span><span class="badge-trend green">Cổng BHYT</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Bệnh nhân cùng chi trả <i class="fa-solid fa-wallet yellow"></i></div><div class="kpi-value" style="font-size:22px">${f.self_revenue || '23.3M'}<span class="kpi-unit">đ</span></div><div class="kpi-footer"><span class="kpi-sub">Thu viện phí & DV</span><span class="badge-trend yellow">Trực tiếp</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">TT Không dùng tiền mặt <i class="fa-solid fa-qrcode purple"></i></div><div class="kpi-value">${f.cashless_rate || '64.8%'}</div><div class="kpi-footer"><span class="kpi-sub">QR Code Smart Banking</span><span class="badge-trend cyan">Chuyển đổi số</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Biên lai điện tử xuất <i class="fa-solid fa-receipt blue"></i></div><div class="kpi-value">${f.receipt_count || 540}<span class="kpi-unit">tờ</span></div><div class="kpi-footer"><span class="kpi-sub">Hóa đơn điện tử e-Invoice</span><span class="badge-trend blue">Khớp 100%</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Trạng thái Chốt quỹ ngày <i class="fa-solid fa-circle-check green"></i></div><div class="kpi-value" style="font-size:22px">KHỚP QUỸ</div><div class="kpi-footer"><span class="kpi-sub">Kế toán trưởng duyệt</span><span class="badge-trend green">Hoàn tất</span></div></div>
+    `;
+  } else if (domain === 'emr') {
+    kpiHtml = `
+      <div class="card kpi-card"><div class="kpi-label">Bệnh án điện tử EMR <i class="fa-solid fa-file-medical cyan"></i></div><div class="kpi-value">94.2%</div><div class="kpi-footer"><span class="kpi-sub">Bệnh án không giấy</span><span class="badge-trend green">Đạt chuẩn</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Chữ ký số Bác sĩ <i class="fa-solid fa-signature blue"></i></div><div class="kpi-value">91.6%</div><div class="kpi-footer"><span class="kpi-sub">Ký số biểu mẫu</span><span class="badge-trend green">Hợp lệ</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">BA Nộp lưu trữ đúng hạn <i class="fa-solid fa-box-archive yellow"></i></div><div class="kpi-value">88.5%</div><div class="kpi-footer"><span class="kpi-sub">Trong vòng 24h - 48h</span><span class="badge-trend yellow">Theo dõi</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Liên thông Cổng BHXH <i class="fa-solid fa-link green"></i></div><div class="kpi-value">99.2%</div><div class="kpi-footer"><span class="kpi-sub">Gửi dữ liệu chuẩn XML</span><span class="badge-trend green">Đồng bộ</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Hài lòng người bệnh <i class="fa-solid fa-face-smile cyan"></i></div><div class="kpi-value">96.5%</div><div class="kpi-footer"><span class="kpi-sub">Khảo sát trực tuyến</span><span class="badge-trend green">Rất tốt</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Mức độ Chuyển đổi số <i class="fa-solid fa-award purple"></i></div><div class="kpi-value">MỨC 6</div><div class="kpi-footer"><span class="kpi-sub">Theo Thông tư 54/2017</span><span class="badge-trend purple">Xuất sắc</span></div></div>
+    `;
+  } else if (domain === 'infra') {
+    kpiHtml = `
+      <div class="card kpi-card"><div class="kpi-label">Thiết bị giám sát Zabbix <i class="fa-solid fa-network-wired cyan"></i></div><div class="kpi-value">128<span class="kpi-unit">nodes</span></div><div class="kpi-footer"><span class="kpi-sub">Online: 124 • Cảnh báo: 3</span><span class="badge-trend green">Hoạt động</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Uptime Hệ thống 30 ngày <i class="fa-solid fa-shield-heart green"></i></div><div class="kpi-value">99.85%</div><div class="kpi-footer"><span class="kpi-sub">SLA cam kết > 99.5%</span><span class="badge-trend green">Đạt SLA</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Độ trễ Internet WAN <i class="fa-solid fa-gauge-simple-high yellow"></i></div><div class="kpi-value">12<span class="kpi-unit">ms</span></div><div class="kpi-footer"><span class="kpi-sub">Mất gói: 0.0%</span><span class="badge-trend green">Cực tốt</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Sao lưu CSDL tự động <i class="fa-solid fa-database green"></i></div><div class="kpi-value" style="font-size:20px">02:00:15</div><div class="kpi-footer"><span class="kpi-sub">Kích thước: 48.2 GB</span><span class="badge-trend green">Thành công</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Sự cố ATTT trong 24h <i class="fa-solid fa-triangle-exclamation yellow"></i></div><div class="kpi-value">0<span class="kpi-unit">vụ</span></div><div class="kpi-footer"><span class="kpi-sub">Đăng nhập sai: 23</span><span class="badge-trend green">An toàn</span></div></div>
+      <div class="card kpi-card"><div class="kpi-label">Thời gian phục hồi TB <i class="fa-solid fa-wrench cyan"></i></div><div class="kpi-value">18<span class="kpi-unit">phút</span></div><div class="kpi-footer"><span class="kpi-sub">MTTR theo quy chuẩn</span><span class="badge-trend cyan">< 30'</span></div></div>
+    `;
+  }
+
+  container.innerHTML = kpiHtml;
+}
+
+// 2. RENDER BIỂU ĐỒ APEXCHARTS Ở TRÊN
+function renderCharts(data, domain) {
+  if (typeof ApexCharts === 'undefined') return;
+
+  const title1 = document.getElementById('lbl-chart-title-1');
+  const title2 = document.getElementById('lbl-chart-title-2');
+  const title3 = document.getElementById('lbl-chart-title-3');
+  const title4 = document.getElementById('lbl-chart-title-4');
+  const title5 = document.getElementById('lbl-chart-title-5');
+
+  // Cập nhật tiêu đề biểu đồ theo Tab
+  if (domain === 'kcb') {
+    if (title1) title1.innerHTML = '<i class="fa-solid fa-chart-column"></i> Theo dõi Lượt khám & Nhập viện theo ngày';
+    if (title2) title2.innerHTML = '<i class="fa-solid fa-chart-pie"></i> Cơ cấu Đối tượng KCB & Chuyển tuyến';
+    if (title3) title3.innerHTML = '<i class="fa-solid fa-hospital"></i> Phân bổ Lượt khám theo Khoa/Phòng';
+    if (title4) title4.innerHTML = '<i class="fa-solid fa-bed-pulse"></i> Công suất Giường bệnh toàn viện';
+    if (title5) title5.innerHTML = '<i class="fa-solid fa-award"></i> Đánh giá Chất lượng & Tiêu chí EMR';
+  } else if (domain === 'lis') {
+    if (title1) title1.innerHTML = '<i class="fa-solid fa-flask-vial"></i> Theo dõi Số ca Xét nghiệm theo ngày';
+    if (title2) title2.innerHTML = '<i class="fa-solid fa-chart-pie"></i> Tỷ trọng Nhóm Xét nghiệm (HH, SH, VS)';
+    if (title3) title3.innerHTML = '<i class="fa-solid fa-hospital"></i> Số ca Xét nghiệm chỉ định theo Khoa';
+    if (title4) title4.innerHTML = '<i class="fa-solid fa-clock-check"></i> Tỷ lệ Trả kết quả đúng hẹn';
+    if (title5) title5.innerHTML = '<i class="fa-solid fa-vial"></i> Xét nghiệm Ngoại trú vs Nội trú';
+  } else if (domain === 'ris') {
+    if (title1) title1.innerHTML = '<i class="fa-solid fa-x-ray"></i> Số ca CĐHA & Phim chụp theo ngày';
+    if (title2) title2.innerHTML = '<i class="fa-solid fa-chart-pie"></i> Cơ cấu Kỹ thuật CĐHA (XQ, SA, CT)';
+    if (title3) title3.innerHTML = '<i class="fa-solid fa-hospital"></i> Số ca CĐHA theo Khoa chỉ định';
+    if (title4) title4.innerHTML = '<i class="fa-solid fa-film"></i> Tiêu hao Phim X-quang/CT';
+    if (title5) title5.innerHTML = '<i class="fa-solid fa-network-wired"></i> Độ sẵn sàng Trạm PACS';
+  } else if (domain === 'pharmacy') {
+    if (title1) title1.innerHTML = '<i class="fa-solid fa-pills"></i> Giá trị Thuốc & VTYT xuất kho theo ngày';
+    if (title2) title2.innerHTML = '<i class="fa-solid fa-chart-pie"></i> Cơ cấu Nhóm Thuốc xuất dùng';
+    if (title3) title3.innerHTML = '<i class="fa-solid fa-hospital"></i> Cấp phát Thuốc theo Khoa lâm sàng';
+    if (title4) title4.innerHTML = '<i class="fa-solid fa-boxes-stacked"></i> Mức độ An toàn Tồn kho';
+    if (title5) title5.innerHTML = '<i class="fa-solid fa-award"></i> Tỷ lệ Thuốc Generic / Nội địa';
+  } else if (domain === 'finance') {
+    if (title1) title1.innerHTML = '<i class="fa-solid fa-sack-dollar"></i> Doanh thu Viện phí theo ngày (BHYT vs Bệnh nhân)';
+    if (title2) title2.innerHTML = '<i class="fa-solid fa-chart-pie"></i> Cơ cấu Nguồn thu (Khám, Giường, CLS, Thuốc)';
+    if (title3) title3.innerHTML = '<i class="fa-solid fa-hospital"></i> Doanh thu theo từng Khoa/Phòng';
+    if (title4) title4.innerHTML = '<i class="fa-solid fa-qrcode"></i> Tỷ lệ TT Không dùng tiền mặt';
+    if (title5) title5.innerHTML = '<i class="fa-solid fa-file-invoice"></i> Số lượng Hóa đơn / Biên lai';
+  } else if (domain === 'emr') {
+    if (title1) title1.innerHTML = '<i class="fa-solid fa-file-signature"></i> Tiến độ Ký số & Bệnh án hoàn thành';
+    if (title2) title2.innerHTML = '<i class="fa-solid fa-chart-pie"></i> Tỷ lệ Hồ sơ Lưu trữ đúng hạn';
+    if (title3) title3.innerHTML = '<i class="fa-solid fa-hospital"></i> Tiến độ Bệnh án EMR theo Khoa';
+    if (title4) title4.innerHTML = '<i class="fa-solid fa-dharmachakra"></i> Radar 6 Tiêu chuẩn Chất lượng EMR';
+    if (title5) title5.innerHTML = '<i class="fa-solid fa-link"></i> Tỷ lệ Liên thông Cổng Giám định';
+  } else if (domain === 'infra') {
+    if (title1) title1.innerHTML = '<i class="fa-solid fa-signal"></i> Băng thông Mạng & Độ trễ Ping WAN';
+    if (title2) title2.innerHTML = '<i class="fa-solid fa-chart-pie"></i> Trạng thái Thiết bị Mạng & Server';
+    if (title3) title3.innerHTML = '<i class="fa-solid fa-microchip"></i> Tải CPU & RAM các Máy chủ Core';
+    if (title4) title4.innerHTML = '<i class="fa-solid fa-temperature-three-quarters"></i> Nhiệt độ Phòng Máy chủ';
+    if (title5) title5.innerHTML = '<i class="fa-solid fa-database"></i> Trạng thái Sao lưu Dữ liệu';
+  }
+
+  // Khởi tạo các biểu đồ ApexCharts
+  const trendDates = ['10/9', '11/9', '12/9', '13/9', '14/9', '15/9', '16/9'];
+  const trendData1 = domain === 'finance' ? [98, 105, 112, 145, 120, 115, 112] : [115, 128, 142, 200, 200, 135, 120];
+  const trendData2 = domain === 'finance' ? [22, 25, 28, 35, 29, 26, 23] : [18, 22, 19, 25, 20, 18, 22];
+
+  if (!CHARTS['primaryTrend']) {
+    CHARTS['primaryTrend'] = new ApexCharts(document.querySelector("#chart-primary-trend"), {
+      chart: { type: 'bar', height: 260, toolbar: { show: false }, background: 'transparent' },
+      theme: { mode: 'dark' },
+      colors: ['#00f2fe', '#39a0ff'],
+      plotOptions: { bar: { columnWidth: '45%', borderRadius: 5 } },
+      stroke: { width: [0, 2], curve: 'smooth' },
+      series: [
+        { name: 'Khám / Chỉ số chính', type: 'column', data: trendData1 },
+        { name: 'Nội trú / Thứ cấp', type: 'line', data: trendData2 }
+      ],
+      xaxis: { categories: trendDates, labels: { style: { colors: '#85a4c4' } } },
+      yaxis: { labels: { style: { colors: '#85a4c4' } } },
+      legend: { position: 'top', horizontalAlign: 'right', labels: { colors: '#eaf3ff' } }
+    });
+    CHARTS['primaryTrend'].render();
+  } else {
+    CHARTS['primaryTrend'].updateSeries([
+      { name: 'Khám / Chỉ số chính', type: 'column', data: trendData1 },
+      { name: 'Nội trú / Thứ cấp', type: 'line', data: trendData2 }
+    ]);
+  }
+
+  // Chart 2: Donut
+  if (!CHARTS['secondaryDonut']) {
+    CHARTS['secondaryDonut'] = new ApexCharts(document.querySelector("#chart-secondary-donut"), {
+      chart: { type: 'donut', height: 260, background: 'transparent' },
+      theme: { mode: 'dark' },
+      colors: ['#00f2fe', '#f1c40f', '#9b7cff', '#2ecc71'],
+      labels: ['BHYT Đúng tuyến', 'Viện phí / Dịch vụ', 'Cấp cứu / Chuyển tuyến', 'Tự nguyện'],
+      series: [72, 18, 6, 4],
+      legend: { position: 'bottom', labels: { colors: '#eaf3ff' } }
+    });
+    CHARTS['secondaryDonut'].render();
+  }
+
+  // Chart 3: Horizontal Bar
+  if (!CHARTS['tertiaryBar']) {
+    CHARTS['tertiaryBar'] = new ApexCharts(document.querySelector("#chart-tertiary-bar"), {
+      chart: { type: 'bar', height: 260, toolbar: { show: false }, background: 'transparent' },
+      theme: { mode: 'dark' },
+      plotOptions: { bar: { horizontal: true, borderRadius: 5, barHeight: '55%' } },
+      colors: ['#39a0ff'],
+      series: [{ name: 'Số lượng phát sinh', data: [78, 42, 35, 24] }],
+      xaxis: { labels: { style: { colors: '#85a4c4' } } },
+      yaxis: { categories: ['Khoa HSCC', 'Khoa Nội trú', 'Khoa Ngoại', 'Khám bệnh'], labels: { style: { colors: '#eaf3ff' } } }
+    });
+    CHARTS['tertiaryBar'].render();
+  }
+
+  // Chart 4: Radial Gauge
+  if (!CHARTS['quaternaryGauge']) {
+    CHARTS['quaternaryGauge'] = new ApexCharts(document.querySelector("#chart-quaternary-gauge"), {
+      chart: { type: 'radialBar', height: 260, background: 'transparent' },
+      theme: { mode: 'dark' },
+      plotOptions: {
+        radialBar: {
+          startAngle: -135, endAngle: 135,
+          hollow: { size: '68%' },
+          track: { background: '#0e243c', strokeWidth: '100%' },
+          dataLabels: {
+            name: { show: true, label: 'HIỆU SUẤT', color: '#85a4c4', fontSize: '12px', offsetY: -10 },
+            value: { show: true, fontSize: '32px', fontWeight: 800, color: '#00f2fe', offsetY: 6, formatter: v => v + '%' }
+          }
+        }
+      },
+      colors: ['#2ecc71'],
+      series: [78]
+    });
+    CHARTS['quaternaryGauge'].render();
+  }
+
+  // Chart 5: Radar
+  if (!CHARTS['quinaryRadar']) {
+    CHARTS['quinaryRadar'] = new ApexCharts(document.querySelector("#chart-quinary-radar"), {
+      chart: { type: 'radar', height: 260, toolbar: { show: false }, background: 'transparent' },
+      theme: { mode: 'dark' },
+      colors: ['#00f2fe'],
+      series: [{ name: 'Điểm đánh giá (%)', data: [94, 91, 88, 96, 99, 92] }],
+      xaxis: { categories: ['Hồ sơ EMR', 'Ký số', 'Lưu trữ', 'Hài lòng', 'Liên thông', 'Sẵn sàng'], labels: { style: { colors: '#eaf3ff', fontSize: '11px' } } },
+      yaxis: { max: 100, tickAmount: 4, labels: { style: { colors: '#85a4c4' } } }
+    });
+    CHARTS['quinaryRadar'].render();
+  }
+}
+
+// 3. RENDER BẢNG THÔNG TIN CHI TIẾT Ở DƯỚI (THAY ĐỔI ĐỘNG THEO TAB VÀ BỘ LỌC)
+function renderTable(data, domain) {
+  const thead = document.getElementById('ioc-table-thead');
+  const tbody = document.getElementById('ioc-table-tbody');
+  const tfoot = document.getElementById('ioc-table-tfoot');
+  const titleEl = document.getElementById('lbl-table-main-title');
+  if (!thead || !tbody) return;
+
+  let headCols = [];
+  let rows = [];
+
+  if (domain === 'kcb') {
+    if (titleEl) titleEl.textContent = 'BẢNG THỐNG KÊ CHI TIẾT KHÁM CHỮA BỆNH & GIƯỜNG BỆNH';
+    headCols = ['STT', 'Mã', 'Khoa / Đơn vị / Ngày', 'Lượt khám', 'BHYT', 'Viện phí', 'Nhập viện', 'Xuất viện', 'Chuyển viện', 'Giường KH', 'Giường TK', 'Giường dùng', 'Công suất %', 'Ngày ĐT TB', 'Hồ sơ EMR', 'Trạng thái'];
+    rows = data.tables?.kcb || data.table_data || [];
+  } else if (domain === 'lis') {
+    if (titleEl) titleEl.textContent = 'BẢNG THỐNG KÊ CHI TIẾT XÉT NGHIỆM (LIS)';
+    headCols = ['STT', 'Mã XN', 'Tên loại xét nghiệm / Kỹ thuật', 'Tổng ca', 'Ngoại trú', 'Nội trú', 'BHYT', 'Viện phí', 'Tỷ lệ đạt chuẩn', 'Thời gian trả KQ', 'Máy xét nghiệm', 'Bác sĩ/KTV', 'Đúng hẹn %', 'Trạng thái'];
+    rows = data.tables?.lis || [];
+  } else if (domain === 'ris') {
+    if (titleEl) titleEl.textContent = 'BẢNG THỐNG KÊ CHI TIẾT CHẨN ĐOÁN HÌNH ẢNH (RIS/PACS)';
+    headCols = ['STT', 'Mã CĐHA', 'Tên kỹ thuật chẩn đoán hình ảnh', 'Tổng ca', 'Ca BHYT', 'Viện phí', 'Ngoại trú', 'Nội trú', 'Phim sử dụng', 'Phim chụp lại', 'Máy thực hiện', 'Hệ thống PACS', 'Thời gian trả', 'Trạng thái'];
+    rows = data.tables?.ris || [];
+  } else if (domain === 'pharmacy') {
+    if (titleEl) titleEl.textContent = 'BẢNG THỐNG KÊ CHI TIẾT DƯỢC & VẬT TƯ Y TẾ TIÊU HAO';
+    headCols = ['STT', 'Mã Thuốc', 'Tên Thuốc / Vật tư y tế & hàm lượng', 'Đơn vị tính', 'Nguồn chi trả', 'Số lượng xuất', 'Đơn giá', 'Thành tiền', 'Tồn kho hiện tại', 'Hạn dùng', 'Kho quản lý', 'Trạng thái'];
+    rows = data.tables?.pharmacy || [];
+  } else if (domain === 'finance') {
+    if (titleEl) titleEl.textContent = 'BẢNG THỐNG KÊ CHI TIẾT TÀI CHÍNH & THU VIỆN PHÍ';
+    headCols = ['STT', 'Mã khoản', 'Khoản mục chi phí khám chữa bệnh', 'Số lượng / Lượt', 'BHYT chi trả', 'Bệnh nhân trả', 'Tổng tiền thu', 'Tỷ lệ không tiền mặt', 'Biên lai xuất', 'Khoa phòng thu', 'Trạng thái quyết toán', 'Khớp quỹ'];
+    rows = data.tables?.finance || [];
+  } else if (domain === 'emr') {
+    if (titleEl) titleEl.textContent = 'BẢNG THEO DÕI TIẾN ĐỘ BỆNH ÁN ĐIỆN TỬ (EMR) VÀ KÝ SỐ';
+    headCols = ['STT', 'Mã khoa', 'Tên khoa / Hồ sơ bệnh án EMR', 'Số BA gửi', 'Đã ký số', 'Lưu trữ xong', 'Lưu đúng hạn', 'Đang lưu', 'Quá hạn', 'Ký số đầy đủ %', 'Đúng hạn %', 'Trạng thái'];
+    rows = data.tables?.emr || [];
+  } else if (domain === 'infra') {
+    if (titleEl) titleEl.textContent = 'BẢNG GIÁM SÁT HẠ TẦNG CNTT, MÁY CHỦ & ĐƯỜNG TRUYỀN';
+    headCols = ['STT', 'Mã thiết bị', 'Tên Server / Thiết bị giám sát', 'Địa chỉ IP', 'Cấu hình', 'Tải CPU', 'Tải RAM', 'Ổ đĩa dùng', 'Nhiệt độ', 'Thời gian Uptime', 'Trạng thái Zabbix', 'Bảo toàn dữ liệu'];
+    rows = data.tables?.infra || [];
+  }
+
+  // Render thead
+  thead.innerHTML = `<tr>${headCols.map(c => `<th>${c}</th>`).join('')}</tr>`;
+
+  // Render tbody
+  if (!rows || rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="${headCols.length}" style="padding: 24px; color: var(--muted); text-align:center;">Không tìm thấy bản ghi nào khớp với bộ lọc hiện tại.</td></tr>`;
+    if (tfoot) tfoot.innerHTML = '';
+    return;
+  }
+
+  let bodyHtml = '';
+  rows.forEach(r => {
+    bodyHtml += `
+      <tr class="table-data-row">
+        <td>${r.stt}</td>
+        <td><b style="color:var(--accent)">${r.code}</b></td>
+        <td style="font-weight:600; color:#fff;">${r.name}</td>
+        <td><b style="color:var(--accent)">${r.col1 || r.kham_count || '--'}</b></td>
+        <td style="color:var(--ok)">${r.col2 || r.bhyt_count || '--'}</td>
+        <td style="color:var(--warn)">${r.col3 || r.vienphi_count || '--'}</td>
+        <td><span style="color:var(--blue); font-weight:700;">${r.col4 || r.nhap_vien || '--'}</span></td>
+        <td>${r.col5 || r.xuat_vien || '--'}</td>
+        <td>${r.col6 || r.chuyen_tuyen || '--'}</td>
+        <td>${r.col7 || r.giuong_kh || '--'}</td>
+        <td>${r.col8 || r.giuong_tk || '--'}</td>
+        <td><b>${r.col9 || r.giuong_sd || '--'}</b></td>
+        <td>${r.col10 || (r.cong_suat ? r.cong_suat + '%' : '--')}</td>
+        <td>${r.col11 || r.ngay_dt_tb || '--'}</td>
+        <td>${r.col12 || r.emr_rate || '--'}</td>
+        <td><span class="status-pill ${r.status_type || 'ok'}">${r.status || 'Hoàn tất'}</span></td>
+      </tr>
+    `;
+  });
+  tbody.innerHTML = bodyHtml;
+
+  // Render tfoot tổng cộng
+  if (tfoot) {
+    tfoot.innerHTML = `
+      <tr>
+        <td colspan="3" style="text-align:left; color:var(--accent); text-transform:uppercase;"><i class="fa-solid fa-calculator"></i> TỔNG CỘNG DỮ LIỆU ĐANG LỌC</td>
+        <td colspan="${headCols.length - 4}" style="text-align:center; color:#fff;">Hiển thị ${rows.length} bản ghi theo điều kiện lọc</td>
+        <td colspan="1"><span class="status-pill ok">Khớp CSDL</span></td>
+      </tr>
+    `;
+  }
+}
+
+// Tìm kiếm nhanh trong bảng
+function filterTableRows() {
+  const q = document.getElementById('table-search-input')?.value.toLowerCase() || '';
+  const trs = document.querySelectorAll('.table-data-row');
+  trs.forEach(tr => {
+    tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+// Xuất CSV
+function exportTableToCsv() {
+  const table = document.getElementById('ioc-data-table');
+  if (!table) return;
+  let csv = [];
+  table.querySelectorAll('tr').forEach(r => {
+    let row = [];
+    r.querySelectorAll('th, td').forEach(c => {
+      row.push(`"${c.innerText.replace(/"/g, '""').trim()}"`);
+    });
+    csv.push(row.join(','));
+  });
+  const blob = new Blob(['\uFEFF' + csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Bao_Cao_${CURRENT_DOMAIN}_${CURRENT_DATE_ISO}.csv`;
+  a.click();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const initialIso = fmtDateIso(new Date());
+  CURRENT_DATE_ISO = initialIso;
+  const dateInput = document.getElementById('global-date-input');
+  if (dateInput) dateInput.value = initialIso;
+
+  const now = new Date();
+  const yearSelect = document.getElementById('filter-year-select');
+  const monthSelect = document.getElementById('filter-month-select');
+  if (yearSelect) yearSelect.value = now.getFullYear();
+  if (monthSelect) monthSelect.value = String(now.getMonth() + 1).padStart(2, '0');
+
+  fetchIocData(false);
+
+  setInterval(() => {
+    fetchIocData(true);
+  }, 30000);
+});
 </script>
 </body>
 </html>
