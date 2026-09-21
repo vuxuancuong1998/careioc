@@ -498,13 +498,13 @@ window.fetchDashboardData = async function() {
             <td style="text-align:right; font-weight:800;">${sV.toLocaleString('vi-VN')}</td>
             <td style="text-align:right; color:#20c6b7; font-weight:800;">${sBh.toLocaleString('vi-VN')}</td>
             <td style="text-align:right; color:#ff9100; font-weight:800;">${sVp.toLocaleString('vi-VN')}</td>
-            <td style="text-align:right; color:var(--warn); font-weight:800;">${sWait}</td>
-            <td style="text-align:right; font-weight:800;">${sExam}</td>
-            <td style="text-align:right; color:var(--ok); font-weight:800;">${sComp}</td>
-            <td style="text-align:right; color:var(--teal); font-weight:800;">${sCls}</td>
-            <td style="text-align:right; color:#39a0ff; font-weight:800;">${sAdm}</td>
-            <td style="text-align:right; color:#a29bfe; font-weight:800;">${sDis}</td>
-            <td style="text-align:right; color:#ff7675; font-weight:800;">${sRef}</td>
+            <td style="text-align:right; color:var(--warn); font-weight:800;">${sWait.toLocaleString('vi-VN')}</td>
+            <td style="text-align:right; font-weight:800;">${sExam.toLocaleString('vi-VN')}</td>
+            <td style="text-align:right; color:var(--ok); font-weight:800;">${sComp.toLocaleString('vi-VN')}</td>
+            <td style="text-align:right; color:var(--teal); font-weight:800;">${sCls.toLocaleString('vi-VN')}</td>
+            <td style="text-align:right; color:#39a0ff; font-weight:800;">${sAdm.toLocaleString('vi-VN')}</td>
+            <td style="text-align:right; color:#a29bfe; font-weight:800;">${sDis.toLocaleString('vi-VN')}</td>
+            <td style="text-align:right; color:#ff7675; font-weight:800;">${sRef.toLocaleString('vi-VN')}</td>
             <td style="text-align:right; color:var(--teal); font-weight:800;">18.5 phút</td>
             <td style="text-align:center;"><span class="status-pill ok">Ổn định</span></td>
           </tr>

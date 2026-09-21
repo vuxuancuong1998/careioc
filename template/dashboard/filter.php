@@ -81,7 +81,8 @@
   <div class="filter-group">
     <label><i class="fa-solid fa-hospital-alt"></i> Khoa/Phòng:</label>
     <select class="filter-select" id="filterDept">
-      <option value="all">-- Tất cả khoa phòng --</option>
+      <option value="all" selected>-- Tất cả khoa (Gộp chung) --</option>
+      <option value="all_split">-- Tất cả khoa (Tách từng khoa) --</option>
       <?php if (!empty($departments)): ?>
         <?php foreach ($departments as $dept): ?>
           <option value="<?= (int)$dept['id'] ?>"><?= htmlspecialchars($dept['department_name']) ?> (<?= htmlspecialchars($dept['department_code']) ?>)</option>
@@ -89,6 +90,8 @@
       <?php endif; ?>
     </select>
   </div>
+
+
 
   <!-- [NOTE]: Bộ lọc "Đối tượng:" (filterPayer) đã được bỏ theo yêu cầu, chuyển thành ghi chú lưu trữ
   <div class="filter-group">

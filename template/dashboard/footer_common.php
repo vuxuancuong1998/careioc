@@ -419,9 +419,11 @@
       }
     }
 
-    const dept = filterDept ? filterDept.value : 'all';
+    const rawDept = filterDept ? filterDept.value : 'all';
+    const isGroup = (rawDept === 'all_split') ? 0 : 1;
+    const dept = (rawDept === 'all_split') ? 'all' : rawDept;
     const payer = filterPayer ? filterPayer.value : 'all';
-    return `filter_type=${fType}&year=${y}&month_from=${mFrom}&month_to=${mTo}&month=${mTo}&date_from=${dFrom}&date_to=${dTo}&department_id=${dept}&payer_type_id=${payer}`;
+    return `filter_type=${fType}&year=${y}&month_from=${mFrom}&month_to=${mTo}&month=${mTo}&date_from=${dFrom}&date_to=${dTo}&department_id=${dept}&group_dept=${isGroup}&payer_type_id=${payer}`;
   };
 
   if (btnResetFilter) {

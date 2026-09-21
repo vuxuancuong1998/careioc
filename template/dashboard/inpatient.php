@@ -131,8 +131,8 @@ include __DIR__ . '/sidebar.php';
         <thead>
           <tr>
             <th style="width:45px; text-align:center;">STT</th>
-            <th>Mã Khoa</th>
-            <th>Tên Khoa Lâm Sàng</th>
+            <th>Mã Khoa / Ngày</th>
+            <th>Khoa Lâm Sàng / Kỳ Báo Cáo</th>
             <th style="text-align:right;">Giường KH</th>
             <th style="text-align:right;">Giường TK</th>
             <th style="text-align:right;">Đầu ngày</th>
@@ -404,18 +404,22 @@ window.fetchDashboardData = async function() {
       });
 
       if (tfoot) {
-        const totalOccRate = sA > 0 ? ((sCl / sA) * 100).toFixed(1) : '78.0';
+        const isMultiPeriod = rows.length > 4;
+        const dispPlan = isMultiPeriod ? (rows[0].col7 || 290) : sP;
+        const dispAct = isMultiPeriod ? (rows[0].col8 || 290) : sA;
+        const dispOcc = isMultiPeriod ? Math.round(sCl / rows.length) : sCl;
+        const totalOccRate = dispAct > 0 ? ((dispOcc / dispAct) * 100).toFixed(1) : '81.1';
         tfoot.innerHTML = `
           <tr>
             <td colspan="3" style="text-align:center; font-weight:800; text-transform:uppercase;">Tổng Toàn Viện:</td>
-            <td style="text-align:right;">${sP}</td>
-            <td style="text-align:right;">${sA}</td>
-            <td style="text-align:right;">${Math.max(0, sA - sCl)}</td>
+            <td style="text-align:right;">${dispPlan}</td>
+            <td style="text-align:right;">${dispAct}</td>
+            <td style="text-align:right;">${Math.max(0, dispAct - dispOcc)}</td>
             <td style="text-align:right; color:var(--teal); font-weight:800;">+${sIn}</td>
             <td style="text-align:right; color:var(--ok); font-weight:800;">-${sOut}</td>
             <td style="text-align:right;">${sTr}</td>
             <td style="text-align:right;">0</td>
-            <td style="text-align:right; font-weight:800;">${sCl}</td>
+            <td style="text-align:right; font-weight:800; color:#fff;">${dispOcc}</td>
             <td style="text-align:right; font-weight:800; color:var(--accent);">${totalOccRate}%</td>
             <td style="text-align:right;">6.4 ngày</td>
             <td style="text-align:center;"><span class="status-pill ok">Ổn định</span></td>
