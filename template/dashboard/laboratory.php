@@ -99,7 +99,7 @@ include __DIR__ . '/sidebar.php';
     </div>
 
     <!-- Biểu đồ 4: Histogram / Phân bố thời gian TAT -->
-    <div class="chart-card col-6">
+    <div class="chart-card col-7">
       <div class="chart-header">
         <div>
           <div class="chart-title"><i class="fa-solid fa-chart-simple"></i> Biểu đồ Phân Bố (Histogram): Thời Gian Trả Kết Quả TAT (Phút)</div>
@@ -110,42 +110,14 @@ include __DIR__ . '/sidebar.php';
     </div>
 
     <!-- Biểu đồ 5: Gauge Chart (Kiểm chuẩn IQC) -->
-    <div class="chart-card col-3">
+    <div class="chart-card col-5">
       <div class="chart-header">
         <div>
-          <div class="chart-title"><i class="fa-solid fa-circle-check"></i> Nội Kiểm IQC Máy</div>
-          <div class="chart-subtitle">Độ tin cậy xét nghiệm</div>
+          <div class="chart-title"><i class="fa-solid fa-circle-check"></i> Nội Kiểm IQC Chất Lượng Xét Nghiệm</div>
+          <div class="chart-subtitle">Tỷ lệ mẫu nội kiểm đạt tiêu chuẩn theo QĐ 2429/QĐ-BYT</div>
         </div>
       </div>
       <div class="chart-body" id="chartLisIqcGauge"></div>
-    </div>
-
-    <!-- Biểu đồ 6: Status Grid Máy Xét Nghiệm -->
-    <div class="chart-card col-3">
-      <div class="chart-header">
-        <div>
-          <div class="chart-title"><i class="fa-solid fa-microchip"></i> Giám Sát Máy XN</div>
-          <div class="chart-subtitle">Kết nối LIS tự động</div>
-        </div>
-      </div>
-      <div class="chart-body" style="display:flex; flex-direction:column; justify-content:center; gap:8px;">
-        <div class="status-matrix-item" style="padding:6px 10px;">
-          <div class="status-matrix-header"><span>Sysmex XN-550</span> <span class="status-pill ok">OK</span></div>
-          <div class="status-matrix-name" style="font-size:11px;">Huyết học tự động &bull; <span id="lisSysmexCount"><?= number_format((int)round(($lis['total'] ?? 396) * 0.28)) ?></span> ca</div>
-        </div>
-        <div class="status-matrix-item" style="padding:6px 10px;">
-          <div class="status-matrix-header"><span>Cobas c311</span> <span class="status-pill ok">OK</span></div>
-          <div class="status-matrix-name" style="font-size:11px;">Sinh hóa tự động &bull; <span id="lisCobasCount"><?= number_format((int)round(($lis['total'] ?? 396) * 0.38)) ?></span> ca</div>
-        </div>
-        <div class="status-matrix-item" style="padding:6px 10px;">
-          <div class="status-matrix-header"><span>Urisys 1100</span> <span class="status-pill ok">OK</span></div>
-          <div class="status-matrix-name" style="font-size:11px;">Nước tiểu 10 thông số &bull; <span id="lisUrisysCount"><?= number_format((int)round(($lis['total'] ?? 396) * 0.15)) ?></span> ca</div>
-        </div>
-        <div class="status-matrix-item" style="padding:6px 10px;">
-          <div class="status-matrix-header"><span>AVL 9180</span> <span class="status-pill ok">OK</span></div>
-          <div class="status-matrix-name" style="font-size:11px;">Điện giải đồ tự động &bull; <span id="lisAvlCount"><?= number_format((int)round(($lis['total'] ?? 396) * 0.11)) ?></span> ca</div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -154,11 +126,11 @@ include __DIR__ . '/sidebar.php';
     <div class="table-header">
       <div class="table-title">
         <i class="fa-solid fa-table-list"></i>
-        <span>Bảng Giám sát Sản lượng Xét nghiệm LIS & Chỉ số Hoạt động Máy</span>
+        <span>Bảng Giám sát Sản lượng Xét nghiệm LIS & Chỉ số Chất lượng Mẫu</span>
         <span id="tableFilterLabel" style="font-size:12px; font-weight:400; color:var(--teal); margin-left:8px;"></span>
       </div>
       <div class="table-actions">
-        <input type="text" class="table-search-input" id="tableSearchInput" placeholder="Tìm tên xét nghiệm, mã kỳ, máy..."/>
+        <input type="text" class="table-search-input" id="tableSearchInput" placeholder="Tìm tên xét nghiệm, mã kỳ, nhóm kỹ thuật..."/>
       </div>
     </div>
 
@@ -176,7 +148,6 @@ include __DIR__ . '/sidebar.php';
             <th style="text-align:right;">Nội trú</th>
             <th style="text-align:right;">Tỷ lệ BHYT</th>
             <th style="text-align:right;">Thời gian TAT</th>
-            <th>Thiết bị phân tích</th>
             <th style="text-align:center;">Nội kiểm IQC</th>
             <th style="text-align:center;">Trạng thái</th>
           </tr>
@@ -372,15 +343,6 @@ window.fetchDashboardData = async function() {
       const elSubDesc = document.getElementById('kpiLisSubtextDesc');
       if (elSubDesc && l.growth_subtext) elSubDesc.textContent = l.growth_subtext;
 
-      // Cập nhật thẻ trạng thái máy xét nghiệm
-      if (l.charts && l.charts.analyzers) {
-        const az = l.charts.analyzers;
-        setEl('lisSysmexCount', Number(az.sysmex || Math.round(l.total * 0.28)).toLocaleString('vi-VN'));
-        setEl('lisCobasCount', Number(az.cobas || Math.round(l.total * 0.38)).toLocaleString('vi-VN'));
-        setEl('lisUrisysCount', Number(az.urisys || Math.round(l.total * 0.15)).toLocaleString('vi-VN'));
-        setEl('lisAvlCount', Number(az.avl || Math.round(l.total * 0.11)).toLocaleString('vi-VN'));
-      }
-
       // 2. Cập nhật Biểu đồ ApexCharts
       if (l.charts) {
         const lc = l.charts;
@@ -410,7 +372,7 @@ window.fetchDashboardData = async function() {
       tblLbl.textContent = `(Dữ liệu: ${data.date})`;
     }
 
-    // 3. Cập nhật Bảng Dữ liệu Xét nghiệm
+    // 3. Cập nhật Bảng Dữ liệu Xét nghiệm (12 cột chuẩn)
     const tbody = document.getElementById('iocTableBody');
     const tfoot = document.getElementById('iocTableFoot');
 
@@ -443,8 +405,7 @@ window.fetchDashboardData = async function() {
           <td style="text-align:right;">${cIn.toLocaleString('vi-VN')}</td>
           <td style="text-align:right; color:var(--ok); font-weight:700;">${row.col6}</td>
           <td style="text-align:right; color:var(--teal);">${row.col7}</td>
-          <td>${row.col8}</td>
-          <td style="text-align:center;"><span class="status-pill ok">${row.col9}</span></td>
+          <td style="text-align:center;"><span class="status-pill ok">${row.col8 || 'Đạt'}</span></td>
           <td style="text-align:center;"><span class="status-pill ${row.status_type || 'ok'}">${row.status || 'Hoạt động tốt'}</span></td>
         `;
         tbody.appendChild(tr);
@@ -462,7 +423,6 @@ window.fetchDashboardData = async function() {
             <td style="text-align:right; font-weight:700;">${sIn.toLocaleString('vi-VN')}</td>
             <td style="text-align:right; font-weight:800; color:var(--ok);">${rateAllBh}%</td>
             <td style="text-align:right; color:var(--teal);">28.5 phút</td>
-            <td>Đồng bộ tự động</td>
             <td style="text-align:center;"><span class="status-pill ok">100% Đạt</span></td>
             <td style="text-align:center;"><span class="status-pill ok">Hoạt động tốt</span></td>
           </tr>

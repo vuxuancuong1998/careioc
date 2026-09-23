@@ -1674,11 +1674,10 @@ class dashboardController extends baseController
                             'col5' => (string)$inC,
                             'col6' => $rateB . '%',
                             'col7' => '28.5 phút',
-                            'col8' => 'Sysmex, Cobas, AVL, Urisys',
-                            'col9' => 'Đạt',
-                            'col10' => '99.5%',
-                            'col11' => 'Hệ thống LIS',
-                            'col12' => 'Đã chốt sổ',
+                            'col8' => 'Đạt',
+                            'col9' => '99.5%',
+                            'col10' => 'Hệ thống LIS',
+                            'col11' => 'Đã chốt sổ',
                             'status' => 'Hoạt động tốt',
                             'status_type' => 'ok'
                         ];
@@ -1704,7 +1703,6 @@ class dashboardController extends baseController
                     $lisYSRows = $this->dbQuery($lisYearSplitSql);
                     $lStt = 1;
                     $tatByCat = [1 => '24.5 phút', 2 => '34.0 phút', 3 => '42.5 phút'];
-                    $devByCat = [1 => 'Máy Sysmex XN-550', 2 => 'Máy Cobas c311', 3 => 'Kính hiển vi & Tủ ấm'];
                     foreach ($lisYSRows as $lys) {
                         $mNum = (int)$lys['month_number'];
                         $catId = (int)$lys['cat_id'];
@@ -1726,11 +1724,10 @@ class dashboardController extends baseController
                             'col5' => (string)$inC,
                             'col6' => $rateB . '%',
                             'col7' => $tatByCat[$catId] ?? '28.5 phút',
-                            'col8' => $devByCat[$catId] ?? 'Hệ thống tự động',
-                            'col9' => 'Đạt',
-                            'col10' => '99.5%',
-                            'col11' => 'KTV Chuyên khoa',
-                            'col12' => 'Đã chốt sổ',
+                            'col8' => 'Đạt',
+                            'col9' => '99.5%',
+                            'col10' => 'KTV Chuyên khoa',
+                            'col11' => 'Đã chốt sổ',
                             'status' => 'Đang chạy',
                             'status_type' => 'ok'
                         ];
@@ -1774,11 +1771,10 @@ class dashboardController extends baseController
                             'col5' => (string)$inC,
                             'col6' => $rateB . '%',
                             'col7' => '28.0 phút',
-                            'col8' => 'Đồng bộ LIS 2 chiều',
-                            'col9' => 'Đạt',
-                            'col10' => '99.6%',
-                            'col11' => 'KTV Trực XN',
-                            'col12' => 'Đã chốt sổ',
+                            'col8' => 'Đạt',
+                            'col9' => '99.6%',
+                            'col10' => 'KTV Trực XN',
+                            'col11' => 'Đã chốt sổ',
                             'status' => 'Đạt chuẩn',
                             'status_type' => 'ok'
                         ];
@@ -1802,7 +1798,6 @@ class dashboardController extends baseController
                     $lisDSRows = $this->dbQuery($lisDaySplitSql);
                     $lStt = 1;
                     $tatByCat = [1 => '24.0 phút', 2 => '34.5 phút', 3 => '42.0 phút'];
-                    $devByCat = [1 => 'Máy Sysmex XN-550', 2 => 'Máy Cobas c311', 3 => 'Kính hiển vi & Tủ ấm'];
                     foreach ($lisDSRows as $lds) {
                         $catId = (int)$lds['cat_id'];
                         $tTests = (int)$lds['total_tests'];
@@ -1824,25 +1819,24 @@ class dashboardController extends baseController
                             'col5' => (string)$inC,
                             'col6' => $rateB . '%',
                             'col7' => $tatByCat[$catId] ?? '28.0 phút',
-                            'col8' => $devByCat[$catId] ?? 'Hệ thống tự động',
-                            'col9' => 'Đạt',
-                            'col10' => '99.5%',
-                            'col11' => 'KTV Xét nghiệm',
-                            'col12' => 'Đã phân tích',
+                            'col8' => 'Đạt',
+                            'col9' => '99.5%',
+                            'col10' => 'KTV Xét nghiệm',
+                            'col11' => 'Đã phân tích',
                             'status' => 'Hoạt động tốt',
                             'status_type' => 'ok'
                         ];
                     }
                 }
             } else {
-                // 3. CHỌN 1 NGÀY: DANH MỤC KỸ THUẬT & THIẾT BỊ PHÂN TÍCH THEO SỐ LIỆU THỰC TẾ NGÀY ĐÓ
+                // 3. CHỌN 1 NGÀY: DANH MỤC KỸ THUẬT THEO SỐ LIỆU THỰC TẾ NGÀY ĐÓ
                 $lisPrototypes = [
-                    ['code' => 'HH-01', 'name' => 'Tổng phân tích tế bào máu ngoại vi (Laser)', 'pct' => 0.36, 'dev' => 'Máy Sysmex XN-550', 'tat' => '25 phút', 'staff' => 'BS. Trực XN'],
-                    ['code' => 'SH-01', 'name' => 'Định lượng Glucose, Ure, Creatinin máu', 'pct' => 0.28, 'dev' => 'Máy Cobas c311', 'tat' => '35 phút', 'staff' => 'BS. Trực XN'],
-                    ['code' => 'SH-02', 'name' => 'Đo hoạt độ AST, ALT, GGT (Men gan)', 'pct' => 0.18, 'dev' => 'Máy Cobas c311', 'tat' => '35 phút', 'staff' => 'BS. Trực XN'],
-                    ['code' => 'MD-01', 'name' => 'Điện giải đồ (Na+, K+, Cl-, Ca2+)', 'pct' => 0.10, 'dev' => 'Máy điện giải đồ 9180', 'tat' => '20 phút', 'staff' => 'KTV. Xét nghiệm'],
-                    ['code' => 'NT-01', 'name' => 'Tổng phân tích nước tiểu 10 thông số', 'pct' => 0.05, 'dev' => 'Máy nước tiểu Urisys', 'tat' => '15 phút', 'staff' => 'KTV. Xét nghiệm'],
-                    ['code' => 'VS-01', 'name' => 'Nhuộm soi vi khuẩn, ký sinh trùng đường ruột', 'pct' => 0.03, 'dev' => 'Kính hiển vi quang học', 'tat' => '45 phút', 'staff' => 'BS. Vi sinh']
+                    ['code' => 'HH-01', 'name' => 'Tổng phân tích tế bào máu ngoại vi (Laser)', 'pct' => 0.36, 'tat' => '25 phút', 'staff' => 'BS. Trực XN'],
+                    ['code' => 'SH-01', 'name' => 'Định lượng Glucose, Ure, Creatinin máu', 'pct' => 0.28, 'tat' => '35 phút', 'staff' => 'BS. Trực XN'],
+                    ['code' => 'SH-02', 'name' => 'Đo hoạt độ AST, ALT, GGT (Men gan)', 'pct' => 0.18, 'tat' => '35 phút', 'staff' => 'BS. Trực XN'],
+                    ['code' => 'MD-01', 'name' => 'Điện giải đồ (Na+, K+, Cl-, Ca2+)', 'pct' => 0.10, 'tat' => '20 phút', 'staff' => 'KTV. Xét nghiệm'],
+                    ['code' => 'NT-01', 'name' => 'Tổng phân tích nước tiểu 10 thông số', 'pct' => 0.05, 'tat' => '15 phút', 'staff' => 'KTV. Xét nghiệm'],
+                    ['code' => 'VS-01', 'name' => 'Nhuộm soi vi khuẩn, ký sinh trùng đường ruột', 'pct' => 0.03, 'tat' => '45 phút', 'staff' => 'BS. Vi sinh']
                 ];
 
                 $accumLis = 0;
@@ -1874,11 +1868,10 @@ class dashboardController extends baseController
                         'col5' => (string)$rowIn,
                         'col6' => $rateBhyt . '%',
                         'col7' => $proto['tat'],
-                        'col8' => $proto['dev'],
-                        'col9' => 'Đạt',
-                        'col10' => '99.5%',
-                        'col11' => $proto['staff'],
-                        'col12' => 'Bình thường',
+                        'col8' => 'Đạt',
+                        'col9' => '99.5%',
+                        'col10' => $proto['staff'],
+                        'col11' => 'Bình thường',
                         'status' => 'Đang chạy',
                         'status_type' => 'ok'
                     ];
@@ -2996,13 +2989,7 @@ class dashboardController extends baseController
                         ],
                         'source_donut' => [$lisOutpatient, $lisInpatient, max(1, (int)round($totLis * 0.05))],
                         'tat_histogram' => $lisTatHist,
-                        'iqc_gauge' => 99.8,
-                        'analyzers' => [
-                            'sysmex' => (int)round($totLis * 0.28),
-                            'cobas' => (int)round($totLis * 0.38),
-                            'urisys' => (int)round($totLis * 0.15),
-                            'avl' => (int)round($totLis * 0.11)
-                        ]
+                        'iqc_gauge' => 99.8
                     ]
                 ],
 
