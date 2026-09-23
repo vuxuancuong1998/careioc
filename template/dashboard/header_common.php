@@ -13,6 +13,16 @@
 <!-- ApexCharts -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
+<script>
+  (function() {
+    try {
+      if (localStorage.getItem('ioc_theme') === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    } catch(e) {}
+  })();
+</script>
+
 <style>
 :root {
   --bg: #071322;
@@ -890,6 +900,244 @@ html, body {
     max-width: 100vw !important;
     padding: 12px;
   }
+}
+
+/* ================= LIGHT MODE (CHẾ ĐỘ SÁNG) ================= */
+[data-theme="light"] {
+  --bg: #f1f5f9;
+  --bg-gradient: radial-gradient(circle at 50% 0%, #e2e8f0 0%, #f1f5f9 85%);
+  --sidebar-bg: #ffffff;
+  --sidebar-border: #cbd5e1;
+  --panel: rgba(255, 255, 255, 0.96);
+  --panel-card: #ffffff;
+  --panel-border: #cbd5e1;
+  --panel-hover: rgba(2, 132, 199, 0.15);
+  --accent: #0284c7;
+  --teal: #0d9488;
+  --blue: #2563eb;
+  --purple: #7c3aed;
+  --ok: #16a34a;
+  --warn: #d97706;
+  --bad: #dc2626;
+  --text: #0f172a;
+  --muted: #64748b;
+  --sub: #475569;
+  --gold: #b45309;
+}
+
+[data-theme="light"] html,
+[data-theme="light"] body {
+  background: var(--bg);
+  background-image: var(--bg-gradient);
+  color: var(--text);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-track { background: #e2e8f0; }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: #94a3b8; }
+
+[data-theme="light"] .topbar-page-info h1 {
+  color: #0f172a;
+}
+[data-theme="light"] .topbar-page-info .hospital-badge {
+  color: #0369a1;
+}
+
+[data-theme="light"] .live-clock-badge {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: var(--accent);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+[data-theme="light"] .topbar-btn {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #334155;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+[data-theme="light"] .topbar-btn:hover {
+  background: #f8fafc;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+[data-theme="light"] .topbar-btn.active {
+  background: linear-gradient(90deg, #0284c7, #0d9488);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+}
+
+[data-theme="light"] .ioc-filter-bar {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+}
+
+[data-theme="light"] .filter-select,
+[data-theme="light"] .filter-input {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+[data-theme="light"] .filter-select:focus,
+[data-theme="light"] .filter-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.2);
+}
+
+[data-theme="light"] .kpi-card {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+[data-theme="light"] .kpi-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.12);
+}
+[data-theme="light"] .kpi-value {
+  color: #0f172a;
+}
+
+[data-theme="light"] .chart-card {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+[data-theme="light"] .chart-header {
+  border-bottom-color: #e2e8f0;
+}
+[data-theme="light"] .chart-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .table-section {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+[data-theme="light"] .table-title {
+  color: #0f172a;
+}
+[data-theme="light"] .table-header {
+  border-bottom-color: #e2e8f0;
+}
+[data-theme="light"] .table-search-input {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+[data-theme="light"] .table-search-input:focus {
+  border-color: var(--accent);
+}
+
+[data-theme="light"] .ioc-table thead th {
+  background: #f1f5f9;
+  color: #0369a1;
+  border-bottom: 2px solid #0284c7;
+  border-top-color: #e2e8f0;
+}
+[data-theme="light"] .ioc-table tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+[data-theme="light"] .ioc-table tbody tr:hover {
+  background: rgba(2, 132, 199, 0.08);
+}
+[data-theme="light"] .ioc-table tbody td {
+  border-bottom-color: #e2e8f0;
+  color: #1e293b;
+}
+[data-theme="light"] .ioc-table tfoot td {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-top: 2px solid #0284c7;
+}
+
+/* Màu sắc các chữ số KPI ở chế độ Sáng theo từng chuyên mục y tế */
+[data-theme="light"] #kpiLisTotal { color: #0284c7 !important; }
+[data-theme="light"] #kpiLisBhyt { color: #0d9488 !important; }
+[data-theme="light"] #kpiLisSelfPay { color: #c2410c !important; }
+[data-theme="light"] #kpiLisOutpatient { color: #2563eb !important; }
+[data-theme="light"] #kpiLisInpatient { color: #7c3aed !important; }
+[data-theme="light"] #kpiLisBhytRate { color: #15803d !important; }
+
+[data-theme="light"] .kpi-num-primary { color: #0284c7 !important; }
+[data-theme="light"] .kpi-num-teal { color: #0d9488 !important; }
+[data-theme="light"] .kpi-num-gold { color: #c2410c !important; }
+[data-theme="light"] .kpi-num-blue { color: #2563eb !important; }
+[data-theme="light"] .kpi-num-purple { color: #7c3aed !important; }
+[data-theme="light"] .kpi-num-green { color: #15803d !important; }
+
+/* Tối ưu màu sắc các chữ số trong bảng dữ liệu khi ở chế độ Sáng */
+[data-theme="light"] .ioc-table td[style*="#20c6b7"],
+[data-theme="light"] .ioc-table td[style*="20c6b7"],
+[data-theme="light"] .ioc-table span[style*="#20c6b7"],
+[data-theme="light"] .ioc-table span[style*="20c6b7"] {
+  color: #0d9488 !important; /* Xanh mòng két đậm đà, tương phản cao trên nền trắng */
+  font-weight: 700;
+}
+[data-theme="light"] .ioc-table td[style*="#ff9100"],
+[data-theme="light"] .ioc-table td[style*="ff9100"],
+[data-theme="light"] .ioc-table span[style*="#ff9100"],
+[data-theme="light"] .ioc-table span[style*="ff9100"] {
+  color: #c2410c !important; /* Cam hổ phách đậm đà, không bị chói nhạt */
+  font-weight: 700;
+}
+[data-theme="light"] .ioc-table td[style*="var(--ok)"],
+[data-theme="light"] .ioc-table td[style*="#2ecc71"],
+[data-theme="light"] .ioc-table span[style*="var(--ok)"] {
+  color: #15803d !important; /* Xanh lục đậm chuẩn y tế */
+  font-weight: 700;
+}
+[data-theme="light"] .ioc-table td[style*="var(--accent)"],
+[data-theme="light"] .ioc-table td[style*="#00f2fe"],
+[data-theme="light"] .ioc-table span[style*="var(--accent)"] {
+  color: #0284c7 !important; /* Xanh dương đậm nét */
+}
+
+/* Màu các chỉ số tăng/giảm */
+[data-theme="light"] .trend-up,
+[data-theme="light"] .kpi-subtext .trend-up {
+  color: #15803d !important;
+  font-weight: 700;
+}
+[data-theme="light"] .trend-down,
+[data-theme="light"] .kpi-subtext .trend-down {
+  color: #dc2626 !important;
+  font-weight: 700;
+}
+
+[data-theme="light"] .nav-link {
+  color: #475569;
+}
+[data-theme="light"] .nav-link:hover {
+  background: rgba(2, 132, 199, 0.08);
+  color: var(--accent);
+}
+[data-theme="light"] .nav-link.active {
+  background: linear-gradient(90deg, rgba(2, 132, 199, 0.15), rgba(13, 148, 136, 0.06));
+  color: #0284c7;
+}
+[data-theme="light"] .sidebar-header {
+  border-bottom-color: #e2e8f0;
+}
+[data-theme="light"] .sidebar-title h2 {
+  color: #0f172a;
+}
+[data-theme="light"] .sidebar-toggle-btn {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+[data-theme="light"] .sidebar-footer {
+  border-top-color: #e2e8f0;
+}
+[data-theme="light"] .apexcharts-text {
+  fill: #475569 !important;
+}
+[data-theme="light"] .apexcharts-legend-text {
+  color: #334155 !important;
+}
+[data-theme="light"] .apexcharts-gridline {
+  stroke: rgba(203, 213, 225, 0.7) !important;
 }
 </style>
 </head>

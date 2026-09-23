@@ -20,6 +20,11 @@
       <span id="clockDate" style="color:var(--muted); font-size:11px; font-weight:500; margin-left:4px;">--/--/----</span>
     </div>
 
+    <button type="button" class="topbar-btn" id="btnThemeToggle" title="Chuyển đổi giao diện Sáng / Tối">
+      <i class="fa-solid fa-sun" id="themeToggleIcon"></i>
+      <span id="themeToggleText">Chế độ Sáng</span>
+    </button>
+
     <button type="button" class="topbar-btn" id="btnWallboard" title="Bật chế độ Wallboard tự động luân chuyển trang trên màn hình lớn">
       <i class="fa-solid fa-tv"></i>
       <span>Wallboard</span>

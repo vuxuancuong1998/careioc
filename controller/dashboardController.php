@@ -874,7 +874,7 @@ class dashboardController extends baseController
                           GROUP BY c.id, c.lis_category_name, c.category_lis_code";
             $lisCategories = $this->dbQuery($lisCatSql);
         } else {
-            $lisTotals = ['bhyt' => 324, 'self_pay' => 72, 'inpatient' => 120, 'outpatient' => 276];
+            $lisTotals = ['bhyt' => 0, 'self_pay' => 0, 'inpatient' => 0, 'outpatient' => 0];
             $lisCategories = [];
         }
 
@@ -1618,20 +1618,11 @@ class dashboardController extends baseController
         }
 
         // BẢNG 2: XÉT NGHIỆM LIS
-        $totLis = (int)($lisTotals['bhyt'] + $lisTotals['self_pay']) ?: 396;
-        $lisBhyt = (int)$lisTotals['bhyt'] ?: 324;
-        $lisSelfPay = (int)$lisTotals['self_pay'] ?: 72;
-        $lisInpatient = (int)$lisTotals['inpatient'] ?: 120;
-        $lisOutpatient = (int)$lisTotals['outpatient'] ?: 276;
-
-        $lisPrototypes = [
-            ['code' => 'HH-01', 'name' => 'Tổng phân tích tế bào máu ngoại vi (Laser)', 'pct' => 0.36, 'dev' => 'Máy Sysmex XN-550', 'tat' => '25 phút', 'staff' => 'BS. Trực XN'],
-            ['code' => 'SH-01', 'name' => 'Định lượng Glucose, Ure, Creatinin máu', 'pct' => 0.28, 'dev' => 'Máy Cobas c311', 'tat' => '35 phút', 'staff' => 'BS. Trực XN'],
-            ['code' => 'SH-02', 'name' => 'Đo hoạt độ AST, ALT, GGT (Men gan)', 'pct' => 0.18, 'dev' => 'Máy Cobas c311', 'tat' => '35 phút', 'staff' => 'BS. Trực XN'],
-            ['code' => 'MD-01', 'name' => 'Điện giải đồ (Na+, K+, Cl-, Ca2+)', 'pct' => 0.10, 'dev' => 'Máy điện giải đồ 9180', 'tat' => '20 phút', 'staff' => 'KTV. Xét nghiệm'],
-            ['code' => 'NT-01', 'name' => 'Tổng phân tích nước tiểu 10 thông số', 'pct' => 0.05, 'dev' => 'Máy nước tiểu Urisys', 'tat' => '15 phút', 'staff' => 'KTV. Xét nghiệm'],
-            ['code' => 'VS-01', 'name' => 'Nhuộm soi vi khuẩn, ký sinh trùng đường ruột', 'pct' => 0.03, 'dev' => 'Kính hiển vi quang học', 'tat' => '45 phút', 'staff' => 'BS. Vi sinh']
-        ];
+        $totLis = (int)(($lisTotals['bhyt'] ?? 0) + ($lisTotals['self_pay'] ?? 0));
+        $lisBhyt = (int)($lisTotals['bhyt'] ?? 0);
+        $lisSelfPay = (int)($lisTotals['self_pay'] ?? 0);
+        $lisInpatient = (int)($lisTotals['inpatient'] ?? 0);
+        $lisOutpatient = (int)($lisTotals['outpatient'] ?? 0);
 
         $tableLis = [];
 
@@ -1661,7 +1652,7 @@ class dashboardController extends baseController
                         $spCount = (int)$lm['self_pay'];
                         $outC = (int)$lm['outpatient'];
                         $inC = (int)$lm['inpatient'];
-                        $rateB = $tTests > 0 ? round(($bCount / $tTests) * 100, 1) : 82.0;
+                        $rateB = $tTests > 0 ? round(($bCount / $tTests) * 100, 1) : 0.0;
 
                         $tableLis[] = [
                             'stt' => $lStt++,
@@ -1672,14 +1663,7 @@ class dashboardController extends baseController
                             'col3' => (string)$spCount,
                             'col4' => (string)$outC,
                             'col5' => (string)$inC,
-                            'col6' => $rateB . '%',
-                            'col7' => '28.5 phút',
-                            'col8' => 'Đạt',
-                            'col9' => '99.5%',
-                            'col10' => 'Hệ thống LIS',
-                            'col11' => 'Đã chốt sổ',
-                            'status' => 'Hoạt động tốt',
-                            'status_type' => 'ok'
+                            'col6' => $rateB . '%'
                         ];
                     }
                 } else {
@@ -1702,16 +1686,14 @@ class dashboardController extends baseController
                     ";
                     $lisYSRows = $this->dbQuery($lisYearSplitSql);
                     $lStt = 1;
-                    $tatByCat = [1 => '24.5 phút', 2 => '34.0 phút', 3 => '42.5 phút'];
                     foreach ($lisYSRows as $lys) {
                         $mNum = (int)$lys['month_number'];
-                        $catId = (int)$lys['cat_id'];
                         $tTests = (int)$lys['total_tests'];
                         $bCount = (int)$lys['bhyt'];
                         $spCount = (int)$lys['self_pay'];
                         $outC = (int)$lys['outpatient'];
                         $inC = (int)$lys['inpatient'];
-                        $rateB = $tTests > 0 ? round(($bCount / $tTests) * 100, 1) : 80.0;
+                        $rateB = $tTests > 0 ? round(($bCount / $tTests) * 100, 1) : 0.0;
 
                         $tableLis[] = [
                             'stt' => $lStt++,
@@ -1722,14 +1704,7 @@ class dashboardController extends baseController
                             'col3' => (string)$spCount,
                             'col4' => (string)$outC,
                             'col5' => (string)$inC,
-                            'col6' => $rateB . '%',
-                            'col7' => $tatByCat[$catId] ?? '28.5 phút',
-                            'col8' => 'Đạt',
-                            'col9' => '99.5%',
-                            'col10' => 'KTV Chuyên khoa',
-                            'col11' => 'Đã chốt sổ',
-                            'status' => 'Đang chạy',
-                            'status_type' => 'ok'
+                            'col6' => $rateB . '%'
                         ];
                     }
                 }
@@ -1757,7 +1732,7 @@ class dashboardController extends baseController
                         $spCount = (int)$ldg['self_pay'];
                         $outC = (int)$ldg['outpatient'];
                         $inC = (int)$ldg['inpatient'];
-                        $rateB = $tTests > 0 ? round(($bCount / $tTests) * 100, 1) : 82.0;
+                        $rateB = $tTests > 0 ? round(($bCount / $tTests) * 100, 1) : 0.0;
 
                         $fDate = date('d/m/Y', strtotime($ldg['full_date']));
                         $tableLis[] = [
@@ -1769,14 +1744,7 @@ class dashboardController extends baseController
                             'col3' => (string)$spCount,
                             'col4' => (string)$outC,
                             'col5' => (string)$inC,
-                            'col6' => $rateB . '%',
-                            'col7' => '28.0 phút',
-                            'col8' => 'Đạt',
-                            'col9' => '99.6%',
-                            'col10' => 'KTV Trực XN',
-                            'col11' => 'Đã chốt sổ',
-                            'status' => 'Đạt chuẩn',
-                            'status_type' => 'ok'
+                            'col6' => $rateB . '%'
                         ];
                     }
                 } else {
@@ -1797,15 +1765,13 @@ class dashboardController extends baseController
                     ";
                     $lisDSRows = $this->dbQuery($lisDaySplitSql);
                     $lStt = 1;
-                    $tatByCat = [1 => '24.0 phút', 2 => '34.5 phút', 3 => '42.0 phút'];
                     foreach ($lisDSRows as $lds) {
-                        $catId = (int)$lds['cat_id'];
                         $tTests = (int)$lds['total_tests'];
                         $bCount = (int)$lds['bhyt'];
                         $spCount = (int)$lds['self_pay'];
                         $outC = (int)$lds['outpatient'];
                         $inC = (int)$lds['inpatient'];
-                        $rateB = $tTests > 0 ? round(($bCount / $tTests) * 100, 1) : 80.0;
+                        $rateB = $tTests > 0 ? round(($bCount / $tTests) * 100, 1) : 0.0;
 
                         $fDate = date('d/m/Y', strtotime($lds['full_date']));
                         $tableLis[] = [
@@ -1817,63 +1783,44 @@ class dashboardController extends baseController
                             'col3' => (string)$spCount,
                             'col4' => (string)$outC,
                             'col5' => (string)$inC,
-                            'col6' => $rateB . '%',
-                            'col7' => $tatByCat[$catId] ?? '28.0 phút',
-                            'col8' => 'Đạt',
-                            'col9' => '99.5%',
-                            'col10' => 'KTV Xét nghiệm',
-                            'col11' => 'Đã phân tích',
-                            'status' => 'Hoạt động tốt',
-                            'status_type' => 'ok'
+                            'col6' => $rateB . '%'
                         ];
                     }
                 }
             } else {
-                // 3. CHỌN 1 NGÀY: DANH MỤC KỸ THUẬT THEO SỐ LIỆU THỰC TẾ NGÀY ĐÓ
-                $lisPrototypes = [
-                    ['code' => 'HH-01', 'name' => 'Tổng phân tích tế bào máu ngoại vi (Laser)', 'pct' => 0.36, 'tat' => '25 phút', 'staff' => 'BS. Trực XN'],
-                    ['code' => 'SH-01', 'name' => 'Định lượng Glucose, Ure, Creatinin máu', 'pct' => 0.28, 'tat' => '35 phút', 'staff' => 'BS. Trực XN'],
-                    ['code' => 'SH-02', 'name' => 'Đo hoạt độ AST, ALT, GGT (Men gan)', 'pct' => 0.18, 'tat' => '35 phút', 'staff' => 'BS. Trực XN'],
-                    ['code' => 'MD-01', 'name' => 'Điện giải đồ (Na+, K+, Cl-, Ca2+)', 'pct' => 0.10, 'tat' => '20 phút', 'staff' => 'KTV. Xét nghiệm'],
-                    ['code' => 'NT-01', 'name' => 'Tổng phân tích nước tiểu 10 thông số', 'pct' => 0.05, 'tat' => '15 phút', 'staff' => 'KTV. Xét nghiệm'],
-                    ['code' => 'VS-01', 'name' => 'Nhuộm soi vi khuẩn, ký sinh trùng đường ruột', 'pct' => 0.03, 'tat' => '45 phút', 'staff' => 'BS. Vi sinh']
-                ];
-
-                $accumLis = 0;
-                $accumBhyt = 0;
-                $accumOut = 0;
-                foreach ($lisPrototypes as $idx => $proto) {
-                    $isLast = ($idx === count($lisPrototypes) - 1);
-                    $rowTot = $isLast ? max(1, $totLis - $accumLis) : (int)round($totLis * $proto['pct']);
-                    $accumLis += $rowTot;
-
-                    $rowBhyt = $isLast ? max(0, $lisBhyt - $accumBhyt) : (int)round($rowTot * ($lisBhyt / max(1, $totLis)));
-                    $accumBhyt += $rowBhyt;
-                    $rowVp = max(0, $rowTot - $rowBhyt);
-
-                    $rowOut = $isLast ? max(0, $lisOutpatient - $accumOut) : (int)round($rowTot * ($lisOutpatient / max(1, $totLis)));
-                    $accumOut += $rowOut;
-                    $rowIn = max(0, $rowTot - $rowOut);
-
-                    $rateBhyt = $rowTot > 0 ? round(($rowBhyt / $rowTot) * 100, 1) : 100.0;
-
+                // 3. CHỌN 1 NGÀY: DANH MỤC 3 CHUYÊN KHOA XÉT NGHIỆM THỰC TẾ 100% TỪ CSDL
+                $singleDaySql = "
+                    SELECT c.category_lis_code, c.lis_category_name,
+                           COALESCE(SUM(l.lis_bhyt_count), 0) as bhyt,
+                           COALESCE(SUM(l.lis_self_pay_count), 0) as self_pay,
+                           COALESCE(SUM(l.inpatient_lis_count), 0) as inpatient,
+                           COALESCE(SUM(l.outpatient_lis_count), 0) as outpatient,
+                           COALESCE(SUM(l.lis_bhyt_count + l.lis_self_pay_count), 0) as total_tests
+                    FROM ioc_lis_categories c
+                    LEFT JOIN ioc_lis_daily l ON c.id = l.lis_group_code AND l.report_date IN ({$dateInList})
+                    WHERE c.lis_category_status = 1
+                    GROUP BY c.id, c.category_lis_code, c.lis_category_name
+                    ORDER BY c.id ASC
+                ";
+                $singleRows = $this->dbQuery($singleDaySql);
+                $lStt = 1;
+                foreach ($singleRows as $sr) {
+                    $tTests = (int)$sr['total_tests'];
+                    $bCount = (int)$sr['bhyt'];
+                    $spCount = (int)$sr['self_pay'];
+                    $outC = (int)$sr['outpatient'];
+                    $inC = (int)$sr['inpatient'];
+                    $rateB = $tTests > 0 ? round(($bCount / $tTests) * 100, 1) : 0.0;
                     $tableLis[] = [
-                        'stt' => $idx + 1,
-                        'code' => $proto['code'],
-                        'name' => $proto['name'],
-                        'col1' => (string)$rowTot,
-                        'col2' => (string)$rowBhyt,
-                        'col3' => (string)$rowVp,
-                        'col4' => (string)$rowOut,
-                        'col5' => (string)$rowIn,
-                        'col6' => $rateBhyt . '%',
-                        'col7' => $proto['tat'],
-                        'col8' => 'Đạt',
-                        'col9' => '99.5%',
-                        'col10' => $proto['staff'],
-                        'col11' => 'Bình thường',
-                        'status' => 'Đang chạy',
-                        'status_type' => 'ok'
+                        'stt' => $lStt++,
+                        'code' => $sr['category_lis_code'],
+                        'name' => "Chuyên khoa " . $sr['lis_category_name'],
+                        'col1' => (string)$tTests,
+                        'col2' => (string)$bCount,
+                        'col3' => (string)$spCount,
+                        'col4' => (string)$outC,
+                        'col5' => (string)$inC,
+                        'col6' => $rateB . '%'
                     ];
                 }
             }
@@ -2687,20 +2634,13 @@ class dashboardController extends baseController
             }
         }
         if (empty($lisTreemapData)) {
-            $lisTreemapData = [
-                ['x' => 'Sinh hóa máu', 'y' => (int)round($totLis * 0.38)],
-                ['x' => 'Huyết học Laser', 'y' => (int)round($totLis * 0.28)],
-                ['x' => 'Vi sinh ký sinh', 'y' => (int)round($totLis * 0.18)],
-                ['x' => 'Nước tiểu 10TS', 'y' => (int)round($totLis * 0.11)],
-                ['x' => 'Điện giải đồ', 'y' => max(1, $totLis - (int)round($totLis * 0.95))]
-            ];
+            $lisTreemapData = [];
         }
 
         $lisLineCats = [];
         $lisLineHH = [];
         $lisLineSH = [];
         $lisLineVS = [];
-        $lisLineOther = [];
 
         if ($isAllYear) {
             for ($mIdx = 1; $mIdx <= 12; $mIdx++) {
@@ -2719,13 +2659,12 @@ class dashboardController extends baseController
                 $yCatMap[(int)$ycr['lis_group_code']][(int)$ycr['month_number']] = (int)$ycr['total_tests'];
             }
             for ($mIdx = 1; $mIdx <= 12; $mIdx++) {
-                $hh = $yCatMap[1][$mIdx] ?? (int)round(($totLis / 12) * 0.42);
-                $sh = $yCatMap[2][$mIdx] ?? (int)round(($totLis / 12) * 0.36);
-                $vs = $yCatMap[3][$mIdx] ?? (int)round(($totLis / 12) * 0.16);
+                $hh = $yCatMap[1][$mIdx] ?? 0;
+                $sh = $yCatMap[2][$mIdx] ?? 0;
+                $vs = $yCatMap[3][$mIdx] ?? 0;
                 $lisLineHH[] = $hh;
                 $lisLineSH[] = $sh;
                 $lisLineVS[] = $vs;
-                $lisLineOther[] = (int)round(($sh + $hh) * 0.22);
             }
         } elseif (!$isSingleDayMode) {
             $dailyCatSql = "SELECT dt.day_of_month, dt.full_date, l.lis_group_code,
@@ -2746,13 +2685,12 @@ class dashboardController extends baseController
             }
             foreach ($seenDays as $dom => $lbl) {
                 $lisLineCats[] = $lbl;
-                $hh = $dCatMap[1][$dom] ?? (int)round(($totLis / max(1, count($seenDays))) * 0.42);
-                $sh = $dCatMap[2][$dom] ?? (int)round(($totLis / max(1, count($seenDays))) * 0.36);
-                $vs = $dCatMap[3][$dom] ?? (int)round(($totLis / max(1, count($seenDays))) * 0.16);
+                $hh = $dCatMap[1][$dom] ?? 0;
+                $sh = $dCatMap[2][$dom] ?? 0;
+                $vs = $dCatMap[3][$dom] ?? 0;
                 $lisLineHH[] = $hh;
                 $lisLineSH[] = $sh;
                 $lisLineVS[] = $vs;
-                $lisLineOther[] = (int)round(($sh + $hh) * 0.22);
             }
         } else {
             $past7Sql = "SELECT dt.day_of_month, dt.full_date, l.lis_group_code,
@@ -2772,23 +2710,67 @@ class dashboardController extends baseController
             }
             foreach ($p7Days as $dom => $lbl) {
                 $lisLineCats[] = $lbl;
-                $hh = $p7Map[1][$dom] ?? 140;
-                $sh = $p7Map[2][$dom] ?? 210;
-                $vs = $p7Map[3][$dom] ?? 80;
+                $hh = $p7Map[1][$dom] ?? 0;
+                $sh = $p7Map[2][$dom] ?? 0;
+                $vs = $p7Map[3][$dom] ?? 0;
                 $lisLineHH[] = $hh;
                 $lisLineSH[] = $sh;
                 $lisLineVS[] = $vs;
-                $lisLineOther[] = (int)round(($sh + $hh) * 0.22);
             }
         }
 
-        $lisTatHist = [
-            (int)round($totLis * 0.22),
-            (int)round($totLis * 0.58),
-            (int)round($totLis * 0.15),
-            (int)round($totLis * 0.04),
-            max(0, $totLis - (int)round($totLis * 0.99))
-        ];
+        // ==================== TÍNH TOÁN TĂNG TRƯỞNG XÉT NGHIỆM LIS THỰC TẾ TỪ CSDL ====================
+        $lisGrowthLabel = '+0.0%';
+        $lisGrowthSubtext = 'so với kỳ trước';
+
+        if ($this->hasTable('ioc_lis_daily') && $this->hasTable('ioc_date')) {
+            if ($isAllYear) {
+                $prevYear = (int)$year - 1;
+                $prevYearSql = "SELECT COALESCE(SUM(l.lis_bhyt_count + l.lis_self_pay_count), 0)
+                                FROM ioc_lis_daily l
+                                JOIN ioc_date d ON l.report_date = d.id
+                                WHERE d.year_number = " . (int)$prevYear;
+                $prevLisCount = (int)$this->dbQueryValue($prevYearSql);
+                if ($prevLisCount > 0) {
+                    $diffLis = $totLis - $prevLisCount;
+                    $rateLis = round(($diffLis / $prevLisCount) * 100, 1);
+                    $signLis = $diffLis >= 0 ? '+' : '';
+                    $lisGrowthLabel = "{$signLis}{$rateLis}%";
+                    $lisGrowthSubtext = ($diffLis >= 0 ? "+{$diffLis}" : "{$diffLis}") . " mẫu so với năm {$prevYear}";
+                }
+            } elseif ($isSingleDayMode && !empty($dFrom)) {
+                $prevDay = date('Y-m-d', strtotime($dFrom . ' -1 day'));
+                $safePrevDay = addslashes($prevDay);
+                $prevDaySql = "SELECT COALESCE(SUM(l.lis_bhyt_count + l.lis_self_pay_count), 0)
+                               FROM ioc_lis_daily l
+                               JOIN ioc_date d ON l.report_date = d.id
+                               WHERE d.full_date = '{$safePrevDay}'";
+                $prevLisCount = (int)$this->dbQueryValue($prevDaySql);
+                if ($prevLisCount > 0) {
+                    $diffLis = $totLis - $prevLisCount;
+                    $rateLis = round(($diffLis / $prevLisCount) * 100, 1);
+                    $signLis = $diffLis >= 0 ? '+' : '';
+                    $lisGrowthLabel = "{$signLis}{$rateLis}%";
+                    $lisGrowthSubtext = ($diffLis >= 0 ? "+{$diffLis}" : "{$diffLis}") . " mẫu so với hôm trước";
+                }
+            } elseif (!$isAllYear && $mFrom === $mTo) {
+                $prevM = (int)$mFrom - 1;
+                $prevMY = (int)$year;
+                if ($prevM < 1) { $prevM = 12; $prevMY -= 1; }
+                $prevMonthSql = "SELECT COALESCE(SUM(l.lis_bhyt_count + l.lis_self_pay_count), 0)
+                                 FROM ioc_lis_daily l
+                                 JOIN ioc_date d ON l.report_date = d.id
+                                 WHERE d.year_number = {$prevMY} AND d.month_number = {$prevM}";
+                $prevLisCount = (int)$this->dbQueryValue($prevMonthSql);
+                if ($prevLisCount > 0) {
+                    $diffLis = $totLis - $prevLisCount;
+                    $rateLis = round(($diffLis / $prevLisCount) * 100, 1);
+                    $signLis = $diffLis >= 0 ? '+' : '';
+                    $lisGrowthLabel = "{$signLis}{$rateLis}%";
+                    $lisGrowthSubtext = ($diffLis >= 0 ? "+{$diffLis}" : "{$diffLis}") . " mẫu so với Tháng {$prevM}/{$prevMY}";
+                }
+            }
+        }
 
             $response = [
                 'success' => true,
@@ -2966,30 +2948,21 @@ class dashboardController extends baseController
                     'thu_phi' => $lisSelfPay,
                     'inpatient' => $lisInpatient,
                     'outpatient' => $lisOutpatient,
-                    'tat_avg' => 28.5,
-                    'thoi_gian_tat' => 28.5,
-                    'on_time_rate' => 98.6,
-                    'ty_le_dung_hen' => 98.6,
-                    'critical_count' => 0,
-                    'canh_bao_nguy_hiem' => 0,
-                    'iqc_rate' => 99.8,
+                    'bhyt_rate' => $totLis > 0 ? round(($lisBhyt / $totLis) * 100, 1) : 0.0,
                     'categories' => $lisCategories,
-                    'growth_label' => '+12.5%',
-                    'growth_subtext' => 'so với kỳ trước',
+                    'growth_label' => $lisGrowthLabel,
+                    'growth_subtext' => $lisGrowthSubtext,
                     'charts' => [
                         'treemap' => $lisTreemapData,
                         'multiline' => [
                             'categories' => $lisLineCats,
                             'series' => [
-                                ['name' => 'Sinh hóa máu', 'data' => $lisLineSH],
-                                ['name' => 'Huyết học Laser', 'data' => $lisLineHH],
-                                ['name' => 'Vi sinh & Ký sinh', 'data' => $lisLineVS],
-                                ['name' => 'Nước tiểu & ĐG', 'data' => $lisLineOther]
+                                ['name' => 'Huyết học', 'data' => $lisLineHH],
+                                ['name' => 'Sinh hóa', 'data' => $lisLineSH],
+                                ['name' => 'Vi sinh & Ký sinh', 'data' => $lisLineVS]
                             ]
                         ],
-                        'source_donut' => [$lisOutpatient, $lisInpatient, max(1, (int)round($totLis * 0.05))],
-                        'tat_histogram' => $lisTatHist,
-                        'iqc_gauge' => 99.8
+                        'source_donut' => [$lisOutpatient, $lisInpatient]
                     ]
                 ],
 

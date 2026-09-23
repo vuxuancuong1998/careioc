@@ -489,6 +489,73 @@
       });
     });
   }
+
+  // 8. THEME TOGGLE (BẬT SÁNG / TỐI) VỚI LOCAL STORAGE
+  const btnThemeToggle = document.getElementById('btnThemeToggle');
+  const themeToggleIcon = document.getElementById('themeToggleIcon');
+  const themeToggleText = document.getElementById('themeToggleText');
+
+  window.applyIocTheme = function(theme, updateCharts = true) {
+    if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('ioc_theme', 'light');
+      if (themeToggleIcon) {
+        themeToggleIcon.className = 'fa-solid fa-moon';
+      }
+      if (themeToggleText) {
+        themeToggleText.textContent = 'Chế độ Tối';
+      }
+      if (btnThemeToggle) {
+        btnThemeToggle.setAttribute('title', 'Đang ở Chế độ Sáng. Bấm để chuyển sang Chế độ Tối');
+      }
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('ioc_theme', 'dark');
+      if (themeToggleIcon) {
+        themeToggleIcon.className = 'fa-solid fa-sun';
+      }
+      if (themeToggleText) {
+        themeToggleText.textContent = 'Chế độ Sáng';
+      }
+      if (btnThemeToggle) {
+        btnThemeToggle.setAttribute('title', 'Đang ở Chế độ Tối. Bấm để chuyển sang Chế độ Sáng');
+      }
+    }
+
+    if (updateCharts && typeof ApexCharts !== 'undefined') {
+      const mode = theme === 'light' ? 'light' : 'dark';
+      const chartVars = [
+        'chartLisMultiLine', 'chartLisSourceDonut',
+        'chartOverviewCombo', 'chartOverviewTreemap',
+        'chartKcbFunnel', 'chartPayerDonut',
+        'chartInpatientWaterfall', 'chartBedStacked',
+        'chartRisFunnel', 'chartRisFilmlessStacked', 'chartRisPayerDonut',
+        'chartPharTreemap', 'chartPharCombo', 'chartPharExpiryDonutNew'
+      ];
+      chartVars.forEach(name => {
+        if (window[name] && typeof window[name].updateOptions === 'function') {
+          try {
+            window[name].updateOptions({
+              theme: { mode: mode }
+            }, false, false);
+          } catch(e) {}
+        }
+      });
+      window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: theme } }));
+    }
+  };
+
+  // Khôi phục trạng thái Theme đã lưu
+  const currentSavedTheme = localStorage.getItem('ioc_theme') || 'dark';
+  window.applyIocTheme(currentSavedTheme, false);
+
+  if (btnThemeToggle) {
+    btnThemeToggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      window.applyIocTheme(isLight ? 'dark' : 'light', true);
+    });
+  }
 })();
 </script>
 </body>
