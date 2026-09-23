@@ -70,7 +70,7 @@ include __DIR__ . '/sidebar.php';
       <div class="chart-header">
         <div>
           <div class="chart-title"><i class="fa-solid fa-table-cells-large"></i> Biểu đồ Cây (Treemap): Sản Lượng Mẫu Theo Chuyên Khoa XN</div>
-          <div class="chart-subtitle">Phân bổ khối lượng kỹ thuật xét nghiệm trong kỳ</div>
+          <div class="chart-subtitle">Phân bổ khối lượng mẫu xét nghiệm (<span id="lisTreemapTotalSub" style="color:var(--teal); font-weight:600;"><?= number_format($lisTot) ?> mẫu</span>)</div>
         </div>
       </div>
       <div class="chart-body" id="chartLisTreemap"></div>
@@ -209,7 +209,7 @@ function initCharts() {
     grid: { borderColor: 'rgba(38, 76, 115, 0.35)', strokeDashArray: 3 }
   };
 
-  // 1. Treemap
+  // 1. Treemap (Sản lượng mẫu theo chuyên khoa XN có hiển thị số lượng)
   try {
     chartLisTreemap = new ApexCharts(document.getElementById('chartLisTreemap'), {
       ...chartTheme,
@@ -218,7 +218,53 @@ function initCharts() {
       series: [{
         data: <?= json_encode($treemapLis, JSON_UNESCAPED_UNICODE) ?>
       }],
-      plotOptions: { treemap: { distributed: true, enableShades: false } }
+      plotOptions: {
+        treemap: {
+          distributed: true,
+          enableShades: false
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        style: {
+          fontSize: '13px',
+          fontWeight: 700,
+          colors: ['#ffffff']
+        },
+        formatter: function(text, op) {
+          let val = (op && op.value !== undefined) ? op.value : null;
+          if (val === null && op && op.w && op.w.config && op.w.config.series) {
+            try {
+              val = op.w.config.series[op.seriesIndex].data[op.dataPointIndex].y;
+            } catch(e) {}
+          }
+          if (val !== null && val !== undefined && !isNaN(val)) {
+            let total = 0;
+            try {
+              const sData = op.w.config.series[op.seriesIndex].data;
+              total = sData.reduce((acc, cur) => acc + (Number(cur.y) || 0), 0);
+            } catch(e) {}
+            const pct = (total > 0 && val) ? ' (' + ((val / total) * 100).toFixed(1) + '%)' : '';
+            return [text, Number(val).toLocaleString('vi-VN') + ' mẫu' + pct];
+          }
+          return text;
+        },
+        offsetY: -3
+      },
+      tooltip: {
+        theme: 'dark',
+        y: {
+          formatter: function(val, opt) {
+            let total = 0;
+            try {
+              const sData = opt.w.config.series[opt.seriesIndex].data;
+              total = sData.reduce((acc, cur) => acc + (Number(cur.y) || 0), 0);
+            } catch(e) {}
+            const pct = (total > 0 && val) ? ' (' + ((val / total) * 100).toFixed(1) + '%)' : '';
+            return Number(val).toLocaleString('vi-VN') + ' mẫu' + pct;
+          }
+        }
+      }
     });
     chartLisTreemap.render();
   } catch(e) {
@@ -344,6 +390,9 @@ window.fetchDashboardData = async function() {
       if (elSubDesc && l.growth_subtext) elSubDesc.textContent = l.growth_subtext;
 
       // 2. Cập nhật Biểu đồ ApexCharts
+      const elTreemapSub = document.getElementById('lisTreemapTotalSub');
+      if (elTreemapSub && l.total) elTreemapSub.textContent = Number(l.total).toLocaleString('vi-VN') + ' mẫu';
+
       if (l.charts) {
         const lc = l.charts;
         if (chartLisTreemap && lc.treemap && lc.treemap.length > 0) {
