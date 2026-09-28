@@ -1,5 +1,11 @@
+<?php
+$isOverview   = isset($active_menu) && $active_menu === 'overview';
+$isDayDefault = isset($active_menu) && in_array($active_menu, ['outpatient', 'inpatient', 'laboratory', 'radiology']);
+$defaultDate  = $isDayDefault ? date('Y-m-d') : '';
+$initialMode  = $isDayDefault ? 'date' : 'month';
+?>
 <!-- BỘ LỌC ĐA TIÊU CHÍ CARE IOC (ĐẶT Ở ĐẦU TRANG - TÍCH HỢP TRÊN TOPBAR) -->
-<div class="ioc-filter-bar" id="iocFilterBar">
+<div class="ioc-filter-bar" id="iocFilterBar" data-default-mode="<?= $initialMode ?>" data-default-date="<?= $defaultDate ?>">
   <div class="filter-group">
     <label><i class="fa-regular fa-calendar-days"></i> Năm:</label>
     <select class="filter-select" id="filterYear">
@@ -10,13 +16,6 @@
   </div>
 
   <!-- [NOTE]: Bộ lọc Quý (filterQuarter) đã được bỏ theo yêu cầu hệ thống chuyển sang chọn khoảng tháng -->
-
-  <?php
-  $isOverview   = isset($active_menu) && $active_menu === 'overview';
-  $isDayDefault = isset($active_menu) && in_array($active_menu, ['outpatient', 'inpatient', 'laboratory', 'radiology']);
-  $defaultDate  = $isDayDefault ? date('Y-m-d') : '';
-  $initialMode  = $isDayDefault ? 'date' : 'month';
-  ?>
 
   <?php if (!$isOverview): ?>
   <div class="filter-group" id="groupFilterMode">

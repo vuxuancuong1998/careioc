@@ -439,30 +439,35 @@
     btnResetFilter.addEventListener('click', function() {
       const now = new Date();
       const currentMonth = String(now.getMonth() + 1);
-      const isOutpatientPage = window.location.pathname.indexOf('outpatient') !== -1;
+      const filterBarEl = document.getElementById('iocFilterBar');
+      const serverDefaultMode = filterBarEl ? filterBarEl.getAttribute('data-default-mode') : '';
+      const isDayDefaultPage = (serverDefaultMode === 'date') 
+        || /outpatient|kcb|inpatient|noitru|laboratory|xetnghiem|radiology|cdha/i.test(window.location.pathname);
 
       if (filterYear) filterYear.value = String(now.getFullYear() >= 2026 ? now.getFullYear() : '2026');
 
+      const defaultMode = isDayDefaultPage ? 'date' : 'month';
       if (filterMode) {
-        const defaultMode = isOutpatientPage ? 'date' : 'month';
         filterMode.value = defaultMode;
         updateFilterModeUI(defaultMode);
       }
 
-      if (isOutpatientPage && filterDateFrom) {
-        // Ngoại trú: reset về ngày hôm nay, Đến ngày không hiện (giống Đến tháng)
-        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      if (isDayDefaultPage && filterDateFrom) {
+        // Các phân hệ lâm sàng & cận lâm sàng: reset về ngày hôm nay, Đến ngày để trống
+        const todayStr = (filterBarEl && filterBarEl.getAttribute('data-default-date')) 
+          ? filterBarEl.getAttribute('data-default-date')
+          : `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         filterDateFrom.value = todayStr;
-        if (filterDateTo) filterDateTo.value = ''; // Đến ngày: không hiện
+        if (filterDateTo) filterDateTo.value = ''; // Đến ngày: để trống
         if (filterDate) filterDate.value = todayStr;
         currentFilterType = 'date_range';
         if (filterMonthFrom) filterMonthFrom.value = currentMonth;
         if (filterMonthTo) {
-          filterMonthTo.value = ''; // Đến tháng: không hiện
+          filterMonthTo.value = '';
           filterMonthTo.disabled = false;
         }
       } else {
-        // Tổng quan hoặc các trang khác: reset về tháng hiện tại, xóa ngày
+        // Tổng quan, Dược, Tài chính, EMR, Hạ tầng: reset về tháng hiện tại
         currentFilterType = 'single_month';
         if (filterMonthFrom) filterMonthFrom.value = currentMonth;
         if (filterMonthTo) {
