@@ -240,10 +240,12 @@ let chartEmrSigning = null;
 let chartEmrCloseSpeed = null;
 
 function initCharts() {
+  const isLightMode = document.documentElement.getAttribute('data-theme') === 'light';
+  const textContrast = isLightMode ? '#000000' : '#ffffff';
   const chartTheme = {
-    theme: { mode: 'dark' },
-    chart: { background: 'transparent', toolbar: { show: false }, fontFamily: 'inherit' },
-    grid: { borderColor: 'rgba(38, 76, 115, 0.35)', strokeDashArray: 3 }
+    theme: { mode: isLightMode ? 'light' : 'dark' },
+    chart: { background: 'transparent', toolbar: { show: false }, fontFamily: 'inherit', foreColor: textContrast },
+    grid: { borderColor: isLightMode ? 'rgba(203, 213, 225, 0.7)' : 'rgba(38, 76, 115, 0.35)', strokeDashArray: 3 }
   };
 
   // 1. Funnel EMR
@@ -264,15 +266,22 @@ function initCharts() {
       colors: ['#00f2fe', '#20c6b7', '#39a0ff', '#ffc107', '#2ecc71'],
       dataLabels: {
         enabled: true,
+        dropShadow: { enabled: true, color: '#000', top: 1, left: 1, blur: 2, opacity: 0.85 },
         formatter: function (val, opt) {
           const step = (opt && typeof opt.dataPointIndex !== 'undefined' && emrFunnelSteps[opt.dataPointIndex]) ? emrFunnelSteps[opt.dataPointIndex] : '';
           return step ? step + ': ' + val + ' HS' : val + ' HS';
         },
         style: { fontSize: '11px', colors: ['#fff'] }
       },
+      <?php
+        $totEmr = (int)($emr['total_records'] ?? 102);
+        $signCnt = ($emr['signed_count'] ?? 0) > 100 ? (int)$emr['signed_count'] : (int)round($totEmr * (($emr['sign_rate'] ?? 96.3) / 100));
+        $closeCnt = ($emr['close_24h_count'] ?? 0) > 100 ? (int)$emr['close_24h_count'] : (int)round($totEmr * (($emr['close_24h_rate'] ?? 96.1) / 100));
+        $archCnt = max(0, $closeCnt - 20);
+      ?>
       series: [{
         name: 'Số hồ sơ',
-        data: [<?= (int)($emr['total_records'] ?? 102) ?>, <?= (int)($emr['total_records'] ?? 102) ?>, <?= (int)($emr['signed_count'] ?? 96) ?>, <?= (int)($emr['close_24h_count'] ?? 98) ?>, <?= max(0, (int)($emr['close_24h_count'] ?? 98) - 2) ?>]
+        data: [<?= $totEmr ?>, <?= $totEmr ?>, <?= $signCnt ?>, <?= $closeCnt ?>, <?= $archCnt ?>]
       }],
       xaxis: {
         categories: ['1. Mở hồ sơ EMR', '2. Diễn biến lâm sàng', '3. Ký số Bác sĩ', '4. Trưởng khoa ký', '5. Đóng lưu trữ'],
@@ -292,7 +301,16 @@ function initCharts() {
     colors: ['#20c6b7'],
     series: [{ name: 'Điểm đánh giá (%)', data: [95, 98, 96, 94, 96, 92] }],
     labels: ['Hạ tầng CNTT', 'Hệ thống HIS', 'Xét nghiệm LIS', 'Hình ảnh PACS', 'Bệnh án EMR', 'An toàn thông tin'],
-    yaxis: { max: 100, labels: { style: { colors: '#85a4c4' } } }
+    xaxis: {
+      labels: {
+        style: {
+          colors: Array(6).fill(textContrast),
+          fontSize: '11px',
+          fontWeight: 700
+        }
+      }
+    },
+    yaxis: { max: 100, labels: { style: { colors: textContrast, fontWeight: 700 } } }
   });
   chartEmrRadarMaturity.render();
 
@@ -311,10 +329,10 @@ function initCharts() {
     ],
     xaxis: {
       categories: ['Khoa HSCC', 'Khoa Nội TH', 'Khoa Ngoại TH', 'Khoa Phụ sản', 'Khoa Nhi'],
-      labels: { style: { colors: '#85a4c4', fontSize: '11px' } }
+      labels: { style: { colors: textContrast, fontSize: '11px' } }
     },
-    yaxis: { max: 100, labels: { style: { colors: '#85a4c4' } } },
-    legend: { position: 'top', labels: { colors: '#b2cbe4' } }
+    yaxis: { max: 100, labels: { style: { colors: textContrast } } },
+    legend: { position: 'top', labels: { colors: textContrast } }
   });
   chartEmrSigning.render();
 
@@ -325,7 +343,19 @@ function initCharts() {
     colors: ['#2ecc71', '#39a0ff', '#ff5c5c'],
     labels: ['Trong 24 giờ', 'Từ 24 - 48h', 'Chậm > 48h'],
     series: [<?= ($emr['close_24h_rate'] ?? 96.1) ?>, <?= round((100 - ($emr['close_24h_rate'] ?? 96.1)) * 0.7, 1) ?>, <?= round((100 - ($emr['close_24h_rate'] ?? 96.1)) * 0.3, 1) ?>],
-    legend: { position: 'bottom', labels: { colors: '#b2cbe4' } }
+    plotOptions: {
+      pie: {
+        donut: {
+          labels: {
+            show: true,
+            name: { color: textContrast },
+            value: { color: textContrast },
+            total: { color: textContrast }
+          }
+        }
+      }
+    },
+    legend: { position: 'bottom', labels: { colors: textContrast } }
   });
   chartEmrCloseSpeed.render();
 }

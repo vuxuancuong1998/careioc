@@ -225,6 +225,7 @@ function initCharts() {
       colors: ['#00f2fe', '#20c6b7', '#39a0ff', '#ffc107', '#2ecc71'],
       dataLabels: {
         enabled: true,
+        dropShadow: { enabled: true, color: '#000', top: 1, left: 1, blur: 2, opacity: 0.85 },
         formatter: function(val, opt) {
           const step = kcbFunnelSteps[opt.dataPointIndex] || '';
           return step ? step + ': ' + val + ' ca' : val + ' ca';

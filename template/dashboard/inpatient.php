@@ -395,7 +395,7 @@ window.fetchDashboardData = async function() {
           <td style="text-align:right; color:var(--ok); font-weight:700;">-${r.col5}</td>
           <td style="text-align:right;">${r.col6}</td>
           <td style="text-align:right;">0</td>
-          <td style="text-align:right; font-weight:700; color:#fff;">${r.col9}</td>
+          <td style="text-align:right; font-weight:700; color:var(--text);">${r.col9}</td>
           <td style="text-align:right; font-weight:700; color:var(--accent);">${r.col10}</td>
           <td style="text-align:right;">${r.col11}</td>
           <td style="text-align:center;"><span class="status-pill ${r.status_type}">${r.status}</span></td>
@@ -419,7 +419,7 @@ window.fetchDashboardData = async function() {
             <td style="text-align:right; color:var(--ok); font-weight:800;">-${sOut}</td>
             <td style="text-align:right;">${sTr}</td>
             <td style="text-align:right;">0</td>
-            <td style="text-align:right; font-weight:800; color:#fff;">${dispOcc}</td>
+            <td style="text-align:right; font-weight:800; color:var(--text);">${dispOcc}</td>
             <td style="text-align:right; font-weight:800; color:var(--accent);">${totalOccRate}%</td>
             <td style="text-align:right;">6.4 ngày</td>
             <td style="text-align:center;"><span class="status-pill ok">Ổn định</span></td>

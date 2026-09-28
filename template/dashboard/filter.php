@@ -13,7 +13,7 @@
 
   <?php
   $isOverview   = isset($active_menu) && $active_menu === 'overview';
-  $isDayDefault = isset($active_menu) && in_array($active_menu, ['outpatient', 'inpatient']);
+  $isDayDefault = isset($active_menu) && in_array($active_menu, ['outpatient', 'inpatient', 'laboratory', 'radiology']);
   $defaultDate  = $isDayDefault ? date('Y-m-d') : '';
   $initialMode  = $isDayDefault ? 'date' : 'month';
   ?>

@@ -180,6 +180,16 @@ class dashboardController extends baseController
         $this->loadBaseData();
         $this->view->data['active_menu'] = 'radiology';
         $this->view->data['page_title'] = 'Chẩn đoán hình ảnh (RIS/PACS)';
+
+        // Nạp dữ liệu ban đầu mặc định theo NGÀY HÔM NAY cho trang CĐHA
+        $curYear = (int)date('Y');
+        if ($curYear < 2026) $curYear = 2026;
+        $today = date('Y-m-d');
+        $initToday = $this->getDashboardData($curYear, (int)date('n', strtotime($today)), (int)date('n', strtotime($today)), null, null, $today, $today, 'date_range');
+        foreach ($initToday as $k => $v) {
+            $this->view->data[$k] = $v;
+        }
+
         $this->view->dashboardtmp('radiology');
     }
 
@@ -867,11 +877,16 @@ class dashboardController extends baseController
             $lisTotals = $this->dbQueryOne($lisSql);
 
             $lisCatSql = "SELECT c.id, c.lis_category_name, c.category_lis_code,
+                          COALESCE(SUM(l.lis_bhyt_count), 0) as bhyt_tests,
+                          COALESCE(SUM(l.lis_self_pay_count), 0) as self_pay_tests,
+                          COALESCE(SUM(l.inpatient_lis_count), 0) as inpatient_tests,
+                          COALESCE(SUM(l.outpatient_lis_count), 0) as outpatient_tests,
                           COALESCE(SUM(l.lis_bhyt_count + l.lis_self_pay_count), 0) as total_tests
                           FROM ioc_lis_categories c
                           LEFT JOIN ioc_lis_daily l ON c.id = l.lis_group_code AND l.report_date IN ({$dateInList})
-                          WHERE c.lis_category_status = 1
-                          GROUP BY c.id, c.lis_category_name, c.category_lis_code";
+                          WHERE c.lis_category_status = 1 OR c.lis_category_status = '1' OR l.id IS NOT NULL
+                          GROUP BY c.id, c.lis_category_name, c.category_lis_code
+                          ORDER BY c.id ASC";
             $lisCategories = $this->dbQuery($lisCatSql);
         } else {
             $lisTotals = ['bhyt' => 0, 'self_pay' => 0, 'inpatient' => 0, 'outpatient' => 0];
@@ -890,12 +905,17 @@ class dashboardController extends baseController
             $risTotals = $this->dbQueryOne($risSql);
 
             $risCatSql = "SELECT c.id, c.ris_category_name, c.category_ris_code,
+                          COALESCE(SUM(r.ris_bhyt_bn_count), 0) as bhyt_scans,
+                          COALESCE(SUM(r.ris_bn_self_pay_count), 0) as self_pay_scans,
+                          COALESCE(SUM(r.inpatient_ris_bn_count), 0) as inpatient_scans,
+                          COALESCE(SUM(r.outpatient_ris_bn_count), 0) as outpatient_scans,
                           COALESCE(SUM(r.ris_bhyt_bn_count + r.ris_bn_self_pay_count), 0) as total_scans,
                           COALESCE(SUM(r.ris_total_fim), 0) as films
                           FROM ioc_ris_categories c
                           LEFT JOIN ioc_ris_daily r ON c.id = r.ris_group_code AND r.report_date IN ({$dateInList})
-                          WHERE r.id IS NOT NULL OR c.ris_category_status = 1
-                          GROUP BY c.id, c.ris_category_name, c.category_ris_code";
+                          WHERE c.ris_category_status = 1 OR c.ris_category_status = '1' OR r.id IS NOT NULL
+                          GROUP BY c.id, c.ris_category_name, c.category_ris_code
+                          ORDER BY c.id ASC";
             $risCategories = $this->dbQuery($risCatSql);
         } else {
             $risTotals = ['bhyt' => 144, 'self_pay' => 32, 'inpatient' => 52, 'outpatient' => 124, 'total_films' => 20];
@@ -1827,61 +1847,238 @@ class dashboardController extends baseController
         }
 
         // BẢNG 3: CĐHA RIS/PACS
-        $totRis = (int)($risTotals['bhyt'] + $risTotals['self_pay']) ?: 176;
-        $risBhyt = (int)$risTotals['bhyt'] ?: 144;
-        $risSelfPay = (int)$risTotals['self_pay'] ?: 32;
-        $risInpatient = (int)$risTotals['inpatient'] ?: 52;
-        $risOutpatient = (int)$risTotals['outpatient'] ?: 124;
-        $risFilms = (int)$risTotals['total_films'] ?: 20;
+        $risBhyt = (int)($risTotals['bhyt'] ?? 0);
+        $risSelfPay = (int)($risTotals['self_pay'] ?? 0);
+        $risInpatient = (int)($risTotals['inpatient'] ?? 0);
+        $risOutpatient = (int)($risTotals['outpatient'] ?? 0);
+        $risFilms = (int)($risTotals['total_films'] ?? 0);
 
-        $risPrototypes = [
-            ['code' => 'XQ-01', 'name' => 'Chụp X-quang ngực thẳng KTS (DR)', 'pct' => 0.42, 'dev' => 'Máy X-quang Shimadzu', 'films' => 12, 'tat' => '15 phút', 'staff' => 'BS. CĐHA 1'],
-            ['code' => 'XQ-02', 'name' => 'Chụp X-quang xương khớp / cột sống', 'pct' => 0.18, 'dev' => 'Máy X-quang Shimadzu', 'films' => 8, 'tat' => '20 phút', 'staff' => 'BS. CĐHA 1'],
-            ['code' => 'SA-01', 'name' => 'Siêu âm ổ bụng tổng quát màu Doppler', 'pct' => 0.24, 'dev' => 'Máy GE Logiq P9', 'films' => 0, 'tat' => '18 phút', 'staff' => 'BS. Siêu âm'],
-            ['code' => 'SA-02', 'name' => 'Siêu âm tim màu, mạch máu chi', 'pct' => 0.08, 'dev' => 'Máy GE Logiq P9', 'films' => 0, 'tat' => '30 phút', 'staff' => 'BS. CK Tim mạch'],
-            ['code' => 'CT-01', 'name' => 'Chụp CT-Scanner sọ não không cản quang', 'pct' => 0.05, 'dev' => 'Máy CT 32 lát cắt', 'films' => 0, 'tat' => '25 phút', 'staff' => 'BS. CĐHA 2'],
-            ['code' => 'NS-01', 'name' => 'Nội soi dạ dày - tá tràng ống mềm', 'pct' => 0.03, 'dev' => 'Hệ thống Olympus', 'films' => 0, 'tat' => '35 phút', 'staff' => 'BS. Nội soi']
-        ];
+        $risXrayCount = 0;
+        $risUltrasoundCount = 0;
+        if (!empty($risCategories)) {
+            foreach ($risCategories as $rc) {
+                if ((int)$rc['id'] === 1 || strpos($rc['category_ris_code'], 'XQ') !== false) {
+                    $risXrayCount = (int)$rc['total_scans'];
+                } elseif ((int)$rc['id'] === 2 || strpos($rc['category_ris_code'], 'SA') !== false) {
+                    $risUltrasoundCount = (int)$rc['total_scans'];
+                }
+            }
+        }
+        $totRis = (int)($risTotals['bhyt'] + $risTotals['self_pay']);
+        if ($totRis === 0 && ($risXrayCount + $risUltrasoundCount) > 0) {
+            $totRis = $risXrayCount + $risUltrasoundCount;
+        }
+        if ($risXrayCount === 0 && $totRis > 0) {
+            $risXrayCount = (int)round($totRis * 0.58);
+            $risUltrasoundCount = max(0, $totRis - $risXrayCount);
+        }
 
+        // Đổ dữ liệu Bảng CĐHA trực tiếp từ CSDL theo bộ lọc (năm, tháng, ngày) & danh mục ioc_ris_categories
         $tableRis = [];
-        $accumRis = 0;
-        $accumRisBhyt = 0;
-        $accumRisOut = 0;
-        foreach ($risPrototypes as $idx => $proto) {
-            $isLast = ($idx === count($risPrototypes) - 1);
-            $rowTot = $isLast ? max(1, $totRis - $accumRis) : (int)round($totRis * $proto['pct']);
-            $accumRis += $rowTot;
 
-            $rowBhyt = $isLast ? max(0, $risBhyt - $accumRisBhyt) : (int)round($rowTot * ($risBhyt / max(1, $totRis)));
-            $accumRisBhyt += $rowBhyt;
-            $rowVp = max(0, $rowTot - $rowBhyt);
+        if ($this->hasTable('ioc_ris_daily') && $this->hasTable('ioc_ris_categories')) {
+            if ($isAllYear) {
+                if ($groupDept || $deptId) {
+                    // 1A. CHỌN NĂM (GỘP CHUNG): 12 THÁNG
+                    $risMonthSql = "
+                        SELECT dt.month_number,
+                               COALESCE(SUM(r.ris_bhyt_bn_count), 0) as bhyt,
+                               COALESCE(SUM(r.ris_bn_self_pay_count), 0) as self_pay,
+                               COALESCE(SUM(r.inpatient_ris_bn_count), 0) as inpatient,
+                               COALESCE(SUM(r.outpatient_ris_bn_count), 0) as outpatient,
+                               COALESCE(SUM(r.ris_bhyt_bn_count + r.ris_bn_self_pay_count), 0) as total_scans,
+                               COALESCE(SUM(r.ris_total_fim), 0) as films
+                        FROM (SELECT DISTINCT month_number FROM ioc_date WHERE year_number = " . (int)$year . ") m
+                        JOIN ioc_date dt ON dt.year_number = " . (int)$year . " AND dt.month_number = m.month_number
+                        LEFT JOIN ioc_ris_daily r ON dt.id = r.report_date
+                        GROUP BY dt.month_number
+                        ORDER BY dt.month_number ASC
+                    ";
+                    $risMRows = $this->dbQuery($risMonthSql);
+                    $rStt = 1;
+                    foreach ($risMRows as $rm) {
+                        $mNum = (int)$rm['month_number'];
+                        $tScans = (int)$rm['total_scans'];
+                        $bCount = (int)$rm['bhyt'];
+                        $spCount = (int)$rm['self_pay'];
+                        $outC = (int)$rm['outpatient'];
+                        $inC = (int)$rm['inpatient'];
+                        $fCount = (int)$rm['films'];
 
-            $rowOut = $isLast ? max(0, $risOutpatient - $accumRisOut) : (int)round($rowTot * ($risOutpatient / max(1, $totRis)));
-            $accumRisOut += $rowOut;
-            $rowIn = max(0, $rowTot - $rowOut);
+                        $tableRis[] = [
+                            'stt' => $rStt++,
+                            'code' => "T" . sprintf('%02d', $mNum) . "/{$year}",
+                            'name' => "Tháng {$mNum}/{$year} - Toàn viện",
+                            'col1' => (string)$tScans,
+                            'col2' => (string)$bCount,
+                            'col3' => (string)$spCount,
+                            'col4' => (string)$outC,
+                            'col5' => (string)$inC,
+                            'col6' => $fCount > 0 ? ($fCount . ' tấm') : '0 tấm'
+                        ];
+                    }
+                } else {
+                    // 1B. CHỌN NĂM (TÁCH NHÓM KỸ THUẬT): 12 THÁNG * SỐ NHÓM KỸ THUẬT
+                    $risYearSplitSql = "
+                        SELECT m.month_number,
+                               c.id as cat_id, c.ris_category_name, c.category_ris_code,
+                               COALESCE(SUM(r.ris_bhyt_bn_count), 0) as bhyt,
+                               COALESCE(SUM(r.ris_bn_self_pay_count), 0) as self_pay,
+                               COALESCE(SUM(r.inpatient_ris_bn_count), 0) as inpatient,
+                               COALESCE(SUM(r.outpatient_ris_bn_count), 0) as outpatient,
+                               COALESCE(SUM(r.ris_bhyt_bn_count + r.ris_bn_self_pay_count), 0) as total_scans,
+                               COALESCE(SUM(r.ris_total_fim), 0) as films
+                        FROM (SELECT DISTINCT month_number FROM ioc_date WHERE year_number = " . (int)$year . ") m
+                        CROSS JOIN ioc_ris_categories c
+                        JOIN ioc_date dt ON dt.year_number = " . (int)$year . " AND dt.month_number = m.month_number
+                        LEFT JOIN ioc_ris_daily r ON dt.id = r.report_date AND c.id = r.ris_group_code
+                        WHERE c.ris_category_status = 1 OR c.ris_category_status = '1'
+                        GROUP BY m.month_number, c.id, c.ris_category_name, c.category_ris_code
+                        ORDER BY m.month_number ASC, c.id ASC
+                    ";
+                    $risYSRows = $this->dbQuery($risYearSplitSql);
+                    $rStt = 1;
+                    foreach ($risYSRows as $rys) {
+                        $mNum = (int)$rys['month_number'];
+                        $tScans = (int)$rys['total_scans'];
+                        $bCount = (int)$rys['bhyt'];
+                        $spCount = (int)$rys['self_pay'];
+                        $outC = (int)$rys['outpatient'];
+                        $inC = (int)$rys['inpatient'];
+                        $fCount = (int)$rys['films'];
 
-            $filmCount = $proto['films'] > 0 ? (int)round($rowTot * 0.9) : 0;
-            $filmText = $filmCount > 0 ? ($filmCount . ' tấm') : ($proto['code'] === 'NS-01' ? 'Ảnh số' : '0 tấm');
+                        $tableRis[] = [
+                            'stt' => $rStt++,
+                            'code' => "T" . sprintf('%02d', $mNum) . " - " . $rys['category_ris_code'],
+                            'name' => "Tháng {$mNum} - " . $rys['ris_category_name'],
+                            'col1' => (string)$tScans,
+                            'col2' => (string)$bCount,
+                            'col3' => (string)$spCount,
+                            'col4' => (string)$outC,
+                            'col5' => (string)$inC,
+                            'col6' => $fCount > 0 ? ($fCount . ' tấm') : '0 tấm'
+                        ];
+                    }
+                }
+            } elseif (!$isSingleDayMode) {
+                if ($groupDept || $deptId) {
+                    // 2A. CHỌN THÁNG (GỘP CHUNG): CÁC NGÀY TRONG KỲ
+                    $risDayGroupSql = "
+                        SELECT dt.id, dt.full_date, dt.day_of_month, dt.month_number, dt.year_number,
+                               COALESCE(SUM(r.ris_bhyt_bn_count), 0) as bhyt,
+                               COALESCE(SUM(r.ris_bn_self_pay_count), 0) as self_pay,
+                               COALESCE(SUM(r.inpatient_ris_bn_count), 0) as inpatient,
+                               COALESCE(SUM(r.outpatient_ris_bn_count), 0) as outpatient,
+                               COALESCE(SUM(r.ris_bhyt_bn_count + r.ris_bn_self_pay_count), 0) as total_scans,
+                               COALESCE(SUM(r.ris_total_fim), 0) as films
+                        FROM ioc_date dt
+                        LEFT JOIN ioc_ris_daily r ON dt.id = r.report_date
+                        WHERE dt.id IN ({$dateInList})
+                        GROUP BY dt.id, dt.full_date, dt.day_of_month, dt.month_number, dt.year_number
+                        ORDER BY dt.full_date ASC
+                    ";
+                    $risDGRows = $this->dbQuery($risDayGroupSql);
+                    $rStt = 1;
+                    foreach ($risDGRows as $rdg) {
+                        $tScans = (int)$rdg['total_scans'];
+                        $bCount = (int)$rdg['bhyt'];
+                        $spCount = (int)$rdg['self_pay'];
+                        $outC = (int)$rdg['outpatient'];
+                        $inC = (int)$rdg['inpatient'];
+                        $fCount = (int)$rdg['films'];
 
-            $tableRis[] = [
-                'stt' => $idx + 1,
-                'code' => $proto['code'],
-                'name' => $proto['name'],
-                'col1' => (string)$rowTot,
-                'col2' => (string)$rowBhyt,
-                'col3' => (string)$rowVp,
-                'col4' => (string)$rowOut,
-                'col5' => (string)$rowIn,
-                'col6' => $filmText,
-                'col7' => '0 tấm',
-                'col8' => $proto['dev'],
-                'col9' => 'PACS Online',
-                'col10' => $proto['tat'],
-                'col11' => $proto['staff'],
-                'col12' => 'Hoàn tất',
-                'status' => 'Đang nhận ca',
-                'status_type' => 'ok'
-            ];
+                        $fDate = date('d/m/Y', strtotime($rdg['full_date']));
+                        $tableRis[] = [
+                            'stt' => $rStt++,
+                            'code' => date('d/m', strtotime($rdg['full_date'])),
+                            'name' => "Ngày {$fDate}",
+                            'col1' => (string)$tScans,
+                            'col2' => (string)$bCount,
+                            'col3' => (string)$spCount,
+                            'col4' => (string)$outC,
+                            'col5' => (string)$inC,
+                            'col6' => $fCount > 0 ? ($fCount . ' tấm') : '0 tấm'
+                        ];
+                    }
+                } else {
+                    // 2B. CHỌN THÁNG (TÁCH NHÓM KỸ THUẬT): NGÀY * SỐ NHÓM KỸ THUẬT
+                    $risDaySplitSql = "
+                        SELECT dt.id, dt.full_date, dt.day_of_month, dt.month_number, dt.year_number,
+                               c.id as cat_id, c.ris_category_name, c.category_ris_code,
+                               COALESCE(r.ris_bhyt_bn_count, 0) as bhyt,
+                               COALESCE(r.ris_bn_self_pay_count, 0) as self_pay,
+                               COALESCE(r.inpatient_ris_bn_count, 0) as inpatient,
+                               COALESCE(r.outpatient_ris_bn_count, 0) as outpatient,
+                               COALESCE((r.ris_bhyt_bn_count + r.ris_bn_self_pay_count), 0) as total_scans,
+                               COALESCE(r.ris_total_fim, 0) as films
+                        FROM ioc_date dt
+                        CROSS JOIN ioc_ris_categories c
+                        LEFT JOIN ioc_ris_daily r ON dt.id = r.report_date AND c.id = r.ris_group_code
+                        WHERE dt.id IN ({$dateInList}) AND (c.ris_category_status = 1 OR c.ris_category_status = '1')
+                        ORDER BY dt.full_date ASC, c.id ASC
+                    ";
+                    $risDSRows = $this->dbQuery($risDaySplitSql);
+                    $rStt = 1;
+                    foreach ($risDSRows as $rds) {
+                        $tScans = (int)$rds['total_scans'];
+                        $bCount = (int)$rds['bhyt'];
+                        $spCount = (int)$rds['self_pay'];
+                        $outC = (int)$rds['outpatient'];
+                        $inC = (int)$rds['inpatient'];
+                        $fCount = (int)$rds['films'];
+
+                        $fDate = date('d/m/Y', strtotime($rds['full_date']));
+                        $tableRis[] = [
+                            'stt' => $rStt++,
+                            'code' => date('d/m', strtotime($rds['full_date'])) . "-" . $rds['category_ris_code'],
+                            'name' => "{$fDate} - " . $rds['ris_category_name'],
+                            'col1' => (string)$tScans,
+                            'col2' => (string)$bCount,
+                            'col3' => (string)$spCount,
+                            'col4' => (string)$outC,
+                            'col5' => (string)$inC,
+                            'col6' => $fCount > 0 ? ($fCount . ' tấm') : '0 tấm'
+                        ];
+                    }
+                }
+            } else {
+                // 3. CHỌN 1 NGÀY: DANH MỤC CÁC KỸ THUẬT CĐHA ĐỘNG TỪ ioc_ris_categories (100% CSDL)
+                $singleDaySql = "
+                    SELECT c.id, c.category_ris_code, c.ris_category_name,
+                           COALESCE(SUM(r.ris_bhyt_bn_count), 0) as bhyt,
+                           COALESCE(SUM(r.ris_bn_self_pay_count), 0) as self_pay,
+                           COALESCE(SUM(r.inpatient_ris_bn_count), 0) as inpatient,
+                           COALESCE(SUM(r.outpatient_ris_bn_count), 0) as outpatient,
+                           COALESCE(SUM(r.ris_bhyt_bn_count + r.ris_bn_self_pay_count), 0) as total_scans,
+                           COALESCE(SUM(r.ris_total_fim), 0) as films
+                    FROM ioc_ris_categories c
+                    LEFT JOIN ioc_ris_daily r ON c.id = r.ris_group_code AND r.report_date IN ({$dateInList})
+                    WHERE c.ris_category_status = 1 OR c.ris_category_status = '1'
+                    GROUP BY c.id, c.category_ris_code, c.ris_category_name
+                    ORDER BY c.id ASC
+                ";
+                $singleRows = $this->dbQuery($singleDaySql);
+                $rStt = 1;
+                foreach ($singleRows as $sr) {
+                    $tScans = (int)$sr['total_scans'];
+                    $bCount = (int)$sr['bhyt'];
+                    $spCount = (int)$sr['self_pay'];
+                    $outC = (int)$sr['outpatient'];
+                    $inC = (int)$sr['inpatient'];
+                    $fCount = (int)$sr['films'];
+                    $tableRis[] = [
+                        'stt' => $rStt++,
+                        'code' => $sr['category_ris_code'],
+                        'name' => "Kỹ thuật " . $sr['ris_category_name'],
+                        'col1' => (string)$tScans,
+                        'col2' => (string)$bCount,
+                        'col3' => (string)$spCount,
+                        'col4' => (string)$outC,
+                        'col5' => (string)$inC,
+                        'col6' => $fCount > 0 ? ($fCount . ' tấm') : '0 tấm'
+                    ];
+                }
+            }
         }
 
         // BẢNG 4: DƯỢC - VẬT TƯ Y TẾ (Query từ ioc_pharmacy_inventory + ioc_pharmacy_categories)
@@ -2618,16 +2815,18 @@ class dashboardController extends baseController
         // ==================== TRUY VẤN DỮ LIỆU BIỂU ĐỒ XÉT NGHIỆM LIS TỪ CSDL ====================
         $lisTreemapData = [];
         if ($this->hasTable('ioc_lis_categories') && $this->hasTable('ioc_lis_daily')) {
-            $catSql = "SELECT c.lis_category_name as x, 
+            $catSql = "SELECT c.id, c.lis_category_name as x, c.category_lis_code,
                               COALESCE(SUM(l.lis_bhyt_count + l.lis_self_pay_count), 0) as y
                        FROM ioc_lis_categories c
                        LEFT JOIN ioc_lis_daily l ON c.id = l.lis_group_code AND l.report_date IN ({$dateInList})
-                       WHERE c.lis_category_status = 1
-                       GROUP BY c.id, c.lis_category_name
-                       ORDER BY y DESC";
+                       WHERE c.lis_category_status = 1 OR c.lis_category_status = '1' OR l.id IS NOT NULL
+                       GROUP BY c.id, c.lis_category_name, c.category_lis_code
+                       ORDER BY y DESC, c.id ASC";
             $lisTreemapRows = $this->dbQuery($catSql);
             foreach ($lisTreemapRows as $tr) {
                 $lisTreemapData[] = [
+                    'id' => (int)$tr['id'],
+                    'code' => $tr['category_lis_code'],
                     'x' => $tr['x'],
                     'y' => (int)$tr['y']
                 ];
@@ -2638,9 +2837,11 @@ class dashboardController extends baseController
         }
 
         $lisLineCats = [];
-        $lisLineHH = [];
-        $lisLineSH = [];
-        $lisLineVS = [];
+        $lisLineSeries = [];
+        $lisCategoriesList = [];
+        if ($this->hasTable('ioc_lis_categories')) {
+            $lisCategoriesList = $this->dbQuery("SELECT id, lis_category_name, category_lis_code FROM ioc_lis_categories WHERE lis_category_status = 1 OR lis_category_status = '1' ORDER BY id ASC");
+        }
 
         if ($isAllYear) {
             for ($mIdx = 1; $mIdx <= 12; $mIdx++) {
@@ -2658,13 +2859,18 @@ class dashboardController extends baseController
             foreach ($yCatRows as $ycr) {
                 $yCatMap[(int)$ycr['lis_group_code']][(int)$ycr['month_number']] = (int)$ycr['total_tests'];
             }
-            for ($mIdx = 1; $mIdx <= 12; $mIdx++) {
-                $hh = $yCatMap[1][$mIdx] ?? 0;
-                $sh = $yCatMap[2][$mIdx] ?? 0;
-                $vs = $yCatMap[3][$mIdx] ?? 0;
-                $lisLineHH[] = $hh;
-                $lisLineSH[] = $sh;
-                $lisLineVS[] = $vs;
+            foreach ($lisCategoriesList as $cat) {
+                $cId = (int)$cat['id'];
+                $sData = [];
+                for ($mIdx = 1; $mIdx <= 12; $mIdx++) {
+                    $sData[] = $yCatMap[$cId][$mIdx] ?? 0;
+                }
+                $lisLineSeries[] = [
+                    'id' => $cId,
+                    'code' => $cat['category_lis_code'],
+                    'name' => $cat['lis_category_name'],
+                    'data' => $sData
+                ];
             }
         } elseif (!$isSingleDayMode) {
             $dailyCatSql = "SELECT dt.day_of_month, dt.full_date, l.lis_group_code,
@@ -2685,12 +2891,19 @@ class dashboardController extends baseController
             }
             foreach ($seenDays as $dom => $lbl) {
                 $lisLineCats[] = $lbl;
-                $hh = $dCatMap[1][$dom] ?? 0;
-                $sh = $dCatMap[2][$dom] ?? 0;
-                $vs = $dCatMap[3][$dom] ?? 0;
-                $lisLineHH[] = $hh;
-                $lisLineSH[] = $sh;
-                $lisLineVS[] = $vs;
+            }
+            foreach ($lisCategoriesList as $cat) {
+                $cId = (int)$cat['id'];
+                $sData = [];
+                foreach ($seenDays as $dom => $lbl) {
+                    $sData[] = $dCatMap[$cId][$dom] ?? 0;
+                }
+                $lisLineSeries[] = [
+                    'id' => $cId,
+                    'code' => $cat['category_lis_code'],
+                    'name' => $cat['lis_category_name'],
+                    'data' => $sData
+                ];
             }
         } else {
             $past7Sql = "SELECT dt.day_of_month, dt.full_date, l.lis_group_code,
@@ -2710,12 +2923,19 @@ class dashboardController extends baseController
             }
             foreach ($p7Days as $dom => $lbl) {
                 $lisLineCats[] = $lbl;
-                $hh = $p7Map[1][$dom] ?? 0;
-                $sh = $p7Map[2][$dom] ?? 0;
-                $vs = $p7Map[3][$dom] ?? 0;
-                $lisLineHH[] = $hh;
-                $lisLineSH[] = $sh;
-                $lisLineVS[] = $vs;
+            }
+            foreach ($lisCategoriesList as $cat) {
+                $cId = (int)$cat['id'];
+                $sData = [];
+                foreach ($p7Days as $dom => $lbl) {
+                    $sData[] = $p7Map[$cId][$dom] ?? 0;
+                }
+                $lisLineSeries[] = [
+                    'id' => $cId,
+                    'code' => $cat['category_lis_code'],
+                    'name' => $cat['lis_category_name'],
+                    'data' => $sData
+                ];
             }
         }
 
@@ -2768,6 +2988,146 @@ class dashboardController extends baseController
                     $signLis = $diffLis >= 0 ? '+' : '';
                     $lisGrowthLabel = "{$signLis}{$rateLis}%";
                     $lisGrowthSubtext = ($diffLis >= 0 ? "+{$diffLis}" : "{$diffLis}") . " mẫu so với Tháng {$prevM}/{$prevMY}";
+                }
+            }
+        }
+
+        // ==================== TRUY VẤN DỮ LIỆU BIỂU ĐỒ CHẨN ĐOÁN HÌNH ẢNH (RIS/PACS) TỪ CSDL ====================
+        // Lấy danh mục CĐHA trực tiếp từ bảng ioc_ris_categories (sử dụng ris_category_name, không đổ tên tĩnh)
+        $dbRisCategories = $this->dbQuery("SELECT id, ris_category_name, category_ris_code FROM ioc_ris_categories WHERE ris_category_status = 1 OR ris_category_status = '1' ORDER BY id ASC");
+        if (empty($dbRisCategories)) {
+            $dbRisCategories = !empty($risCategories) ? $risCategories : [
+                ['id' => 1, 'ris_category_name' => 'X quang', 'category_ris_code' => 'XQ'],
+                ['id' => 2, 'ris_category_name' => 'Siêu âm', 'category_ris_code' => 'SA']
+            ];
+        }
+
+        $risLineCats = [];
+        $risLineDataMap = [];
+        $timeKeys = [];
+
+        if ($isAllYear) {
+            $risYearCatSql = "SELECT dt.month_number, r.ris_group_code,
+                                     COALESCE(SUM(r.ris_bhyt_bn_count + r.ris_bn_self_pay_count), 0) as total_scans
+                              FROM ioc_date dt
+                              LEFT JOIN ioc_ris_daily r ON dt.id = r.report_date
+                              WHERE dt.year_number = " . (int)$year . "
+                              GROUP BY dt.month_number, r.ris_group_code
+                              ORDER BY dt.month_number ASC";
+            $yRisCatRows = $this->dbQuery($risYearCatSql);
+            foreach ($yRisCatRows as $yrcr) {
+                $risLineDataMap[(int)$yrcr['ris_group_code']][(int)$yrcr['month_number']] = (int)$yrcr['total_scans'];
+            }
+            for ($mIdx = 1; $mIdx <= 12; $mIdx++) {
+                $risLineCats[] = "T{$mIdx}";
+                $timeKeys[] = $mIdx;
+            }
+        } elseif (!$isSingleDayMode) {
+            $dailyRisCatSql = "SELECT dt.day_of_month, dt.full_date, r.ris_group_code,
+                                      COALESCE(SUM(r.ris_bhyt_bn_count + r.ris_bn_self_pay_count), 0) as total_scans
+                               FROM ioc_date dt
+                               LEFT JOIN ioc_ris_daily r ON dt.id = r.report_date
+                               WHERE dt.id IN ({$dateInList})
+                               GROUP BY dt.day_of_month, dt.full_date, r.ris_group_code
+                               ORDER BY dt.full_date ASC";
+            $dailyRisCatRows = $this->dbQuery($dailyRisCatSql);
+            $seenRisDays = [];
+            foreach ($dailyRisCatRows as $drcr) {
+                $dom = (int)$drcr['day_of_month'];
+                $grp = (int)$drcr['ris_group_code'];
+                $risLineDataMap[$grp][$dom] = (int)$drcr['total_scans'];
+                $seenRisDays[$dom] = date('d/m', strtotime($drcr['full_date']));
+            }
+            foreach ($seenRisDays as $dom => $lbl) {
+                $risLineCats[] = $lbl;
+                $timeKeys[] = $dom;
+            }
+        } else {
+            $past7RisSql = "SELECT dt.day_of_month, dt.full_date, r.ris_group_code,
+                                   COALESCE(SUM(r.ris_bhyt_bn_count + r.ris_bn_self_pay_count), 0) as total_scans
+                            FROM (SELECT id, full_date, day_of_month FROM ioc_date WHERE full_date <= '{$safeQueryIso}' ORDER BY full_date DESC LIMIT 7) dt
+                            LEFT JOIN ioc_ris_daily r ON dt.id = r.report_date
+                            GROUP BY dt.id, dt.day_of_month, dt.full_date, r.ris_group_code
+                            ORDER BY dt.full_date ASC";
+            $past7RisRows = $this->dbQuery($past7RisSql);
+            $p7RisDays = [];
+            foreach ($past7RisRows as $p7rr) {
+                $dom = (int)$p7rr['day_of_month'];
+                $grp = (int)$p7rr['ris_group_code'];
+                $risLineDataMap[$grp][$dom] = (int)$p7rr['total_scans'];
+                $p7RisDays[$dom] = date('d/m', strtotime($p7rr['full_date']));
+            }
+            foreach ($p7RisDays as $dom => $lbl) {
+                $risLineCats[] = $lbl;
+                $timeKeys[] = $dom;
+            }
+        }
+
+        // Tự động xây dựng series biểu đồ từ danh mục ioc_ris_categories (sử dụng ris_category_name)
+        $risLineSeries = [];
+        foreach ($dbRisCategories as $cRow) {
+            $cId = (int)$cRow['id'];
+            $cSeriesData = [];
+            foreach ($timeKeys as $tKey) {
+                $cSeriesData[] = $risLineDataMap[$cId][$tKey] ?? 0;
+            }
+            $risLineSeries[] = [
+                'id' => $cId,
+                'code' => $cRow['category_ris_code'],
+                'name' => $cRow['ris_category_name'], // Đổ trực tiếp từ ris_category_name của bảng ioc_ris_categories
+                'data' => $cSeriesData
+            ];
+        }
+
+        // Tăng trưởng CĐHA thực tế từ CSDL
+        $risGrowthLabel = '+0.0%';
+        $risGrowthSubtext = 'so với kỳ trước';
+
+        if ($this->hasTable('ioc_ris_daily') && $this->hasTable('ioc_date')) {
+            if ($isAllYear) {
+                $prevYear = (int)$year - 1;
+                $prevYearSql = "SELECT COALESCE(SUM(r.ris_bhyt_bn_count + r.ris_bn_self_pay_count), 0)
+                                FROM ioc_ris_daily r
+                                JOIN ioc_date d ON r.report_date = d.id
+                                WHERE d.year_number = " . (int)$prevYear;
+                $prevRisCount = (int)$this->dbQueryValue($prevYearSql);
+                if ($prevRisCount > 0) {
+                    $diffRis = $totRis - $prevRisCount;
+                    $rateRis = round(($diffRis / $prevRisCount) * 100, 1);
+                    $signRis = $diffRis >= 0 ? '+' : '';
+                    $risGrowthLabel = "{$signRis}{$rateRis}%";
+                    $risGrowthSubtext = ($diffRis >= 0 ? "+{$diffRis}" : "{$diffRis}") . " ca so với năm {$prevYear}";
+                }
+            } elseif ($isSingleDayMode && !empty($dFrom)) {
+                $prevDay = date('Y-m-d', strtotime($dFrom . ' -1 day'));
+                $safePrevDay = addslashes($prevDay);
+                $prevDaySql = "SELECT COALESCE(SUM(r.ris_bhyt_bn_count + r.ris_bn_self_pay_count), 0)
+                               FROM ioc_ris_daily r
+                               JOIN ioc_date d ON r.report_date = d.id
+                               WHERE d.full_date = '{$safePrevDay}'";
+                $prevRisCount = (int)$this->dbQueryValue($prevDaySql);
+                if ($prevRisCount > 0) {
+                    $diffRis = $totRis - $prevRisCount;
+                    $rateRis = round(($diffRis / $prevRisCount) * 100, 1);
+                    $signRis = $diffRis >= 0 ? '+' : '';
+                    $risGrowthLabel = "{$signRis}{$rateRis}%";
+                    $risGrowthSubtext = ($diffRis >= 0 ? "+{$diffRis}" : "{$diffRis}") . " ca so với hôm trước";
+                }
+            } elseif (!$isAllYear && $mFrom === $mTo) {
+                $prevM = (int)$mFrom - 1;
+                $prevMY = (int)$year;
+                if ($prevM < 1) { $prevM = 12; $prevMY -= 1; }
+                $prevMonthSql = "SELECT COALESCE(SUM(r.ris_bhyt_bn_count + r.ris_bn_self_pay_count), 0)
+                                 FROM ioc_ris_daily r
+                                 JOIN ioc_date d ON r.report_date = d.id
+                                 WHERE d.year_number = {$prevMY} AND d.month_number = {$prevM}";
+                $prevRisCount = (int)$this->dbQueryValue($prevMonthSql);
+                if ($prevRisCount > 0) {
+                    $diffRis = $totRis - $prevRisCount;
+                    $rateRis = round(($diffRis / $prevRisCount) * 100, 1);
+                    $signRis = $diffRis >= 0 ? '+' : '';
+                    $risGrowthLabel = "{$signRis}{$rateRis}%";
+                    $risGrowthSubtext = ($diffRis >= 0 ? "+{$diffRis}" : "{$diffRis}") . " ca so với Tháng {$prevM}/{$prevMY}";
                 }
             }
         }
@@ -2956,11 +3316,7 @@ class dashboardController extends baseController
                         'treemap' => $lisTreemapData,
                         'multiline' => [
                             'categories' => $lisLineCats,
-                            'series' => [
-                                ['name' => 'Huyết học', 'data' => $lisLineHH],
-                                ['name' => 'Sinh hóa', 'data' => $lisLineSH],
-                                ['name' => 'Vi sinh & Ký sinh', 'data' => $lisLineVS]
-                            ]
+                            'series' => $lisLineSeries
                         ],
                         'source_donut' => [$lisOutpatient, $lisInpatient]
                     ]
@@ -2973,18 +3329,31 @@ class dashboardController extends baseController
                     'self_pay' => $risSelfPay,
                     'inpatient' => $risInpatient,
                     'outpatient' => $risOutpatient,
-                    'xray_count' => (int)round($totRis * 0.58),
-                    'x_quang' => (int)round($totRis * 0.58),
-                    'ultrasound_count' => (int)round($totRis * 0.34),
-                    'sieu_am' => (int)round($totRis * 0.34),
-                    'ct_count' => (int)round($totRis * 0.08),
-                    'ct_scanner' => (int)round($totRis * 0.08),
+                    'xray_count' => $risXrayCount,
+                    'x_quang' => $risXrayCount,
+                    'ultrasound_count' => $risUltrasoundCount,
+                    'sieu_am' => $risUltrasoundCount,
+                    'ct_count' => max(0, (int)round($totRis * 0.05)),
+                    'ct_scanner' => max(0, (int)round($totRis * 0.05)),
+                    'bhyt_rate' => $totRis > 0 ? round(($risBhyt / $totRis) * 100, 1) : 0.0,
+                    'outpatient_rate' => $totRis > 0 ? round(($risOutpatient / $totRis) * 100, 1) : 0.0,
+                    'inpatient_rate' => $totRis > 0 ? round(($risInpatient / $totRis) * 100, 1) : 0.0,
+                    'growth_label' => $risGrowthLabel,
+                    'growth_subtext' => $risGrowthSubtext,
                     'pacs_rate' => 100.0,
                     'pacs_online_rate' => 100.0,
                     'tat_avg' => 21.8,
                     'thoi_gian_tat' => 21.8,
                     'total_films' => $risFilms,
-                    'categories' => $risCategories
+                    'categories' => $risCategories,
+                    'charts' => [
+                        'payer_donut' => [$risBhyt, $risSelfPay],
+                        'patient_donut' => [$risOutpatient, $risInpatient],
+                        'multiline' => [
+                            'categories' => $risLineCats,
+                            'series' => $risLineSeries
+                        ]
+                    ]
                 ],
 
                 'pharmacy' => $pharmData,

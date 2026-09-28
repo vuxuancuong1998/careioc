@@ -24,7 +24,7 @@ class Database{
         $this->connection = mysqli_connect($address, $account, $pwd, $name, $port);
         $this->connection->set_charset("utf8mb4");
         if (!$this->connection){
-            die("Database connection failed: " . mysqli_error()); 
+            die("Database connection failed: " . mysqli_connect_error()); 
         } 
         else{ 
 			/*

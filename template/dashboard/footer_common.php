@@ -59,6 +59,15 @@
     });
   }
 
+  const sidebarLogo = document.querySelector('.sidebar-logo');
+  if (sidebarLogo) {
+    sidebarLogo.addEventListener('click', function() {
+      if (sidebar && sidebar.classList.contains('collapsed')) {
+        setSidebarState(false);
+      }
+    });
+  }
+
   // 3. FULLSCREEN TOGGLE
   const btnFullscreen = document.getElementById('btnFullscreen');
   if (btnFullscreen) {
@@ -523,25 +532,80 @@
     }
 
     if (updateCharts && typeof ApexCharts !== 'undefined') {
-      const mode = theme === 'light' ? 'light' : 'dark';
+      const isL = theme === 'light';
+      const mode = isL ? 'light' : 'dark';
+      const textContrast = isL ? '#000000' : '#ffffff';
+
       const chartVars = [
-        'chartLisMultiLine', 'chartLisSourceDonut',
+        'chartLisMultiLine', 'chartLisSourceDonut', 'chartLisDeptDonut',
         'chartOverviewCombo', 'chartOverviewTreemap',
-        'chartKcbFunnel', 'chartPayerDonut',
-        'chartInpatientWaterfall', 'chartBedStacked',
-        'chartRisFunnel', 'chartRisFilmlessStacked', 'chartRisPayerDonut',
-        'chartPharTreemap', 'chartPharCombo', 'chartPharExpiryDonutNew'
+        'chartKcbFunnel', 'chartPayerDonut', 'chartPatientTypeDonut', 'chartKcbPayerDept', 'chartKcbResultDonut', 'chartOutcomeDonut', 'chartKcbStacked',
+        'chartInpatientWaterfall', 'chartBedStacked', 'chartInpatientDeptStay', 'chartInpatientDeptBeds', 'chartBedGaugeNoitru', 'chartTreatmentRadar', 'chartInpatientTrendArea',
+        'chartRisFunnel', 'chartRisFilmlessStacked', 'chartRisPayerDonut', 'chartRisPatientTypeDonut', 'chartRisTimeLine',
+        'chartPharTreemap', 'chartPharCombo', 'chartPharDonut', 'chartPharExpiryDonutNew', 'chartPharTop', 'chartPharGauge',
+        'chartFinanceWaterfall', 'chartFinanceTreemap', 'chartFinanceTrend',
+        'chartInfraRealtime', 'chartInfraBandwidth', 'chartInfraAvailability',
+        'chartEmrFunnel', 'chartEmrRadarMaturity', 'chartEmrSigning', 'chartEmrCloseSpeed'
       ];
-      chartVars.forEach(name => {
+
+      // Tìm thêm tất cả các biến biểu đồ ApexCharts trên window
+      const allChartNames = new Set(chartVars);
+      for (let k in window) {
+        if (k.startsWith('chart') && window[k] && typeof window[k].updateOptions === 'function') {
+          allChartNames.add(k);
+        }
+      }
+
+      allChartNames.forEach(name => {
         if (window[name] && typeof window[name].updateOptions === 'function') {
           try {
-            window[name].updateOptions({
-              theme: { mode: mode }
-            }, false, false);
+            const chartOpts = {
+              theme: { mode: mode },
+              chart: { foreColor: textContrast },
+              xaxis: {
+                labels: {
+                  style: { colors: textContrast }
+                }
+              },
+              yaxis: {
+                labels: {
+                  style: { colors: textContrast }
+                }
+              },
+              legend: {
+                labels: {
+                  colors: textContrast
+                }
+              },
+              plotOptions: {
+                pie: {
+                  donut: {
+                    labels: {
+                      name: { color: textContrast },
+                      value: { color: textContrast },
+                      total: { color: textContrast }
+                    }
+                  }
+                }
+              }
+            };
+
+            // Riêng Radar Chart cần mảng 6 màu cho các đỉnh đa giác
+            if (name === 'chartEmrRadarMaturity' || name === 'chartTreatmentRadar') {
+              chartOpts.xaxis = {
+                labels: {
+                  style: {
+                    colors: Array(8).fill(textContrast)
+                  }
+                }
+              };
+            }
+
+            window[name].updateOptions(chartOpts, false, false);
           } catch(e) {}
         }
       });
-      window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: theme } }));
+      window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: theme, isLight: isL, textContrast: textContrast } }));
     }
   };
 
@@ -556,6 +620,79 @@
       window.applyIocTheme(isLight ? 'dark' : 'light', true);
     });
   }
+
+  // 9. BACKGROUND DISPLAY / BRIGHTNESS CONTROLLER
+  const btnBgAdjust = document.getElementById('btnBgAdjust');
+  const bgAdjustPopover = document.getElementById('bgAdjustPopover');
+  const bgOpacityRange = document.getElementById('bgOpacityRange');
+  const bgOpacityValue = document.getElementById('bgOpacityValue');
+  const bgAdjustText = document.getElementById('bgAdjustText');
+  const bgPresetBtns = document.querySelectorAll('.bg-preset-btn');
+
+  window.applyBgOpacity = function(val, save = true) {
+    val = Math.max(0, Math.min(100, parseInt(val, 10) || 0));
+    const op = (val / 100);
+    const br = (0.5 + (op * 0.7)).toFixed(2); // 0% -> 0.5 (tối giản phẳng), 100% -> 1.2 (sáng rực rỡ)
+
+    // Đồng bộ toàn bộ các biến màu nền & độ trong suốt của cả hệ thống (nền gradient, sidebar, cards, bảng biểu)
+    const panelAlpha = (0.98 - (op * 0.20)).toFixed(2);
+    const sidebarAlpha = (0.96 - (op * 0.26)).toFixed(2);
+    const cardBlur = Math.round(6 + (op * 12)) + 'px';
+
+    document.documentElement.style.setProperty('--bg-gradient-opacity', op);
+    document.documentElement.style.setProperty('--bg-gradient-brightness', br);
+    document.documentElement.style.setProperty('--panel-alpha', panelAlpha);
+    document.documentElement.style.setProperty('--sidebar-alpha', sidebarAlpha);
+    document.documentElement.style.setProperty('--card-blur', cardBlur);
+
+    if (bgOpacityRange) bgOpacityRange.value = val;
+    if (bgOpacityValue) bgOpacityValue.textContent = `${val}%`;
+    if (bgAdjustText) bgAdjustText.textContent = `Nền: ${val}%`;
+
+    // Highlight active preset button
+    bgPresetBtns.forEach(btn => {
+      const bVal = parseInt(btn.getAttribute('data-val'), 10);
+      btn.classList.toggle('active', bVal === val);
+    });
+
+    if (save) {
+      localStorage.setItem('ioc_bg_opacity', val);
+    }
+  };
+
+  // Khôi phục độ sáng màu nền đã lưu (mặc định 85%)
+  const savedBgOpacity = localStorage.getItem('ioc_bg_opacity');
+  window.applyBgOpacity(savedBgOpacity !== null ? savedBgOpacity : 85, false);
+
+  if (btnBgAdjust && bgAdjustPopover) {
+    btnBgAdjust.addEventListener('click', function(e) {
+      e.stopPropagation();
+      bgAdjustPopover.classList.toggle('show');
+    });
+
+    bgAdjustPopover.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!bgAdjustPopover.contains(e.target) && e.target !== btnBgAdjust) {
+        bgAdjustPopover.classList.remove('show');
+      }
+    });
+  }
+
+  if (bgOpacityRange) {
+    bgOpacityRange.addEventListener('input', function() {
+      window.applyBgOpacity(this.value, true);
+    });
+  }
+
+  bgPresetBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const v = parseInt(this.getAttribute('data-val'), 10);
+      window.applyBgOpacity(v, true);
+    });
+  });
 })();
 </script>
 </body>

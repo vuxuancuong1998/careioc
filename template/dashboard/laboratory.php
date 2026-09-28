@@ -7,6 +7,7 @@ include __DIR__ . '/sidebar.php';
   <?php include __DIR__ . '/topbar.php'; ?>
 
   <!-- 1. KPI STATS ROW (TRÊN CÙNG) -->
+  <!-- 1. KPI STATS ROW (TRÊN CÙNG - CÁC CHỈ SỐ HOẠT ĐỘNG THỰC TẾ) -->
   <section class="kpi-grid">
     <div class="kpi-card">
       <div class="kpi-top">
@@ -14,8 +15,36 @@ include __DIR__ . '/sidebar.php';
         <div class="kpi-icon-wrap"><i class="fa-solid fa-vial"></i></div>
       </div>
       <div class="kpi-value" id="kpiLisTotal"><?= number_format($lis['total'] ?? 0) ?></div>
-      <div class="kpi-subtext" id="kpiLisGrowth"><span class="trend-up" id="kpiLisTrendBadge"><i class="fa-solid fa-arrow-trend-up"></i> <?= $lis['growth_label'] ?? '+0.0%' ?></span> <span id="kpiLisSubtextDesc"><?= $lis['growth_subtext'] ?? 'so với kỳ trước' ?></span></div>
+      <div class="kpi-subtext" id="kpiLisGrowth"><span class="trend-up" id="kpiLisTrendBadge"><i class="fa-solid fa-arrow-trend-up"></i> <?= htmlspecialchars($lis['growth_label'] ?? '+0.0%') ?></span> <span id="kpiLisSubtextDesc"><?= htmlspecialchars($lis['growth_subtext'] ?? 'so với kỳ trước') ?></span></div>
     </div>
+
+    <?php 
+    $lisCatStyles = [
+        1 => ['icon' => 'fa-solid fa-droplet', 'color' => 'var(--teal)', 'bg' => 'rgba(32,198,183,0.1)'], // Huyết học
+        2 => ['icon' => 'fa-solid fa-vial-virus', 'color' => 'var(--blue)', 'bg' => 'rgba(57,160,255,0.1)'], // Sinh hóa
+        3 => ['icon' => 'fa-solid fa-bacterium', 'color' => 'var(--gold)', 'bg' => 'rgba(255,193,7,0.1)'], // Vi sinh
+        4 => ['icon' => 'fa-solid fa-dna', 'color' => 'var(--purple)', 'bg' => 'rgba(155,124,255,0.1)']
+    ];
+    if (!empty($lis['categories'])):
+      foreach ($lis['categories'] as $cat): 
+        $cId = (int)$cat['id'];
+        $cName = $cat['lis_category_name']; // Lấy trực tiếp từ lis_category_name của bảng ioc_lis_categories, KHÔNG ĐỔ TÊN TĨNH
+        $cTests = (int)($cat['total_tests'] ?? 0);
+        $cPct = ($lis['total'] ?? 0) > 0 ? round(($cTests / $lis['total']) * 100, 1) : 0;
+        $cStyle = $lisCatStyles[$cId] ?? ['icon' => 'fa-solid fa-flask', 'color' => 'var(--accent)', 'bg' => 'rgba(0,242,254,0.1)'];
+    ?>
+    <div class="kpi-card" data-cat-id="<?= $cId ?>">
+      <div class="kpi-top">
+        <span class="kpi-label" id="kpiLisCatLabel_<?= $cId ?>"><?= htmlspecialchars($cName) ?></span>
+        <div class="kpi-icon-wrap" style="color:<?= $cStyle['color'] ?>; background:<?= $cStyle['bg'] ?>;"><i class="<?= $cStyle['icon'] ?>"></i></div>
+      </div>
+      <div class="kpi-value" id="kpiLisCatVal_<?= $cId ?>"><?= number_format($cTests) ?></div>
+      <div class="kpi-subtext" id="kpiLisCatSub_<?= $cId ?>">Chiếm <span id="kpiLisCatPct_<?= $cId ?>"><?= $cPct ?>%</span> tổng số mẫu</div>
+    </div>
+    <?php 
+      endforeach; 
+    endif;
+    ?>
 
     <div class="kpi-card">
       <div class="kpi-top">
@@ -35,7 +64,8 @@ include __DIR__ . '/sidebar.php';
       <div class="kpi-subtext" id="kpiLisSelfPaySub">Chiếm <?= ($lis['total'] ?? 0) > 0 ? round((($lis['self_pay'] ?? 0) / $lis['total']) * 100, 1) : 0 ?>% tổng số mẫu</div>
     </div>
 
-    <div class="kpi-card">
+    <!-- [NOTE]: Các thẻ chỉ số nguồn bệnh nhân & tỷ lệ BHYT chuyển thành ghi chú theo yêu cầu, hiển thị chi tiết ở biểu đồ tròn và bảng:
+    <div class="kpi-card" id="noteKpiLisOutpatient" style="display:none;">
       <div class="kpi-top">
         <span class="kpi-label">Xét nghiệm Ngoại trú</span>
         <div class="kpi-icon-wrap" style="color:var(--accent); background:rgba(0,242,254,0.1);"><i class="fa-solid fa-hospital-user"></i></div>
@@ -44,7 +74,7 @@ include __DIR__ . '/sidebar.php';
       <div class="kpi-subtext" id="kpiLisOutpatientSub">Chiếm <?= ($lis['total'] ?? 0) > 0 ? round((($lis['outpatient'] ?? 0) / $lis['total']) * 100, 1) : 0 ?>% tổng số mẫu</div>
     </div>
 
-    <div class="kpi-card">
+    <div class="kpi-card" id="noteKpiLisInpatient" style="display:none;">
       <div class="kpi-top">
         <span class="kpi-label">Xét nghiệm Nội trú</span>
         <div class="kpi-icon-wrap" style="color:var(--purple); background:rgba(155,124,255,0.1);"><i class="fa-solid fa-bed-pulse"></i></div>
@@ -53,7 +83,7 @@ include __DIR__ . '/sidebar.php';
       <div class="kpi-subtext" id="kpiLisInpatientSub">Chiếm <?= ($lis['total'] ?? 0) > 0 ? round((($lis['inpatient'] ?? 0) / $lis['total']) * 100, 1) : 0 ?>% tổng số mẫu</div>
     </div>
 
-    <div class="kpi-card">
+    <div class="kpi-card" id="noteKpiLisBhytRate" style="display:none;">
       <div class="kpi-top">
         <span class="kpi-label">Tỷ lệ xét nghiệm BHYT</span>
         <div class="kpi-icon-wrap" style="color:var(--ok); background:rgba(46,204,113,0.1);"><i class="fa-solid fa-shield-halved"></i></div>
@@ -61,6 +91,7 @@ include __DIR__ . '/sidebar.php';
       <div class="kpi-value" id="kpiLisBhytRate"><?= ($lis['total'] ?? 0) > 0 ? round((($lis['bhyt'] ?? 0) / $lis['total']) * 100, 1) : 0 ?>%</div>
       <div class="kpi-subtext"><span style="color:var(--ok);"><i class="fa-solid fa-check"></i> Đối tượng BHYT</span> chiếm đa số</div>
     </div>
+    -->
   </section>
 
   <!-- 2. HỆ THỐNG BIỂU ĐỒ XÉT NGHIỆM LIS CHO MÀN HÌNH LỚN -->
@@ -81,7 +112,7 @@ include __DIR__ . '/sidebar.php';
       <div class="chart-header">
         <div>
           <div class="chart-title"><i class="fa-solid fa-chart-line"></i> Diễn Biến Sản Lượng Theo Chuyên Khoa</div>
-          <div class="chart-subtitle">Theo dõi biến động số lượng mẫu Huyết học, Sinh hóa và Vi sinh theo thời gian</div>
+          <div class="chart-subtitle">Theo dõi biến động số lượng mẫu theo từng chuyên khoa xét nghiệm</div>
         </div>
       </div>
       <div class="chart-body" id="chartLisMultiLine"></div>
@@ -175,7 +206,7 @@ function initCharts() {
     })).filter(r => r.value > 0).sort((a, b) => b.value - a.value);
 
     if (items.length === 0) {
-      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#85a4c4;font-size:12.5px;">Chưa có dữ liệu mẫu xét nghiệm</div>';
+      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text);font-size:12.5px;">Chưa có dữ liệu mẫu xét nghiệm</div>';
       return;
     }
 
@@ -194,20 +225,6 @@ function initCharts() {
     const W = container.clientWidth || 450;
     const H = 260;
     const GAP = 6;
-
-    const shortNames = {
-      'Huyết học': 'Huyết học',
-      'Huyết học Laser': 'Huyết học',
-      'Sinh hóa': 'Sinh hóa',
-      'Sinh hóa máu': 'Sinh hóa',
-      'Vi sinh': 'Vi sinh & Ký sinh',
-      'Vi sinh & Ký sinh': 'Vi sinh',
-      'Vi sinh ký sinh': 'Vi sinh',
-      'Nước tiểu': 'Nước tiểu',
-      'Nước tiểu 10TS': 'Nước tiểu 10TS',
-      'Điện giải đồ': 'Điện giải đồ',
-      'Đông máu': 'Đông máu'
-    };
 
     let cells = [];
 
@@ -276,7 +293,7 @@ function initCharts() {
     cells.forEach((cell, idx) => {
       const it = cell.item;
       const pct = ((it.value / total) * 100).toFixed(1);
-      const displayName = shortNames[it.name] || it.name;
+      const displayName = it.name;
       const isSmall = cell.w < 85 || cell.h < 75;
       const isMedium = cell.w < 135 && !isSmall;
 
@@ -314,7 +331,7 @@ function initCharts() {
               line-height: 1.2;
               letter-spacing: 0.1px;
             ">${displayName}</span>
-            ${!isSmall ? `<span style="font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.7); background:rgba(0,0,0,0.22); padding:1px 4px; border-radius:3px; white-space:nowrap;">${pct}%</span>` : ''}
+            ${!isSmall ? `<span style="font-size:9.5px; font-weight:700; color:#ffffff; background:rgba(0,0,0,0.35); padding:1px 4px; border-radius:3px; white-space:nowrap;">${pct}%</span>` : ''}
           </div>
 
           <!-- GÓC DƯỚI BÊN PHẢI: SỐ LƯỢNG MẪU NỔI BẬT Ở GÓC -->
@@ -328,8 +345,8 @@ function initCharts() {
             ">${Number(it.value).toLocaleString('vi-VN')}</span>
             <span style="
               font-size: ${isSmall ? '8.5px' : '10px'};
-              font-weight: 700;
-              color: rgba(255,255,255,0.78);
+              font-weight: 800;
+              color: #ffffff;
             ">MẪU</span>
           </div>
         </div>
@@ -357,9 +374,10 @@ function initCharts() {
   });
 
   // 2. Multi-Line Chart
+  let currentLisCats = <?= json_encode($multiLineData['categories'] ?? [], JSON_UNESCAPED_UNICODE) ?>;
   try {
     const isL = document.documentElement.getAttribute('data-theme') === 'light';
-    const mlColors = isL ? ['#0284c7', '#0d9488', '#ea580c'] : ['#00f2fe', '#20c6b7', '#ff9100'];
+    const mlColors = isL ? ['#0284c7', '#0d9488', '#ea580c', '#8b5cf6', '#eab308'] : ['#00f2fe', '#20c6b7', '#ff9100', '#a78bfa', '#fde047'];
     chartLisMultiLine = new ApexCharts(document.getElementById('chartLisMultiLine'), {
       ...chartTheme,
       chart: { ...chartTheme.chart, type: 'line', height: 260 },
@@ -367,7 +385,7 @@ function initCharts() {
       stroke: { curve: 'smooth', width: 2.5 },
       series: <?= json_encode($multiLineData['series'], JSON_UNESCAPED_UNICODE) ?>,
       xaxis: {
-        categories: <?= json_encode($multiLineData['categories'], JSON_UNESCAPED_UNICODE) ?>,
+        categories: currentLisCats,
         labels: { style: { colors: isL ? '#334155' : '#85a4c4', fontSize: '11px' } }
       },
       yaxis: { labels: { style: { colors: isL ? '#334155' : '#85a4c4' } } },
@@ -379,22 +397,94 @@ function initCharts() {
     console.error('Lỗi khởi tạo chartLisMultiLine:', e);
   }
 
-  // 3. Donut Chart
+  // 3. Donut Chart (Cơ cấu nguồn gửi mẫu: Ngoại trú vs Nội trú)
   try {
     const isL = document.documentElement.getAttribute('data-theme') === 'light';
     const donutColors = isL ? ['#0284c7', '#3b82f6'] : ['#00f2fe', '#39a0ff'];
+    const labelColor = isL ? '#334155' : '#85a4c4';
     chartLisSourceDonut = new ApexCharts(document.getElementById('chartLisSourceDonut'), {
       ...chartTheme,
       chart: { ...chartTheme.chart, type: 'donut', height: 260 },
       colors: donutColors,
       labels: ['Ngoại trú', 'Nội trú'],
       series: <?= json_encode($sourceDonutData, JSON_UNESCAPED_UNICODE) ?>,
-      legend: { position: 'bottom', labels: { colors: isL ? '#1e293b' : '#b2cbe4' } }
+      stroke: { width: 0 },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '68%',
+            labels: {
+              show: true,
+              name: { show: true, color: labelColor, fontSize: '11px', offsetY: -3 },
+              value: {
+                show: true,
+                color: isL ? '#0284c7' : '#00f2fe',
+                fontSize: '17px',
+                fontWeight: 700,
+                offsetY: 3,
+                formatter: v => Number(v).toLocaleString('vi-VN') + ' mẫu'
+              },
+              total: {
+                show: true,
+                label: 'Tổng mẫu',
+                color: labelColor,
+                fontSize: '11px',
+                formatter: function(w) {
+                  const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                  return Number(total).toLocaleString('vi-VN') + ' mẫu';
+                }
+              }
+            }
+          }
+        }
+      },
+      legend: { position: 'bottom', labels: { colors: isL ? '#1e293b' : '#b2cbe4' } },
+      dataLabels: {
+        enabled: true,
+        formatter: function(val) { return val.toFixed(1) + '%'; },
+        style: { fontSize: '12px', colors: ['#fff'] }
+      },
+      tooltip: {
+        y: { formatter: v => Number(v).toLocaleString('vi-VN') + ' mẫu' }
+      }
     });
     chartLisSourceDonut.render();
     window.chartLisSourceDonut = chartLisSourceDonut;
   } catch(e) {
     console.error('Lỗi khởi tạo chartLisSourceDonut:', e);
+  }
+
+  // Auto-toggle dataLabels: đổi giữa % và chỉ số thực mỗi 4 giây (như ở Khám chữa bệnh Ngoại trú)
+  let _lisDonutShowPct = true;
+  setInterval(function() {
+    _lisDonutShowPct = !_lisDonutShowPct;
+    const fmtSource = _lisDonutShowPct
+      ? function(val, opts) { return val.toFixed(1) + '%'; }
+      : function(val, opts) {
+          const s = opts.w.globals.series;
+          return Number(s[opts.seriesIndex] || 0).toLocaleString('vi-VN') + ' mẫu';
+        };
+    if (chartLisSourceDonut) {
+      chartLisSourceDonut.updateOptions({ dataLabels: { formatter: fmtSource } }, false, false);
+    }
+  }, 4000);
+
+  const elLisDonut = document.getElementById('chartLisSourceDonut');
+  if (elLisDonut) {
+    elLisDonut.style.cursor = 'pointer';
+    elLisDonut.setAttribute('title', 'Nhấn để chuyển đổi giữa % và Số lượng mẫu');
+    elLisDonut.addEventListener('click', function() {
+      _lisDonutShowPct = !_lisDonutShowPct;
+      const fmtSource = _lisDonutShowPct
+        ? function(val, opts) { return val.toFixed(1) + '%'; }
+        : function(val, opts) {
+            const s = opts.w.globals.series;
+            return Number(s[opts.seriesIndex] || 0).toLocaleString('vi-VN') + ' mẫu';
+          };
+      if (chartLisSourceDonut) {
+        chartLisSourceDonut.updateOptions({ dataLabels: { formatter: fmtSource } }, false, false);
+      }
+    });
   }
 }
 
@@ -404,7 +494,7 @@ window.addEventListener('themeChanged', function(e) {
   const labelColor = isL ? '#334155' : '#85a4c4';
   const legendColor = isL ? '#1e293b' : '#b2cbe4';
   const gridBorder = isL ? 'rgba(203, 213, 225, 0.7)' : 'rgba(38, 76, 115, 0.35)';
-  const mlColors = isL ? ['#0284c7', '#0d9488', '#ea580c'] : ['#00f2fe', '#20c6b7', '#ff9100'];
+  const mlColors = isL ? ['#0284c7', '#0d9488', '#ea580c', '#8b5cf6', '#eab308'] : ['#00f2fe', '#20c6b7', '#ff9100', '#a78bfa', '#fde047'];
   const donutColors = isL ? ['#0284c7', '#3b82f6'] : ['#00f2fe', '#39a0ff'];
 
   if (window.chartLisMultiLine && typeof window.chartLisMultiLine.updateOptions === 'function') {
@@ -412,7 +502,10 @@ window.addEventListener('themeChanged', function(e) {
       theme: { mode: isL ? 'light' : 'dark' },
       colors: mlColors,
       grid: { borderColor: gridBorder },
-      xaxis: { labels: { style: { colors: labelColor } } },
+      xaxis: {
+        categories: currentLisCats,
+        labels: { style: { colors: labelColor, fontSize: '11px' } }
+      },
       yaxis: { labels: { style: { colors: labelColor } } },
       legend: { labels: { colors: legendColor } }
     }, false, false);
@@ -421,6 +514,17 @@ window.addEventListener('themeChanged', function(e) {
     window.chartLisSourceDonut.updateOptions({
       theme: { mode: isL ? 'light' : 'dark' },
       colors: donutColors,
+      plotOptions: {
+        pie: {
+          donut: {
+            labels: {
+              name: { color: labelColor },
+              value: { color: isL ? '#0284c7' : '#00f2fe' },
+              total: { color: labelColor }
+            }
+          }
+        }
+      },
       legend: { labels: { colors: legendColor } }
     }, false, false);
   }
@@ -435,7 +539,7 @@ window.fetchDashboardData = async function() {
     const data = await res.json();
     if (!data.success) return;
 
-    // 1. Cập nhật 6 thẻ KPI LIS (100% dữ liệu thực từ CSDL)
+    // 1. Cập nhật các thẻ KPI LIS theo danh mục ioc_lis_categories (100% dữ liệu thực từ CSDL)
     if (data.lis) {
       const l = data.lis;
       const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
@@ -445,6 +549,20 @@ window.fetchDashboardData = async function() {
       setEl('kpiLisOutpatient', Number(l.outpatient || 0).toLocaleString('vi-VN'));
       setEl('kpiLisInpatient', Number(l.inpatient || 0).toLocaleString('vi-VN'));
       setEl('kpiLisBhytRate', `${l.bhyt_rate || (l.total > 0 ? ((l.bhyt / l.total) * 100).toFixed(1) : '0')}%`);
+
+      if (l.categories && Array.isArray(l.categories)) {
+        l.categories.forEach(cat => {
+          const valEl = document.getElementById(`kpiLisCatVal_${cat.id}`);
+          if (valEl) valEl.textContent = Number(cat.total_tests || 0).toLocaleString('vi-VN');
+
+          const lblEl = document.getElementById(`kpiLisCatLabel_${cat.id}`);
+          if (lblEl && cat.lis_category_name) lblEl.textContent = cat.lis_category_name;
+
+          const pctEl = document.getElementById(`kpiLisCatPct_${cat.id}`);
+          const pct = l.total > 0 ? ((cat.total_tests / l.total) * 100).toFixed(1) : '0';
+          if (pctEl) pctEl.textContent = `${pct}%`;
+        });
+      }
 
       const bhytPct = l.total > 0 ? ((l.bhyt / l.total) * 100).toFixed(1) : '0';
       setEl('kpiLisBhytSub', `Chiếm ${bhytPct}% tổng số mẫu`);
@@ -474,8 +592,14 @@ window.fetchDashboardData = async function() {
           chartLisTreemap.updateSeries([{ data: lc.treemap }]);
         }
         if (chartLisMultiLine && lc.multiline) {
+          currentLisCats = lc.multiline.categories || [];
+          const isL = document.documentElement.getAttribute('data-theme') === 'light';
+          const labelColor = isL ? '#334155' : '#85a4c4';
           chartLisMultiLine.updateOptions({
-            xaxis: { categories: lc.multiline.categories }
+            xaxis: {
+              categories: currentLisCats,
+              labels: { style: { colors: labelColor, fontSize: '11px' } }
+            }
           }, false, false);
           chartLisMultiLine.updateSeries(lc.multiline.series);
         }

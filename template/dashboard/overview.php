@@ -369,7 +369,7 @@ function initCharts() {
     })).filter(r => r.value > 0).sort((a, b) => b.value - a.value);
 
     if (items.length === 0) {
-      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#85a4c4;font-size:12.5px;">Chưa có dữ liệu phân bổ khoa</div>';
+      container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text);font-size:12.5px;">Chưa có dữ liệu phân bổ khoa</div>';
       return;
     }
 
@@ -509,7 +509,7 @@ function initCharts() {
               line-height: 1.2;
               letter-spacing: 0.1px;
             ">${displayName}</span>
-            ${!isSmall ? `<span style="font-size:9.5px; font-weight:600; color:rgba(255,255,255,0.7); background:rgba(0,0,0,0.22); padding:1px 4px; border-radius:3px; white-space:nowrap;">${pct}%</span>` : ''}
+            ${!isSmall ? `<span style="font-size:9.5px; font-weight:700; color:#ffffff; background:rgba(0,0,0,0.35); padding:1px 4px; border-radius:3px; white-space:nowrap;">${pct}%</span>` : ''}
           </div>
 
           <!-- GÓC DƯỚI BÊN PHẢI: SỐ LƯỢNG BỆNH NHÂN NỔI BẬT Ở GÓC -->
@@ -523,8 +523,8 @@ function initCharts() {
             ">${Number(it.value).toLocaleString('vi-VN')}</span>
             <span style="
               font-size: ${isSmall ? '8.5px' : '10px'};
-              font-weight: 700;
-              color: rgba(255,255,255,0.78);
+              font-weight: 800;
+              color: #ffffff;
             ">BN</span>
           </div>
         </div>
@@ -834,16 +834,16 @@ window.fetchDashboardData = async function() {
           <td style="text-align:center;">${row.stt}</td>
           <td style="font-weight:700; color:var(--accent);">${row.code}</td>
           <td style="font-weight:600;">${row.name}</td>
-          <td style="text-align:right; font-weight:700; color:#fff;">${row.col1}</td>
-          <td style="text-align:right; color:#85a4c4;">${row.col2}</td>
+          <td style="text-align:right; font-weight:700; color:var(--text);">${row.col1}</td>
+          <td style="text-align:right; color:var(--text);">${row.col2}</td>
           <td style="text-align:right; font-weight:600; color:${v3 >= 0 ? '#2ecc71' : '#ff5c5c'};">${row.col3}</td>
           <td style="text-align:right; font-weight:700; color:${v3 >= 0 ? '#2ecc71' : '#ff5c5c'};">${row.col4}</td>
           <td style="text-align:right; font-weight:700; color:#ffc107;">${row.col5}</td>
-          <td style="text-align:right; color:#85a4c4;">${row.col6}</td>
+          <td style="text-align:right; color:var(--text);">${row.col6}</td>
           <td style="text-align:right; font-weight:700; color:var(--teal);">${row.col7}</td>
-          <td style="text-align:right; color:#85a4c4;">${row.col8}</td>
+          <td style="text-align:right; color:var(--text);">${row.col8}</td>
           <td style="text-align:right; font-weight:600; color:#20c6b7;">${row.col9}</td>
-          <td style="text-align:right; color:#b2cbe4;">${row.col10}</td>
+          <td style="text-align:right; color:var(--text);">${row.col10}</td>
           <td style="text-align:center;">
             <span class="status-pill ${row.status_type}">${row.status}</span>
           </td>
@@ -857,12 +857,12 @@ window.fetchDashboardData = async function() {
       tfoot.innerHTML = `
         <tr>
           <td colspan="3" style="text-align:center; font-weight:800; text-transform:uppercase;">Tổng Hợp Toàn Kỳ Phân Tích:</td>
-          <td style="text-align:right; font-weight:800; color:#fff;">${sumCol1.toLocaleString('vi-VN')}</td>
-          <td style="text-align:right; color:#85a4c4;">${sumCol2.toLocaleString('vi-VN')}</td>
+          <td style="text-align:right; font-weight:800; color:var(--text);">${sumCol1.toLocaleString('vi-VN')}</td>
+          <td style="text-align:right; color:var(--text);">${sumCol2.toLocaleString('vi-VN')}</td>
           <td style="text-align:right; font-weight:700; color:${sumCol3 >= 0 ? '#2ecc71' : '#ff5c5c'};">${sumCol3 >= 0 ? '+' : ''}${sumCol3.toLocaleString('vi-VN')}</td>
           <td style="text-align:right; font-weight:800; color:${avgGrowth >= 0 ? '#2ecc71' : '#ff5c5c'};">${avgGrowth >= 0 ? '+' : ''}${avgGrowth}%</td>
           <td style="text-align:right; font-weight:800; color:#ffc107;">${lastCum.toLocaleString('vi-VN')}</td>
-          <td style="text-align:right; color:#85a4c4;">${annualTarget.toLocaleString('vi-VN')}</td>
+          <td style="text-align:right; color:var(--text);">${annualTarget.toLocaleString('vi-VN')}</td>
           <td style="text-align:right; font-weight:800; color:var(--teal);">${cumRate}%</td>
           <td style="text-align:right;">--</td>
           <td style="text-align:right;">--</td>

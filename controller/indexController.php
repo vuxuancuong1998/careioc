@@ -4,12 +4,12 @@ Class indexController Extends baseController
 {
 	public function index()
     {
-		// if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin/login"); }
+		if(!(isset($_SESSION['user']['id']) && $_SESSION['user']['id'] != "")){ header("Location: ".XC_URL."/admin.careioc/login"); }
 		
 		global $db;
 		// echo "SSSSSSSSSSSS";
 		$this->view->data["pagetitle"] = "Tổng quan";
-		
+		header("Location: ".XC_URL."/dashboard.careioc");
 		// $this->view->show("index");
 		/*
 		global $db;
